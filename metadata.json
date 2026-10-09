@@ -1,0 +1,6 @@
+{
+  "name": "FinTalent Partners",
+  "description": "Premier recruitment platform for CA Firms, Corporates, and Startups across Finance, Tax, Audit, and Accounting roles.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
