@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { CredibilityStrip } from './components/CredibilityStrip';
@@ -11,7 +12,10 @@ import { Footer } from './components/Footer';
 import { StatusTrackerModal } from './components/StatusTrackerModal';
 import { AdminPortal } from './components/AdminPortal';
 
-export default function App() {
+function MainApp() {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+
   // Modal states
   const [isTrackerOpen, setIsTrackerOpen] = useState(false);
   const [trackerPhone, setTrackerPhone] = useState('');
@@ -55,8 +59,14 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#101426] text-slate-100 font-sans antialiased flex flex-col selection:bg-[#D4FF5A] selection:text-[#101426] overflow-x-hidden">
-      {/* Global Header */}
+    <div 
+      className={`min-h-screen font-sans antialiased flex flex-col overflow-x-hidden transition-colors duration-200 ${
+        isDark 
+          ? 'bg-[#101426] text-slate-100 selection:bg-[#D4FF5A] selection:text-[#101426]' 
+          : 'bg-[#F7F6F2] text-[#101426] selection:bg-[#4563FF] selection:text-white'
+      }`}
+    >
+      {/* Global Header with Light/Dark Mode Switcher */}
       <Header
         onOpenTracker={() => setIsTrackerOpen(true)}
         onNavigateCandidate={() => scrollToSection('candidate-form')}
@@ -126,5 +136,13 @@ export default function App() {
         }}
       />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <MainApp />
+    </ThemeProvider>
   );
 }

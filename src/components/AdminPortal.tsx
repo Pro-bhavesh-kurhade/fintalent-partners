@@ -50,6 +50,24 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ isOpen, onClose }) => 
   // Toast / update alert
   const [updateFeedback, setUpdateFeedback] = useState<string | null>(null);
 
+  // Lock body scroll and listen for Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   useEffect(() => {
     if (isAuthenticated && isOpen) {
       loadData();
@@ -189,7 +207,15 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ isOpen, onClose }) => 
   });
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 animate-in fade-in">
+    <div 
+      className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 animate-in fade-in"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="admin-portal-title"
+    >
       <div className="rounded-3xl max-w-7xl w-full h-[95vh] flex flex-col bg-white text-slate-900 shadow-2xl border border-slate-200 overflow-hidden relative">
         
         {/* Top Header Bar */}
@@ -200,7 +226,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ isOpen, onClose }) => 
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="font-display font-bold text-base text-white">FinTalent Partners Admin Portal</h2>
+                <h2 id="admin-portal-title" className="font-display font-bold text-base text-white">FinTalent Partners Admin Portal</h2>
                 <span className="text-[10px] bg-[#10B981]/20 text-[#10B981] font-mono px-2 py-0.5 rounded-full border border-[#10B981]/30">
                   Supabase Live
                 </span>
@@ -213,7 +239,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ isOpen, onClose }) => 
             {isAuthenticated && (
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white text-xs font-semibold border border-white/10 transition cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white text-xs font-semibold border border-white/10 transition cursor-pointer min-h-[36px]"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Log Out</span>
@@ -221,8 +247,8 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ isOpen, onClose }) => 
             )}
             <button
               onClick={onClose}
-              className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-white/10 transition cursor-pointer"
-              aria-label="Close"
+              className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-white/10 transition cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-[#4563FF] outline-none"
+              aria-label="Close Admin Portal"
             >
               <X className="w-5 h-5" />
             </button>
@@ -253,7 +279,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ isOpen, onClose }) => 
               </div>
 
               {authError && (
-                <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2">
+                <div role="alert" className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
                   <span>{authError}</span>
                 </div>
@@ -261,10 +287,11 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ isOpen, onClose }) => 
 
               <form onSubmit={handleLogin} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                  <label htmlFor="admin-email-input" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                     Email Address
                   </label>
                   <input
+                    id="admin-email-input"
                     type="email"
                     required
                     value={adminEmail}
@@ -274,10 +301,11 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ isOpen, onClose }) => 
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                  <label htmlFor="admin-password-input" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                     Password
                   </label>
                   <input
+                    id="admin-password-input"
                     type="password"
                     required
                     value={adminPassword}
@@ -295,7 +323,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ isOpen, onClose }) => 
 
                 <button
                   type="submit"
-                  className="w-full bg-[#101426] hover:bg-slate-800 text-white font-display font-bold py-3.5 rounded-xl text-sm transition shadow-lg cursor-pointer"
+                  className="w-full bg-[#101426] hover:bg-slate-800 text-white font-display font-bold py-3.5 rounded-xl text-sm transition shadow-lg cursor-pointer min-h-[48px] focus-visible:ring-2 focus-visible:ring-[#4563FF] outline-none"
                 >
                   Authenticate & Open Dashboard
                 </button>

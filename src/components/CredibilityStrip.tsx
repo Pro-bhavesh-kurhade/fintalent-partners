@@ -1,7 +1,11 @@
 import React from 'react';
-import { ShieldCheck, Sparkles, Building2, Award } from 'lucide-react';
+import { Sparkles, Award } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 export const CredibilityStrip: React.FC = () => {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+
   const items = [
     { label: "QUALIFIED CHARTERED ACCOUNTANTS", highlight: true },
     { label: "CA INTER / SEMI-QUALIFIED", highlight: false },
@@ -14,10 +18,28 @@ export const CredibilityStrip: React.FC = () => {
   ];
 
   return (
-    <div className="w-full overflow-hidden bg-[#101426] border-b border-white/10 py-5 select-none relative">
+    <div 
+      className={`w-full overflow-hidden border-b py-4 select-none relative transition-colors duration-200 ${
+        isDark 
+          ? 'bg-[#0E1222] border-white/10' 
+          : 'bg-white border-slate-200 shadow-2xs'
+      }`}
+    >
       {/* Decorative gradient masks at edges to prevent harsh cutoff */}
-      <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-28 bg-gradient-to-r from-[#101426] to-transparent z-10 pointer-events-none" />
-      <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-28 bg-gradient-to-l from-[#101426] to-transparent z-10 pointer-events-none" />
+      <div 
+        className={`absolute left-0 top-0 bottom-0 w-16 sm:w-28 z-10 pointer-events-none bg-gradient-to-r ${
+          isDark 
+            ? 'from-[#0E1222] to-transparent' 
+            : 'from-white to-transparent'
+        }`} 
+      />
+      <div 
+        className={`absolute right-0 top-0 bottom-0 w-16 sm:w-28 z-10 pointer-events-none bg-gradient-to-l ${
+          isDark 
+            ? 'from-[#0E1222] to-transparent' 
+            : 'from-white to-transparent'
+        }`} 
+      />
 
       <div className="animate-marquee whitespace-nowrap flex items-center">
         {/* First track */}
@@ -27,18 +49,22 @@ export const CredibilityStrip: React.FC = () => {
               <div
                 className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-display font-bold uppercase tracking-wider ${
                   item.highlight
-                    ? 'bg-[#D4FF5A]/15 text-[#D4FF5A] border border-[#D4FF5A]/30'
-                    : 'bg-white/5 text-slate-300 border border-white/10'
+                    ? isDark 
+                      ? 'bg-[#D4FF5A]/15 text-[#D4FF5A] border border-[#D4FF5A]/30'
+                      : 'bg-emerald-50 text-emerald-800 border border-emerald-300 shadow-2xs'
+                    : isDark
+                      ? 'bg-white/5 text-slate-300 border border-white/10'
+                      : 'bg-slate-100 text-slate-700 border border-slate-200'
                 }`}
               >
                 {item.highlight ? (
-                  <Sparkles className="w-3.5 h-3.5 text-[#D4FF5A]" />
+                  <Sparkles className={`w-3.5 h-3.5 ${isDark ? 'text-[#D4FF5A]' : 'text-emerald-600'}`} />
                 ) : (
-                  <Award className="w-3.5 h-3.5 text-[#4563FF]" />
+                  <Award className={`w-3.5 h-3.5 ${isDark ? 'text-[#4563FF]' : 'text-[#4563FF]'}`} />
                 )}
                 <span>{item.label}</span>
               </div>
-              <span className="text-white/20 font-bold">/</span>
+              <span className={`font-bold ${isDark ? 'text-white/20' : 'text-slate-300'}`}>/</span>
             </div>
           ))}
         </div>
@@ -50,18 +76,22 @@ export const CredibilityStrip: React.FC = () => {
               <div
                 className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-display font-bold uppercase tracking-wider ${
                   item.highlight
-                    ? 'bg-[#D4FF5A]/15 text-[#D4FF5A] border border-[#D4FF5A]/30'
-                    : 'bg-white/5 text-slate-300 border border-white/10'
+                    ? isDark 
+                      ? 'bg-[#D4FF5A]/15 text-[#D4FF5A] border border-[#D4FF5A]/30'
+                      : 'bg-emerald-50 text-emerald-800 border border-emerald-300 shadow-2xs'
+                    : isDark
+                      ? 'bg-white/5 text-slate-300 border border-white/10'
+                      : 'bg-slate-100 text-slate-700 border border-slate-200'
                 }`}
               >
                 {item.highlight ? (
-                  <Sparkles className="w-3.5 h-3.5 text-[#D4FF5A]" />
+                  <Sparkles className={`w-3.5 h-3.5 ${isDark ? 'text-[#D4FF5A]' : 'text-emerald-600'}`} />
                 ) : (
-                  <Award className="w-3.5 h-3.5 text-[#4563FF]" />
+                  <Award className={`w-3.5 h-3.5 ${isDark ? 'text-[#4563FF]' : 'text-[#4563FF]'}`} />
                 )}
                 <span>{item.label}</span>
               </div>
-              <span className="text-white/20 font-bold">/</span>
+              <span className={`font-bold ${isDark ? 'text-white/20' : 'text-slate-300'}`}>/</span>
             </div>
           ))}
         </div>
