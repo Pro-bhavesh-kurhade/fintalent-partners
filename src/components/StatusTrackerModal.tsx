@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   X, Search, Phone, Calendar, CheckCircle2, Clock, 
   AlertCircle, Loader2, FileText, ExternalLink, ShieldCheck, 
-  MessageSquare, User, MapPin, Briefcase, Award, ArrowRight, Sparkles
+  MessageSquare, User, ArrowRight, Sparkles, Award 
 } from 'lucide-react';
 import { trackCandidateStatus, STAGES, Candidate } from '../lib/supabase';
 
@@ -81,47 +81,50 @@ export const StatusTrackerModal: React.FC<StatusTrackerModalProps> = ({
   const currentStageIndex = candidate ? getStageIndex(candidate.status) : 1;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-      <div className="bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-8 shadow-xl border border-slate-200 relative overflow-hidden max-h-[92vh] flex flex-col">
-        {/* Top brand header strip */}
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-emerald-600" />
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-[#101426]/90 backdrop-blur-xl flex items-center justify-center p-3 sm:p-6 animate-in fade-in">
+      <div className="bg-[#101426] rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl border border-white/15 relative overflow-hidden max-h-[92vh] flex flex-col text-white">
+        
+        {/* Top vibrant gradient strip */}
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#4563FF] via-[#D4FF5A] to-[#10B981]" />
         
         {/* Header with Close */}
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100 shrink-0">
+        <div className="flex items-center justify-between pb-5 border-b border-white/10 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold">
-              <Search className="w-5 h-5 text-emerald-400" />
+            <div className="w-11 h-11 rounded-2xl bg-white/5 border border-white/10 text-white flex items-center justify-center font-bold">
+              <Search className="w-5 h-5 text-[#D4FF5A]" />
             </div>
             <div>
-              <h3 className="text-xl font-black text-slate-950 font-headline tracking-tight">
-                Track Application Status
+              <h3 className="font-display font-extrabold text-xl sm:text-2xl text-white tracking-tight uppercase">
+                APPLICATION STATUS TRACKER
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-400">
                 Live recruitment pipeline tracker (Mobile + DOB Authentication)
               </p>
             </div>
           </div>
+
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 transition cursor-pointer"
+            className="p-2.5 text-slate-400 hover:text-white rounded-xl hover:bg-white/10 transition cursor-pointer"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Scrollable Container */}
+        {/* Scrollable Body */}
         <div className="overflow-y-auto py-5 space-y-6 flex-1 pr-1">
+          
           {/* Search Inputs */}
-          <div className="bg-slate-50 p-4 sm:p-5 rounded-xl border border-slate-200 shadow-2xs space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div className="bg-white/5 p-5 rounded-2xl border border-white/10 space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Phone */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
                   Registered Mobile Number
                 </label>
-                <div className="flex rounded-xl border border-slate-300 bg-white focus-within:border-emerald-600 focus-within:ring-1 focus-within:ring-emerald-600 overflow-hidden">
-                  <span className="px-3 bg-slate-100 text-slate-500 font-semibold text-xs flex items-center border-r border-slate-200">
+                <div className="flex rounded-xl border border-white/15 bg-white/5 focus-within:border-[#4563FF] focus-within:ring-2 focus-within:ring-[#4563FF]/30 overflow-hidden">
+                  <span className="px-3.5 bg-white/10 text-slate-300 font-bold text-xs flex items-center border-r border-white/10">
                     +91
                   </span>
                   <input
@@ -131,14 +134,14 @@ export const StatusTrackerModal: React.FC<StatusTrackerModalProps> = ({
                     value={phone}
                     onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                    className="w-full px-3 py-2 text-sm outline-none font-mono text-slate-900"
+                    className="w-full px-3.5 py-2.5 text-sm outline-none font-mono text-white bg-transparent"
                   />
                 </div>
               </div>
 
               {/* DOB */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
                   Date of Birth (DOB)
                 </label>
                 <input
@@ -146,7 +149,7 @@ export const StatusTrackerModal: React.FC<StatusTrackerModalProps> = ({
                   value={dob}
                   onChange={(e) => setDob(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 text-sm outline-none font-mono text-slate-900 cursor-pointer"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-white/15 bg-white/5 focus:border-[#4563FF] focus:ring-2 focus:ring-[#4563FF]/30 text-sm outline-none font-mono text-white cursor-pointer"
                 />
               </div>
             </div>
@@ -154,17 +157,17 @@ export const StatusTrackerModal: React.FC<StatusTrackerModalProps> = ({
             <button
               onClick={() => handleSearch()}
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-5 rounded-xl text-sm transition shadow-2xs disabled:opacity-60 cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 bg-[#D4FF5A] hover:bg-[#bbf036] text-[#101426] font-display font-bold py-3 px-6 rounded-xl text-sm transition shadow-lg shadow-[#D4FF5A]/20 cursor-pointer disabled:opacity-60"
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin text-white" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                   <span>Querying Live Supabase Records...</span>
                 </>
               ) : (
                 <>
-                  <Search className="w-4 h-4 text-emerald-400" />
-                  <span>Check Current Status</span>
+                  <Search className="w-4 h-4" />
+                  <span>Check Current Pipeline Status</span>
                 </>
               )}
             </button>
@@ -172,19 +175,19 @@ export const StatusTrackerModal: React.FC<StatusTrackerModalProps> = ({
 
           {/* Friendly Alert if Error / No Match */}
           {errorMsg && (
-            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 space-y-2">
+            <div className="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-200 space-y-2 animate-in fade-in">
               <div className="flex items-start gap-2.5">
-                <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                 <p className="text-sm font-medium">{errorMsg}</p>
               </div>
               {onSwitchToApply && (
-                <div className="pt-1 pl-7">
+                <div className="pt-2 pl-7">
                   <button
                     onClick={() => {
                       onClose();
                       onSwitchToApply();
                     }}
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800 underline cursor-pointer"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-[#D4FF5A] hover:underline cursor-pointer"
                   >
                     <span>Click here to submit your profile now</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -194,35 +197,44 @@ export const StatusTrackerModal: React.FC<StatusTrackerModalProps> = ({
             </div>
           )}
 
-          {/* Match Found: Candidate Details & 5-Stage Swiggy/Amazon Progress Tracker */}
+          {/* Match Found: Candidate Details & Horizontal/Vertical Pipeline */}
           {candidate && (
             <div className="space-y-6 animate-in fade-in duration-300">
+              
               {/* Profile Card Summary */}
-              <div className="bg-slate-900 text-white p-5 rounded-xl border border-slate-800 shadow-xs">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+              <div className="bg-white/5 p-6 rounded-3xl border border-white/10 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
                   <div>
-                    <div className="text-lg font-bold text-white font-headline flex items-center gap-2">
-                      <span>{candidate.full_name}</span>
-                      <span className="text-xs bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-500/40 font-semibold font-sans">
+                    <div className="flex items-center gap-3">
+                      <h4 className="font-display font-extrabold text-xl text-white">
+                        {candidate.full_name}
+                      </h4>
+                      <span className="text-xs bg-[#D4FF5A]/20 text-[#D4FF5A] px-3 py-1 rounded-full font-bold border border-[#D4FF5A]/30">
                         {candidate.qualification}
                       </span>
                     </div>
-                    <div className="text-xs text-slate-300 mt-1">
-                      {candidate.domain} • {candidate.experience_years} Yrs Exp • {candidate.current_location}
+                    <div className="text-xs text-slate-300 mt-1.5 flex flex-wrap gap-2">
+                      <span>{candidate.domain}</span>
+                      <span>·</span>
+                      <span>{candidate.experience_years} Years Experience</span>
+                      <span>·</span>
+                      <span>{candidate.current_location}</span>
                     </div>
                   </div>
 
-                  <div className="text-right sm:self-center">
-                    <span className="text-[10px] uppercase tracking-wider text-slate-400 block font-semibold">Current Status</span>
-                    <span className="text-sm font-bold text-emerald-400 font-headline">
+                  <div className="sm:text-right">
+                    <span className="text-[10px] uppercase tracking-wider text-slate-400 block font-bold">
+                      Current Stage:
+                    </span>
+                    <span className="text-base font-display font-bold text-[#D4FF5A]">
                       {candidate.status}
                     </span>
                   </div>
                 </div>
 
-                <div className="pt-3 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-300">
-                  <div className="flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-slate-400">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-slate-400" />
                     <span>Registered on {new Date(candidate.created_at || Date.now()).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                   </div>
 
@@ -231,9 +243,9 @@ export const StatusTrackerModal: React.FC<StatusTrackerModalProps> = ({
                       href={candidate.resume_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-emerald-300 hover:text-white font-semibold underline"
+                      className="inline-flex items-center gap-1.5 text-[#D4FF5A] hover:underline font-bold"
                     >
-                      <FileText className="w-3.5 h-3.5" />
+                      <FileText className="w-4 h-4" />
                       <span>View Uploaded Resume PDF</span>
                       <ExternalLink className="w-3 h-3" />
                     </a>
@@ -241,77 +253,116 @@ export const StatusTrackerModal: React.FC<StatusTrackerModalProps> = ({
                 </div>
               </div>
 
-              {/* 5-Stage Visual Progress Timeline */}
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 sm:p-6 space-y-6">
+              {/* 5-Stage Visual Progress Timeline: Horizontal on Desktop, Vertical on Mobile */}
+              <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 space-y-6">
                 <div>
-                  <h4 className="text-sm font-bold text-slate-900 font-headline tracking-tight flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-emerald-600" />
-                    Hiring Progress Timeline
+                  <h4 className="font-display font-bold text-base text-white tracking-tight flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-[#D4FF5A]" />
+                    <span>5-Stage Recruitment Timeline</span>
                   </h4>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    Real-time updates as your profile progresses across screening & interviews.
+                  <p className="text-xs text-slate-400 mt-1">
+                    Real-time status updates from our executive screening and partner interview rounds.
                   </p>
                 </div>
 
-                {/* Vertical Timeline */}
-                <div className="relative pl-6 sm:pl-8 space-y-5 before:absolute before:left-3 sm:before:left-4 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
+                {/* DESKTOP HORIZONTAL TIMELINE */}
+                <div className="hidden lg:block pt-4 pb-2">
+                  <div className="relative flex items-center justify-between">
+                    {/* Connecting background line */}
+                    <div className="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-1 bg-white/10 -z-0" />
+                    
+                    {/* Active progress fill line */}
+                    <div
+                      className="absolute left-6 top-1/2 -translate-y-1/2 h-1 bg-gradient-to-r from-[#4563FF] via-[#D4FF5A] to-[#10B981] -z-0 transition-all duration-500"
+                      style={{
+                        width: `${Math.max(0, Math.min(100, ((currentStageIndex - 1) / 4) * 100))}%`,
+                      }}
+                    />
+
+                    {STAGES.map((stage) => {
+                      const isCompleted = currentStageIndex > stage.id;
+                      const isCurrent = currentStageIndex === stage.id;
+
+                      return (
+                        <div key={stage.id} className="relative z-10 flex flex-col items-center text-center max-w-[140px]">
+                          <div
+                            className={`w-12 h-12 rounded-2xl flex items-center justify-center font-display font-bold text-sm transition-all ${
+                              isCompleted
+                                ? 'bg-[#10B981] text-[#101426] shadow-lg shadow-[#10B981]/30'
+                                : isCurrent
+                                ? 'bg-[#D4FF5A] text-[#101426] ring-4 ring-[#D4FF5A]/30 scale-110 shadow-xl shadow-[#D4FF5A]/40'
+                                : 'bg-[#101426] border-2 border-white/20 text-slate-500'
+                            }`}
+                          >
+                            {isCompleted ? (
+                              <CheckCircle2 className="w-6 h-6" />
+                            ) : (
+                              <span>0{stage.id}</span>
+                            )}
+                          </div>
+
+                          <div className="mt-3">
+                            <span
+                              className={`text-xs font-display font-bold block ${
+                                isCurrent
+                                  ? 'text-[#D4FF5A]'
+                                  : isCompleted
+                                  ? 'text-white'
+                                  : 'text-slate-500'
+                              }`}
+                            >
+                              {stage.short}
+                            </span>
+                            <span className="text-[10px] text-slate-400 line-clamp-2 mt-0.5">
+                              {stage.desc}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* MOBILE VERTICAL TIMELINE */}
+                <div className="lg:hidden relative pl-8 space-y-6 before:absolute before:left-3 before:top-2 before:bottom-2 before:w-0.5 before:bg-white/10">
                   {STAGES.map((stage) => {
                     const isCompleted = currentStageIndex > stage.id;
                     const isCurrent = currentStageIndex === stage.id;
 
                     return (
-                      <div key={stage.id} className="relative group">
-                        {/* Dot indicator on vertical line */}
+                      <div key={stage.id} className="relative">
                         <div
-                          className={`absolute -left-6 sm:-left-8 top-1 w-6 h-6 rounded-full flex items-center justify-center transition-all ${
+                          className={`absolute -left-8 top-1 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                             isCompleted
-                              ? 'bg-emerald-600 text-white shadow-xs'
+                              ? 'bg-[#10B981] text-[#101426]'
                               : isCurrent
-                              ? 'bg-slate-900 text-emerald-400 ring-4 ring-emerald-100'
-                              : 'bg-white border-2 border-slate-300 text-slate-400'
+                              ? 'bg-[#D4FF5A] text-[#101426] ring-4 ring-[#D4FF5A]/30'
+                              : 'bg-[#101426] border border-white/20 text-slate-500'
                           }`}
                         >
-                          {isCompleted ? (
-                            <CheckCircle2 className="w-4 h-4" />
-                          ) : (
-                            <span className="text-[11px] font-bold">{stage.id}</span>
-                          )}
+                          {isCompleted ? '✓' : stage.id}
                         </div>
 
-                        {/* Stage details */}
                         <div
-                          className={`p-3.5 rounded-xl border transition-all ${
+                          className={`p-4 rounded-2xl border transition-all ${
                             isCurrent
-                              ? 'bg-white border-slate-900 shadow-xs'
+                              ? 'bg-white/10 border-[#D4FF5A]'
                               : isCompleted
-                              ? 'bg-white border-slate-200'
-                              : 'bg-slate-100/60 border-slate-200/60 opacity-60'
+                              ? 'bg-white/5 border-white/15'
+                              : 'bg-transparent border-white/5 opacity-50'
                           }`}
                         >
                           <div className="flex items-center justify-between gap-2">
-                            <span
-                              className={`text-sm font-bold font-headline ${
-                                isCurrent
-                                  ? 'text-slate-950'
-                                  : isCompleted
-                                  ? 'text-slate-800'
-                                  : 'text-slate-500'
-                              }`}
-                            >
+                            <span className={`text-sm font-display font-bold ${isCurrent ? 'text-[#D4FF5A]' : 'text-white'}`}>
                               {stage.label}
                             </span>
                             {isCurrent && (
-                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider bg-slate-900 text-emerald-400 font-sans">
-                                Active Stage
-                              </span>
-                            )}
-                            {isCompleted && (
-                              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md uppercase tracking-wider font-sans">
-                                Completed ✓
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#D4FF5A] text-[#101426]">
+                                Current
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-slate-500 mt-1">{stage.desc}</p>
+                          <p className="text-xs text-slate-400 mt-1">{stage.desc}</p>
                         </div>
                       </div>
                     );
@@ -320,32 +371,37 @@ export const StatusTrackerModal: React.FC<StatusTrackerModalProps> = ({
 
                 {/* HR Notes / Remarks if left by Admin */}
                 {candidate.admin_notes && (
-                  <div className="mt-4 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950 space-y-1">
-                    <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-800">
-                      <MessageSquare className="w-3.5 h-3.5" />
+                  <div className="mt-6 p-5 rounded-2xl bg-[#D4FF5A]/10 border border-[#D4FF5A]/30 text-white space-y-1.5 animate-in fade-in">
+                    <div className="flex items-center gap-2 text-xs font-display font-bold text-[#D4FF5A] uppercase tracking-wider">
+                      <MessageSquare className="w-4 h-4" />
                       <span>Note from FinTalent HR Team:</span>
                     </div>
-                    <p className="text-sm font-medium">{candidate.admin_notes}</p>
+                    <p className="text-sm text-slate-200">{candidate.admin_notes}</p>
                   </div>
                 )}
+
               </div>
+
             </div>
           )}
+
         </div>
 
         {/* Footer */}
-        <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 shrink-0">
-          <div className="flex items-center gap-1.5">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Encrypted Verification</span>
+        <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs text-slate-400 shrink-0">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-[#D4FF5A]" />
+            <span>Encrypted Supabase Database</span>
           </div>
+
           <button
             onClick={onClose}
-            className="text-slate-600 hover:text-slate-900 font-semibold px-4 py-2 rounded-xl hover:bg-slate-100 transition cursor-pointer"
+            className="text-slate-300 hover:text-white font-semibold px-4 py-2 rounded-xl hover:bg-white/10 transition cursor-pointer"
           >
-            Close
+            Close Tracker
           </button>
         </div>
+
       </div>
     </div>
   );

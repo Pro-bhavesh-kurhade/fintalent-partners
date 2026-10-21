@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { CheckCircle2, Search, ArrowRight, ShieldCheck, X, FileText, Phone, Calendar } from 'lucide-react';
+import { CheckCircle2, Search, ArrowRight, ShieldCheck, X, Phone, Calendar } from 'lucide-react';
 import { fireCelebrationConfetti } from '../lib/confetti';
 
 interface CelebrationModalProps {
@@ -28,93 +28,88 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
-      <div 
-        className="rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200/90 relative overflow-hidden"
-        style={{
-          background: 'rgba(255, 255, 255, 0.98)',
-          backdropFilter: 'blur(16px)',
-        }}
-      >
-        {/* Top green celebratory aura */}
-        <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-500" />
-        <div className="absolute top-3 right-3">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-[#101426]/90 backdrop-blur-xl flex items-center justify-center p-4 animate-in fade-in duration-200">
+      <div className="rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-white/20 bg-[#101426] text-white relative overflow-hidden">
+        {/* Top neon glow line */}
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#4563FF] via-[#D4FF5A] to-[#10B981]" />
+        
+        <div className="absolute top-4 right-4">
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-100 transition cursor-pointer"
+            className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-white/10 transition cursor-pointer"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="text-center space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center shadow-inner">
-            <CheckCircle2 className="w-10 h-10 animate-bounce" />
+        <div className="text-center space-y-5 pt-2">
+          <div className="w-16 h-16 rounded-2xl bg-[#D4FF5A]/20 text-[#D4FF5A] mx-auto flex items-center justify-center shadow-lg border border-[#D4FF5A]/30">
+            <CheckCircle2 className="w-9 h-9" />
           </div>
 
           <div>
-            <span className="inline-block px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full mb-2 border border-emerald-200">
-              Profile Successfully Registered!
+            <span className="inline-block px-3 py-1 bg-[#10B981]/20 text-[#10B981] text-xs font-display font-bold rounded-full mb-2 border border-[#10B981]/40 uppercase tracking-wider">
+              Profile Registered Successfully!
             </span>
-            <h3 className="text-2xl font-extrabold text-slate-900 font-serif">
-              Welcome aboard, {candidateName}!
+            <h3 className="text-2xl sm:text-3xl font-black text-white font-display uppercase tracking-tight">
+              WELCOME ABOARD!
             </h3>
-            <p className="text-sm text-slate-600 mt-1">
-              Your resume has been securely stored in our verified finance database and queued for screening with our 40+ partner CA firms and corporate clients.
+            <p className="text-sm text-slate-300 mt-2 leading-relaxed">
+              Your resume is securely stored in the talent database and queued for screening with our 40+ partner CA firms and corporate clients.
             </p>
           </div>
 
           {/* Secure credentials box */}
-          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-left space-y-3">
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-left space-y-3">
+            <div className="flex items-center gap-2 text-xs font-display font-bold text-[#D4FF5A] uppercase tracking-wider">
+              <ShieldCheck className="w-4 h-4 text-[#D4FF5A]" />
               <span>Your Application Tracking Passcode</span>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-xs">
-                <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+              <div className="bg-[#101426] p-3 rounded-xl border border-white/10">
+                <div className="flex items-center gap-1.5 text-xs text-slate-400 font-medium">
                   <Phone className="w-3.5 h-3.5 text-slate-400" />
                   <span>Mobile Number</span>
                 </div>
-                <div className="font-mono font-bold text-slate-900 text-sm mt-0.5">
+                <div className="font-mono font-bold text-white text-sm mt-1">
                   {phone}
                 </div>
               </div>
-              <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-xs">
-                <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+              <div className="bg-[#101426] p-3 rounded-xl border border-white/10">
+                <div className="flex items-center gap-1.5 text-xs text-slate-400 font-medium">
                   <Calendar className="w-3.5 h-3.5 text-slate-400" />
                   <span>Date of Birth</span>
                 </div>
-                <div className="font-mono font-bold text-slate-900 text-sm mt-0.5">
+                <div className="font-mono font-bold text-white text-sm mt-1">
                   {dob}
                 </div>
               </div>
             </div>
-            <p className="text-[11px] text-slate-500 italic">
-              * Bookmark these details. You can check screening progress, shortlists, and partner interview calls at any time using our status tracker.
+            <p className="text-[11px] text-slate-400">
+              * Bookmark these details. Check screening progress and partner interview status at any time in the live tracker.
             </p>
           </div>
 
           {/* Direct CTA */}
-          <div className="pt-2 space-y-2">
+          <div className="pt-2 space-y-2.5">
             <button
               onClick={() => {
                 onClose();
                 onTrackNow(phone, dob);
               }}
-              className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-emerald-700/20 hover:shadow-emerald-700/40 transition active:scale-[0.99]"
+              className="w-full flex items-center justify-center gap-2.5 bg-[#D4FF5A] hover:bg-[#bbf036] text-[#101426] font-display font-extrabold py-4 px-6 rounded-xl shadow-xl shadow-[#D4FF5A]/20 transition cursor-pointer text-sm"
             >
               <Search className="w-4 h-4" />
-              <span>Track Your Status Now</span>
+              <span>Open Live Status Tracker Now</span>
               <ArrowRight className="w-4 h-4" />
             </button>
 
             <button
               onClick={onClose}
-              className="w-full py-2.5 text-slate-500 hover:text-slate-700 text-sm font-semibold transition"
+              className="w-full py-2.5 text-slate-400 hover:text-white text-xs font-semibold transition cursor-pointer"
             >
-              Back to Homepage
+              Close and Return to Homepage
             </button>
           </div>
         </div>

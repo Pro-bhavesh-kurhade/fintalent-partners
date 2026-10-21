@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
+import { CredibilityStrip } from './components/CredibilityStrip';
 import { Specializations } from './components/Specializations';
+import { MarketplaceSplit } from './components/MarketplaceSplit';
 import { CandidateForm } from './components/CandidateForm';
 import { EmployerForm } from './components/EmployerForm';
 import { TrustSection } from './components/TrustSection';
@@ -53,7 +55,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased flex flex-col selection:bg-emerald-100 selection:text-emerald-900">
+    <div className="min-h-screen bg-[#101426] text-slate-100 font-sans antialiased flex flex-col selection:bg-[#D4FF5A] selection:text-[#101426] overflow-x-hidden">
       {/* Global Header */}
       <Header
         onOpenTracker={() => setIsTrackerOpen(true)}
@@ -63,25 +65,36 @@ export default function App() {
 
       {/* Main Content */}
       <main className="flex-1">
-        {/* Hero Section */}
+        {/* Section 1: Hero Section */}
         <Hero
           onCandidateClick={() => scrollToSection('candidate-form')}
           onEmployerClick={() => scrollToSection('employer-form')}
+          onTrackerClick={() => setIsTrackerOpen(true)}
         />
 
-        {/* Practice Domains & Specializations */}
+        {/* Section 2: Credibility Strip Marquee */}
+        <CredibilityStrip />
+
+        {/* Section 3: Practice Domains & Specializations (Bento Grid) */}
         <Specializations onSelectDomain={handleSelectDomain} />
 
-        {/* Candidate Resume Submission Form (Anchor: #candidate-form) */}
+        {/* Section 4: Two-Sided Talent Marketplace */}
+        <MarketplaceSplit
+          onCandidateClick={() => scrollToSection('candidate-form')}
+          onEmployerClick={() => scrollToSection('employer-form')}
+          onTrackerClick={() => setIsTrackerOpen(true)}
+        />
+
+        {/* Section 5: Candidate Resume Submission Form (Anchor: #candidate-form) */}
         <CandidateForm
           onTrackNow={handleOpenTrackerWithData}
           initialDomain={selectedDomain}
         />
 
-        {/* Employer / CA Firm Requirement Form (Anchor: #employer-form) */}
+        {/* Section 6: Employer / CA Firm Requirement Form (Anchor: #employer-form) */}
         <EmployerForm />
 
-        {/* Trust & FAQ Section */}
+        {/* Section 7: Editorial About Amii Ma'am & FAQ Section */}
         <TrustSection />
       </main>
 
