@@ -1,165 +1,221 @@
 import React, { useState } from 'react';
-import { MessageCircle, Menu, X, ArrowUpRight, Search, Sun, Moon } from 'lucide-react';
+import {
+  MessageCircle,
+  Menu,
+  X,
+  Search,
+  Sun,
+  Moon,
+  Briefcase,
+  Users,
+  Zap,
+  Sparkles,
+  ArrowUpRight,
+} from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { buildWhatsAppUrl } from '../lib/supabase';
 
 interface HeaderProps {
+  openRolesCount: number;
   onOpenTracker: () => void;
+  onExploreJobs: () => void;
+  onBrowseTalent: () => void;
   onNavigateCandidate: () => void;
   onNavigateEmployer: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
+  openRolesCount,
   onOpenTracker,
+  onExploreJobs,
+  onBrowseTalent,
   onNavigateCandidate,
   onNavigateEmployer,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
-
-  const WHATSAPP_URL =
-    "https://wa.me/919821262613?text=Hi%20Amii%20Ma%27am%2C%20reaching%20out%20via%20FinTalent%20Partners";
-
   const isDark = theme === 'dark';
 
+  const whatsappHref = buildWhatsAppUrl(
+    "Hi Amii Ma'am, reaching out via FinTalent Partners website!"
+  );
+
   return (
-    <header 
-      className={`sticky top-0 z-50 backdrop-blur-xl border-b transition-colors duration-200 ${
-        isDark 
-          ? 'bg-[#101426]/90 border-white/10 text-white' 
-          : 'bg-[#F7F6F2]/95 border-slate-200 shadow-xs text-[#101426]'
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
-        {/* Left: Custom CSS Logo Mark & Brand Title */}
-        <a 
-          href="#" 
-          className="flex items-center gap-3.5 group shrink-0 focus-visible:ring-2 focus-visible:ring-[#4563FF] rounded-xl outline-none"
+    <header className="sticky top-0 z-50 px-3 sm:px-6 pt-3 pb-2 pointer-events-none">
+      <div
+        className={`max-w-7xl mx-auto rounded-2xl px-4 sm:px-5 h-16 flex items-center justify-between gap-3 backdrop-blur-xl transition-all pointer-events-auto ${
+          isDark
+            ? 'bg-[#0E111B]/88 border border-white/14 text-white shadow-[0_14px_38px_-12px_rgba(0,0,0,0.75)]'
+            : 'bg-white/92 border-[1.5px] border-[#0D1017] text-[#0D1017] shadow-[4px_4px_0px_0px_#0D1017]'
+        }`}
+      >
+        {/* Brand Identity */}
+        <a
+          href="#"
+          className="flex items-center gap-3 group shrink-0 outline-none rounded-xl"
           aria-label="FinTalent Partners Home"
         >
-          {/* Custom geometric logo mark */}
-          <div className="relative w-11 h-11 rounded-xl bg-gradient-to-br from-[#4563FF] via-[#101426] to-[#D4FF5A] p-0.5 shadow-md shadow-[#4563FF]/20 group-hover:scale-105 transition-transform duration-300">
-            <div className="w-full h-full bg-[#101426] rounded-[10px] flex items-center justify-center relative overflow-hidden">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(212,255,90,0.2),transparent_70%)]" />
-              <span className="font-display font-extrabold text-lg text-white tracking-tighter">
-                F<span className="text-[#D4FF5A]">T</span>
-              </span>
-              <div className="absolute -bottom-1 -right-1 w-2.5 h-2.5 bg-[#10B981] rounded-full ring-2 ring-[#101426]" />
-            </div>
+          <div
+            className={`w-10 h-10 rounded-xl flex items-center justify-center relative overflow-hidden transition-transform duration-200 group-hover:-rotate-6 ${
+              isDark
+                ? 'bg-[#C8FF32] text-[#090B10]'
+                : 'bg-[#0D1017] text-[#C8FF32]'
+            }`}
+          >
+            <span className="font-display font-extrabold text-lg tracking-tighter leading-none">
+              FT
+            </span>
+            <span className="w-2 h-2 rounded-full bg-[#FF6B4A] absolute top-1.5 right-1.5" />
           </div>
-          <div>
-            <div className="flex items-center gap-1.5 leading-none">
-              <span className={`font-display font-extrabold text-xl sm:text-2xl tracking-tight ${
-                isDark ? 'text-white' : 'text-[#101426]'
-              }`}>
+          <div className="leading-none">
+            <div className="flex items-center gap-1.5">
+              <span className="font-display font-extrabold text-lg sm:text-xl tracking-tight">
                 FinTalent
               </span>
-              <span className="font-display font-extrabold text-xl sm:text-2xl text-[#4563FF]">
-                Partners
+              <span
+                className={`text-[10px] font-mono font-bold uppercase px-1.5 py-0.5 rounded-md ${
+                  isDark
+                    ? 'bg-[#FF6B4A]/20 text-[#FF8A70] border border-[#FF6B4A]/30'
+                    : 'bg-[#C8FF32] text-[#0D1017] border border-[#0D1017]/20'
+                }`}
+              >
+                INDIA
               </span>
             </div>
-            <p className={`text-[11px] font-medium tracking-wide mt-1 hidden sm:block ${
-              isDark ? 'text-slate-400' : 'text-slate-600'
-            }`}>
-              Executive Search · CA, Tax & Finance
+            <p
+              className={`text-[11px] font-medium mt-0.5 hidden xl:block ${
+                isDark ? 'text-slate-400' : 'text-slate-600'
+              }`}
+            >
+              CA · Tax · Audit · CFO Search
             </p>
           </div>
         </a>
 
-        {/* Center: Exactly 3 Clean Navigation Links */}
-        <nav className="hidden md:flex items-center gap-6 lg:gap-8" aria-label="Main Navigation">
+        {/* Center Instant Finder & Action Pills */}
+        <nav
+          className="hidden lg:flex items-center gap-1.5"
+          aria-label="Primary Navigation"
+        >
           <button
-            onClick={onNavigateCandidate}
-            className={`text-sm font-semibold py-1 cursor-pointer relative group transition-colors focus-visible:ring-2 focus-visible:ring-[#4563FF] rounded-md outline-none ${
-              isDark ? 'text-slate-300 hover:text-[#D4FF5A]' : 'text-slate-700 hover:text-[#4563FF]'
-            }`}
-          >
-            <span>For Candidates</span>
-            <span className={`absolute bottom-0 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-300 ${
-              isDark ? 'bg-[#D4FF5A]' : 'bg-[#4563FF]'
-            }`} />
-          </button>
-
-          <button
-            onClick={onNavigateEmployer}
-            className={`text-sm font-semibold py-1 cursor-pointer relative group transition-colors focus-visible:ring-2 focus-visible:ring-[#4563FF] rounded-md outline-none ${
-              isDark ? 'text-slate-300 hover:text-[#D4FF5A]' : 'text-slate-700 hover:text-[#4563FF]'
-            }`}
-          >
-            <span>For Employers</span>
-            <span className={`absolute bottom-0 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-300 ${
-              isDark ? 'bg-[#D4FF5A]' : 'bg-[#4563FF]'
-            }`} />
-          </button>
-
-          <button
-            onClick={onOpenTracker}
-            className={`text-sm font-semibold py-1.5 px-3.5 rounded-xl cursor-pointer flex items-center gap-2 border transition-all focus-visible:ring-2 focus-visible:ring-[#4563FF] outline-none ${
-              isDark 
-                ? 'bg-white/5 hover:bg-white/10 text-slate-200 border-white/10' 
-                : 'bg-white hover:bg-slate-100 text-slate-800 border-slate-300 shadow-2xs'
-            }`}
-          >
-            <Search className={`w-3.5 h-3.5 ${isDark ? 'text-[#D4FF5A]' : 'text-[#4563FF]'}`} />
-            <span>Track Status</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-ping" />
-          </button>
-        </nav>
-
-        {/* Right Actions: Dark/Light Mode Switch + WhatsApp Action */}
-        <div className="flex items-center gap-3 shrink-0">
-          {/* Funky Theme Toggle Button */}
-          <button
-            onClick={toggleTheme}
             type="button"
-            className={`p-2.5 rounded-xl border cursor-pointer transition-all flex items-center justify-center gap-1.5 min-w-[44px] min-h-[44px] focus-visible:ring-2 focus-visible:ring-[#4563FF] outline-none ${
+            onClick={onExploreJobs}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition cursor-pointer ${
               isDark
-                ? 'bg-white/10 hover:bg-white/15 text-[#D4FF5A] border-white/15'
-                : 'bg-white hover:bg-slate-100 text-[#4563FF] border-slate-300 shadow-2xs'
+                ? 'hover:bg-white/10 text-slate-200 hover:text-[#C8FF32]'
+                : 'hover:bg-[#FAF7F0] text-[#0D1017]'
             }`}
-            aria-label={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
-            title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
           >
-            {isDark ? (
-              <Sun className="w-4 h-4 text-[#D4FF5A] animate-in spin-in-90 duration-300" />
-            ) : (
-              <Moon className="w-4 h-4 text-[#4563FF] animate-in spin-in-90 duration-300" />
-            )}
-            <span className="text-xs font-bold font-display uppercase tracking-wider hidden lg:inline">
-              {isDark ? 'Light' : 'Dark'}
+            <Briefcase className="w-3.5 h-3.5 text-[#FF6B4A]" />
+            <span>Open Roles</span>
+            <span
+              className={`text-[10px] font-mono px-1.5 py-0.5 rounded-full font-bold ${
+                isDark
+                  ? 'bg-[#C8FF32]/20 text-[#C8FF32]'
+                  : 'bg-[#0D1017] text-[#C8FF32]'
+              }`}
+            >
+              {openRolesCount}
             </span>
           </button>
 
-          {/* Desktop WhatsApp Desk CTA */}
+          <button
+            type="button"
+            onClick={onBrowseTalent}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition cursor-pointer ${
+              isDark
+                ? 'hover:bg-white/10 text-slate-200 hover:text-[#C8FF32]'
+                : 'hover:bg-[#FAF7F0] text-[#0D1017]'
+            }`}
+          >
+            <Users className="w-3.5 h-3.5 text-[#3B5BFF]" />
+            <span>Talent Pool</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={onNavigateCandidate}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition cursor-pointer ${
+              isDark
+                ? 'hover:bg-white/10 text-slate-200 hover:text-[#C8FF32]'
+                : 'hover:bg-[#FAF7F0] text-[#0D1017]'
+            }`}
+          >
+            <Zap className="w-3.5 h-3.5 text-[#12B886]" />
+            <span>60s Apply</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={onNavigateEmployer}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition cursor-pointer ${
+              isDark
+                ? 'hover:bg-white/10 text-slate-200 hover:text-[#C8FF32]'
+                : 'hover:bg-[#FAF7F0] text-[#0D1017]'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-[#FF6B4A]" />
+            <span>Hire in 48h</span>
+          </button>
+        </nav>
+
+        {/* Right Controls: Live Status + Theme Switch + WhatsApp */}
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={onOpenTracker}
+            className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-2 border transition cursor-pointer min-h-[40px] ${
+              isDark
+                ? 'bg-white/6 hover:bg-white/12 text-white border-white/15'
+                : 'bg-[#FAF7F0] hover:bg-amber-100/60 text-[#0D1017] border-[#0D1017]/25'
+            }`}
+          >
+            <Search
+              className={`w-3.5 h-3.5 ${
+                isDark ? 'text-[#C8FF32]' : 'text-[#3B5BFF]'
+              }`}
+            />
+            <span className="hidden sm:inline">Track Status</span>
+            <span className="w-2 h-2 rounded-full bg-[#12B886] animate-pulse" />
+          </button>
+
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className={`w-10 h-10 rounded-xl border flex items-center justify-center transition cursor-pointer ${
+              isDark
+                ? 'bg-white/6 hover:bg-white/12 text-[#C8FF32] border-white/15'
+                : 'bg-[#FAF7F0] hover:bg-slate-200/70 text-[#0D1017] border-[#0D1017]/25'
+            }`}
+            aria-label={isDark ? 'Switch to Cream Light Mode' : 'Switch to Acid Dark Mode'}
+            title={isDark ? 'Switch to Cream Mode' : 'Switch to Dark Studio'}
+          >
+            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+
           <a
-            href={WHATSAPP_URL}
+            href={whatsappHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:inline-flex items-center gap-2.5 bg-[#D4FF5A] hover:bg-[#bbf036] text-[#101426] px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold shadow-md shadow-[#D4FF5A]/20 hover:shadow-[#D4FF5A]/40 transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer font-display min-h-[44px] focus-visible:ring-2 focus-visible:ring-[#4563FF] outline-none"
+            className={`neo-btn-pop inline-flex items-center gap-2 px-4 h-10 rounded-xl text-xs font-display font-extrabold cursor-pointer ${
+              isDark
+                ? 'bg-[#C8FF32] hover:bg-[#b8f21e] text-[#090B10]'
+                : 'bg-[#C8FF32] hover:bg-[#b8f21e] text-[#0D1017] border-[1.5px] border-[#0D1017] shadow-[2px_2px_0px_0px_#0D1017]'
+            }`}
           >
             <MessageCircle className="w-4 h-4 fill-current shrink-0" />
-            <span>WhatsApp Desk</span>
+            <span className="hidden md:inline">WhatsApp Desk</span>
           </a>
 
-          {/* Mobile WhatsApp Quick Action (Min 44x44px touch target) */}
-          <a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="sm:hidden flex items-center justify-center bg-[#D4FF5A] text-[#101426] min-w-[44px] min-h-[44px] rounded-xl text-xs font-bold shadow-md cursor-pointer focus-visible:ring-2 focus-visible:ring-[#4563FF] outline-none"
-            aria-label="WhatsApp Desk"
-          >
-            <MessageCircle className="w-5 h-5 fill-current" />
-          </a>
-
-          {/* Mobile Drawer Toggle (Min 44x44px touch target) */}
           <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className={`md:hidden flex items-center justify-center min-w-[44px] min-h-[44px] rounded-xl border cursor-pointer transition-colors focus-visible:ring-2 focus-visible:ring-[#4563FF] outline-none ${
-              isDark 
-                ? 'text-slate-300 hover:text-white bg-white/5 border-white/10' 
-                : 'text-slate-700 hover:text-[#101426] bg-white border-slate-300 shadow-2xs'
+            type="button"
+            onClick={() => setMobileMenuOpen((prev) => !prev)}
+            className={`lg:hidden w-10 h-10 rounded-xl border flex items-center justify-center cursor-pointer ${
+              isDark
+                ? 'bg-white/6 text-white border-white/15'
+                : 'bg-[#FAF7F0] text-[#0D1017] border-[#0D1017]/25'
             }`}
-            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-label="Toggle Menu"
             aria-expanded={mobileMenuOpen}
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -167,85 +223,70 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Dropdown Drawer */}
       {mobileMenuOpen && (
-        <div 
-          className={`md:hidden border-b px-4 pt-3 pb-6 space-y-2.5 shadow-2xl animate-in slide-in-from-top-3 ${
-            isDark ? 'bg-[#101426] border-white/10' : 'bg-white border-slate-200'
+        <div
+          className={`lg:hidden max-w-7xl mx-auto mt-2 rounded-2xl p-4 space-y-2 pointer-events-auto backdrop-blur-xl ${
+            isDark
+              ? 'bg-[#0E111B]/95 border border-white/15 text-white shadow-2xl'
+              : 'bg-white border-[1.5px] border-[#0D1017] text-[#0D1017] shadow-[4px_4px_0px_0px_#0D1017]'
           }`}
         >
           <button
+            type="button"
             onClick={() => {
               setMobileMenuOpen(false);
-              onNavigateCandidate();
+              onExploreJobs();
             }}
-            className={`w-full text-left px-4 min-h-[48px] rounded-xl text-sm font-bold flex justify-between items-center border transition-colors cursor-pointer ${
-              isDark 
-                ? 'bg-white/5 text-slate-200 hover:text-[#D4FF5A] border-white/5' 
-                : 'bg-slate-50 text-slate-800 hover:text-[#4563FF] border-slate-200'
+            className={`w-full px-4 py-3 rounded-xl text-sm font-bold flex items-center justify-between cursor-pointer ${
+              isDark ? 'bg-white/5 hover:bg-white/10' : 'bg-[#FAF7F0] hover:bg-slate-100'
             }`}
           >
-            <span>For Candidates</span>
-            <ArrowUpRight className="w-4 h-4 opacity-60" />
-          </button>
-
-          <button
-            onClick={() => {
-              setMobileMenuOpen(false);
-              onNavigateEmployer();
-            }}
-            className={`w-full text-left px-4 min-h-[48px] rounded-xl text-sm font-bold flex justify-between items-center border transition-colors cursor-pointer ${
-              isDark 
-                ? 'bg-white/5 text-slate-200 hover:text-[#D4FF5A] border-white/5' 
-                : 'bg-slate-50 text-slate-800 hover:text-[#4563FF] border-slate-200'
-            }`}
-          >
-            <span>For Employers</span>
-            <ArrowUpRight className="w-4 h-4 opacity-60" />
-          </button>
-
-          <button
-            onClick={() => {
-              setMobileMenuOpen(false);
-              onOpenTracker();
-            }}
-            className={`w-full text-left px-4 min-h-[48px] rounded-xl text-sm font-bold border flex items-center justify-between cursor-pointer ${
-              isDark
-                ? 'bg-[#4563FF]/20 text-white border-[#4563FF]/40'
-                : 'bg-[#4563FF]/10 text-[#4563FF] border-[#4563FF]/30'
-            }`}
-          >
-            <span className="flex items-center gap-2">
-              <Search className="w-4 h-4 text-[#D4FF5A]" />
-              Track Application Status
+            <span className="flex items-center gap-2.5">
+              <Briefcase className="w-4 h-4 text-[#FF6B4A]" />
+              Browse Open Finance Roles ({openRolesCount})
             </span>
-            <span className="w-2 h-2 rounded-full bg-[#10B981]" />
+            <ArrowUpRight className="w-4 h-4 opacity-60" />
           </button>
 
-          <div className="pt-2 flex flex-col gap-2">
-            <button
-              onClick={() => {
-                toggleTheme();
-              }}
-              className={`w-full flex items-center justify-center gap-2 min-h-[48px] rounded-xl border text-sm font-bold font-display cursor-pointer ${
-                isDark 
-                  ? 'bg-white/10 text-white border-white/20' 
-                  : 'bg-slate-100 text-slate-800 border-slate-300'
-              }`}
-            >
-              {isDark ? <Sun className="w-4 h-4 text-[#D4FF5A]" /> : <Moon className="w-4 h-4 text-[#4563FF]" />}
-              <span>Switch to {isDark ? 'Light' : 'Dark'} Mode</span>
-            </button>
+          <button
+            type="button"
+            onClick={() => {
+              setMobileMenuOpen(false);
+              onBrowseTalent();
+            }}
+            className={`w-full px-4 py-3 rounded-xl text-sm font-bold flex items-center justify-between cursor-pointer ${
+              isDark ? 'bg-white/5 hover:bg-white/10' : 'bg-[#FAF7F0] hover:bg-slate-100'
+            }`}
+          >
+            <span className="flex items-center gap-2.5">
+              <Users className="w-4 h-4 text-[#3B5BFF]" />
+              Pre-Vetted Talent Pool (For Recruiters)
+            </span>
+            <ArrowUpRight className="w-4 h-4 opacity-60" />
+          </button>
 
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 min-h-[48px] rounded-xl bg-[#D4FF5A] text-[#101426] text-sm font-bold font-display shadow-md cursor-pointer"
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onNavigateCandidate();
+              }}
+              className="py-3 px-4 rounded-xl bg-[#C8FF32] text-[#090B10] font-display font-extrabold text-xs text-center cursor-pointer"
             >
-              <MessageCircle className="w-4 h-4 fill-current" />
-              <span>Connect on WhatsApp with Amii Ma'am</span>
-            </a>
+              60s Candidate Apply
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onNavigateEmployer();
+              }}
+              className="py-3 px-4 rounded-xl bg-[#3B5BFF] text-white font-display font-extrabold text-xs text-center cursor-pointer"
+            >
+              Hire Talent (48h)
+            </button>
           </div>
         </div>
       )}

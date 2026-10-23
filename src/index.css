@@ -2,125 +2,144 @@
 
 @layer base {
   :root {
-    --color-midnight: #101426;
-    --color-cobalt: #4563FF;
-    --color-neon: #D4FF5A;
-    --color-emerald: #10B981;
-    --color-lavender: #B9A7FF;
-    --color-warm-white: #F7F6F2;
-    --color-pure-white: #FFFFFF;
+    --font-display: 'Bricolage Grotesque', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    --accent-lime: #c8ff32;
+    --accent-lime-hover: #b6f218;
+    --accent-coral: #ff6b4a;
+    --accent-violet: #5b5bd6;
+    --accent-cobalt: #3b5bff;
+    --accent-mint: #12b886;
   }
 
   html {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: var(--font-sans);
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   html.dark {
-    color: #F8FAFC;
-    background-color: #101426;
+    color: #f5f7fb;
+    background-color: #090b10;
   }
 
   html.light {
-    color: #101426;
-    background-color: #F7F6F2;
+    color: #0d1017;
+    background-color: #faf7f0;
   }
 
-  h1, h2, h3, h4, .font-display {
-    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-display {
+    font-family: var(--font-display);
     letter-spacing: -0.03em;
+  }
+
+  .font-mono {
+    font-family: var(--font-mono);
   }
 
   .tabular-nums {
     font-variant-numeric: tabular-nums;
   }
 
-  /* Universal focus-visible accessibility */
   :focus-visible {
-    outline: 2px solid #4563FF;
+    outline: 2px solid #3b5bff;
     outline-offset: 2px;
   }
 
   html.dark :focus-visible {
-    outline-color: #D4FF5A;
+    outline-color: #c8ff32;
   }
 }
 
-/* Custom background patterns and glows */
-.bg-mesh-dark {
-  background-color: #101426;
-  background-image: 
-    radial-gradient(at 10% 20%, rgba(69, 99, 255, 0.22) 0px, transparent 50%),
-    radial-gradient(at 90% 10%, rgba(212, 255, 90, 0.15) 0px, transparent 40%),
-    radial-gradient(at 50% 80%, rgba(185, 167, 255, 0.18) 0px, transparent 50%);
+/* Tactile Funky Studio Surfaces & Neo-Editorial Shadows */
+.studio-grain {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 0);
+  background-size: 24px 24px;
 }
 
-.bg-mesh-light {
-  background-color: #F7F6F2;
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(69, 99, 255, 0.10) 0px, transparent 45%),
-    radial-gradient(at 100% 100%, rgba(212, 255, 90, 0.20) 0px, transparent 40%),
-    radial-gradient(at 50% 50%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
+.studio-grain-light {
+  background-image: radial-gradient(rgba(13, 16, 23, 0.07) 1px, transparent 0);
+  background-size: 24px 24px;
 }
 
-.grid-pattern-dark {
-  background-size: 40px 40px;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+.neo-card-dark {
+  background: rgba(17, 20, 30, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(16px);
 }
 
-.grid-pattern-light {
-  background-size: 32px 32px;
-  background-image: 
-    linear-gradient(to right, rgba(16, 20, 38, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(16, 20, 38, 0.05) 1px, transparent 1px);
+.neo-card-light {
+  background: #ffffff;
+  border: 1.5px solid #0d1017;
+  box-shadow: 5px 5px 0px 0px #0d1017;
 }
 
-/* Marquee animation */
-@keyframes marquee {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-50%); }
+.neo-card-light-soft {
+  background: #ffffff;
+  border: 1px solid rgba(13, 16, 23, 0.14);
+  box-shadow: 0 12px 32px -12px rgba(13, 16, 23, 0.08);
 }
 
-.animate-marquee {
+.neo-btn-pop {
+  transition: transform 0.16s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.16s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.neo-btn-pop:hover {
+  transform: translate(-2px, -2px);
+}
+
+.neo-btn-pop:active {
+  transform: translate(0px, 0px);
+}
+
+/* Smooth infinite ticker */
+@keyframes ticker-scroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-ticker {
   display: flex;
-  width: 200%;
-  animation: marquee 28s linear infinite;
+  width: max-content;
+  animation: ticker-scroll 30s linear infinite;
 }
 
-.animate-marquee:hover {
+.animate-ticker:hover {
   animation-play-state: paused;
 }
 
-@keyframes pulse-subtle {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.85; transform: scale(1.02); }
+/* Custom sleek scrollbars */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
-.animate-pulse-subtle {
-  animation: pulse-subtle 4s ease-in-out infinite;
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-/* Custom glow borders */
-.glow-neon-sm {
-  box-shadow: 0 0 20px -5px rgba(212, 255, 90, 0.35);
-}
-
-.glow-cobalt-sm {
-  box-shadow: 0 0 25px -5px rgba(69, 99, 255, 0.4);
-}
-
-/* Responsive horizontal overflow prevention */
 body {
   overflow-x: hidden;
   max-width: 100vw;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-/* Respect reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
-  *, ::before, ::after {
+  *,
+  ::before,
+  ::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

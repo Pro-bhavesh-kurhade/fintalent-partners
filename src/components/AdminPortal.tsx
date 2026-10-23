@@ -1,23 +1,48 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  X, Lock, ShieldCheck, Search, Filter, RefreshCw, 
-  FileText, ExternalLink, MessageCircle, Phone, CheckCircle2, 
-  Clock, AlertCircle, Building2, Users, Download, Edit3, 
-  LogOut, Save, ChevronRight, LayoutDashboard, Database 
+import {
+  X,
+  Lock,
+  Search,
+  RefreshCw,
+  FileText,
+  ExternalLink,
+  MessageCircle,
+  Phone,
+  CheckCircle2,
+  AlertCircle,
+  Building2,
+  Users,
+  Download,
+  Edit3,
+  LogOut,
+  Save,
+  Plus,
 } from 'lucide-react';
-import { 
-  Candidate, FirmRequest, STAGES, 
-  fetchAllCandidates, fetchAllFirmRequests, 
-  updateCandidateStatus, updateFirmStatus 
+import {
+  Candidate,
+  FirmRequest,
+  STAGES,
+  PRACTICE_DOMAINS,
+  QUALIFICATIONS,
+  ORG_TYPES,
+  fetchAllCandidates,
+  fetchAllFirmRequests,
+  updateCandidateStatus,
+  updateFirmStatus,
+  submitFirmRequirement,
 } from '../lib/supabase';
 
 interface AdminPortalProps {
   isOpen: boolean;
   onClose: () => void;
+  onDataChanged?: () => void;
 }
 
-export const AdminPortal: React.FC<AdminPortalProps> = ({ isOpen, onClose }) => {
-  // Authentication states
+export const AdminPortal: React.FC<AdminPortalProps> = ({
+  isOpen,
+  onClose,
+  onDataChanged,
+}) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     return localStorage.getItem('fintalent_admin_auth') === 'true';
   });
@@ -25,46 +50,46 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ isOpen, onClose }) => 
   const [adminPassword, setAdminPassword] = useState('admin123');
   const [authError, setAuthError] = useState<string | null>(null);
 
-  // Active navigation tab
-  const [activeTab, setActiveTab] = useState<'candidates' | 'firms' | 'overview'>('candidates');
+  const [activeTab, setActiveTab] = useState<'candidates' | 'firms'>('candidates');
 
-  // Data
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [firmRequests, setFirmRequests] = useState<FirmRequest[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(false);
 
-  // Filters & search for candidates
   const [searchQuery, setSearchQuery] = useState('');
   const [filterDomain, setFilterDomain] = useState('All');
   const [filterQualification, setFilterQualification] = useState('All');
   const [filterStatus, setFilterStatus] = useState('All');
-
-  // Firm filter
   const [firmStatusFilter, setFirmStatusFilter] = useState('All');
 
-  // Candidate editing notes modal
   const [editingCandidate, setEditingCandidate] = useState<Candidate | null>(null);
   const [tempNotes, setTempNotes] = useState('');
   const [isSavingNotes, setIsSavingNotes] = useState(false);
 
-  // Toast / update alert
+  // Quick Add Role Drawer inside Admin
+  const [showNewRoleModal, setShowNewRoleModal] = useState(false);
+  const [newOrg, setNewOrg] = useState('');
+  const [newOrgType, setNewOrgType] = useState<string>(ORG_TYPES[0]);
+  const [newRole, setNewRole] = useState('');
+  const [newDomain, setNewDomain] = useState<string>(PRACTICE_DOMAINS[0]);
+  const [newBudget, setNewBudget] = useState('14 - 20 LPA');
+  const [newCity, setNewCity] = useState('Mumbai (BKC)');
+  const [newContact, setNewContact] = useState("Amii Ma'am Desk");
+  const [newPhone, setNewPhone] = useState('9821262613');
+
   const [updateFeedback, setUpdateFeedback] = useState<string | null>(null);
 
-  // Lock body scroll and listen for Escape key
   useEffect(() => {
     if (!isOpen) return;
-
-    const originalOverflow = document.body.style.overflow;
+    const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
-    window.addEventListener('keydown', handleKeyDown);
-
+    window.addEventListener('keydown', onKey);
     return () => {
-      document.body.style.overflow = originalOverflow;
-      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = prev;
+      window.removeEventListener('keydown', onKey);
     };
   }, [isOpen, onClose]);
 
@@ -83,11 +108,14 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ isOpen, onClose }) => 
       ]);
       setCandidates(cands);
       setFirmRequests(firms);
-    } catch (err) {
-      console.error('Failed to load admin data:', err);
     } finally {
       setIsLoadingData(false);
     }
+  };
+
+  const showFeedback = (msg: string) => {
+    setUpdateFeedback(msg);
+    setTimeout(() => setUpdateFeedback(null), 3200);
   };
 
   const handleLogin = (e: React.FormEvent) => {
@@ -97,7 +125,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ isOpen, onClose }) => 
       setIsAuthenticated(true);
       localStorage.setItem('fintalent_admin_auth', 'true');
     } else {
-      setAuthError('Invalid credentials. Default: admin@fintalentpartners.com / admin123');
+      setAuthError('Invalid credentials. Use admin@fintalentpartners.com / admin123');
     }
   };
 
@@ -106,60 +134,94 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ isOpen, onClose }) => 
     localStorage.removeItem('fintalent_admin_auth');
   };
 
-  // Status update
   const handleStatusChange = async (candidateId: string, newStatus: string) => {
-    try {
-      setCandidates(prev =>
-        prev.map(c => c.id === candidateId ? { ...c, status: newStatus } : c)
-      );
-      await updateCandidateStatus(candidateId, newStatus);
-      showFeedback(`Updated status to "${newStatus}"! Live candidate tracker synchronized.`);
-    } catch (err) {
-      console.error('Failed to update status:', err);
-      showFeedback('Error updating status');
-    }
+    setCandidates((prev) =>
+      prev.map((c) => (c.id === candidateId ? { ...c, status: newStatus } : c))
+    );
+    await updateCandidateStatus(candidateId, newStatus);
+    onDataChanged?.();
+    showFeedback(`Stage synced to "${newStatus}"`);
   };
 
   const handleSaveNotes = async () => {
     if (!editingCandidate) return;
-    try {
-      setIsSavingNotes(true);
-      const id = editingCandidate.id;
-      setCandidates(prev =>
-        prev.map(c => c.id === id ? { ...c, admin_notes: tempNotes } : c)
-      );
-      await updateCandidateStatus(id, editingCandidate.status, tempNotes);
-      setEditingCandidate(null);
-      showFeedback('HR internal remarks saved and synced live!');
-    } catch (err) {
-      console.error('Failed to save notes:', err);
-    } finally {
-      setIsSavingNotes(false);
-    }
+    setIsSavingNotes(true);
+    const id = editingCandidate.id;
+    setCandidates((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, admin_notes: tempNotes } : c))
+    );
+    await updateCandidateStatus(id, editingCandidate.status, tempNotes);
+    setEditingCandidate(null);
+    setIsSavingNotes(false);
+    showFeedback('HR note synced live to Candidate Tracker!');
   };
 
   const handleFirmStatusChange = async (firmId: string, newStatus: string) => {
-    try {
-      setFirmRequests(prev =>
-        prev.map(f => f.id === firmId ? { ...f, status: newStatus } : f)
-      );
-      await updateFirmStatus(firmId, newStatus);
-      showFeedback(`Firm request status set to ${newStatus}`);
-    } catch (err) {
-      console.error('Failed to update firm status:', err);
+    setFirmRequests((prev) =>
+      prev.map((f) => (f.id === firmId ? { ...f, status: newStatus } : f))
+    );
+    await updateFirmStatus(firmId, newStatus);
+    onDataChanged?.();
+    showFeedback(`Mandate status set to ${newStatus}`);
+  };
+
+  const handlePublishNewRole = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newOrg.trim() || !newRole.trim()) return;
+    const res = await submitFirmRequirement({
+      organization_name: newOrg.trim(),
+      org_type: newOrgType,
+      contact_person: newContact.trim() || "Amii Ma'am Desk",
+      contact_phone: newPhone.trim() || '9821262613',
+      role_needed: newRole.trim(),
+      domain: newDomain,
+      budget_range: newBudget.trim() || 'Open to discussion',
+      city: newCity.trim() || 'Mumbai',
+    });
+    if (res.data) {
+      setFirmRequests((prev) => [res.data, ...prev]);
+      onDataChanged?.();
+      setShowNewRoleModal(false);
+      setNewOrg('');
+      setNewRole('');
+      showFeedback('New live role published to Open Roles Board!');
     }
   };
 
-  const showFeedback = (msg: string) => {
-    setUpdateFeedback(msg);
-    setTimeout(() => setUpdateFeedback(null), 3500);
-  };
+  const filteredCandidates = candidates.filter((c) => {
+    const q = searchQuery.toLowerCase();
+    const matchesSearch =
+      c.full_name.toLowerCase().includes(q) ||
+      c.phone.includes(q) ||
+      c.email.toLowerCase().includes(q) ||
+      c.current_location.toLowerCase().includes(q);
+    const matchesDomain = filterDomain === 'All' || c.domain === filterDomain;
+    const matchesQual = filterQualification === 'All' || c.qualification === filterQualification;
+    const matchesStatus = filterStatus === 'All' || c.status === filterStatus;
+    return matchesSearch && matchesDomain && matchesQual && matchesStatus;
+  });
 
-  // Export CSV
+  const filteredFirms = firmRequests.filter(
+    (f) => firmStatusFilter === 'All' || f.status === firmStatusFilter
+  );
+
   const handleExportCsv = () => {
-    if (candidates.length === 0) return;
-    const headers = ['Full Name', 'Email', 'Phone', 'DOB', 'Qualification', 'Domain', 'Experience', 'Location', 'Expected CTC', 'Status', 'Resume URL', 'Notes'];
-    const rows = filteredCandidates.map(c => [
+    if (filteredCandidates.length === 0) return;
+    const headers = [
+      'Full Name',
+      'Email',
+      'Phone',
+      'DOB',
+      'Qualification',
+      'Domain',
+      'Experience',
+      'Location',
+      'Expected CTC',
+      'Status',
+      'Resume URL',
+      'Notes',
+    ];
+    const rows = filteredCandidates.map((c) => [
       `"${c.full_name}"`,
       `"${c.email}"`,
       `"${c.phone}"`,
@@ -173,11 +235,15 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ isOpen, onClose }) => 
       `"${c.resume_url}"`,
       `"${(c.admin_notes || '').replace(/"/g, '""')}"`,
     ]);
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
-    const encodedUri = encodeURI(csvContent);
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
     const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `FinTalent_Candidates_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute('href', encodeURI(csvContent));
+    link.setAttribute(
+      'download',
+      `FinTalent_Candidates_${new Date().toISOString().slice(0, 10)}.csv`
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -185,581 +251,623 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ isOpen, onClose }) => 
 
   if (!isOpen) return null;
 
-  // Candidate filtering
-  const filteredCandidates = candidates.filter(c => {
-    const query = searchQuery.toLowerCase();
-    const matchesSearch = 
-      c.full_name.toLowerCase().includes(query) ||
-      c.phone.includes(query) ||
-      c.email.toLowerCase().includes(query) ||
-      c.current_location.toLowerCase().includes(query);
-
-    const matchesDomain = filterDomain === 'All' || c.domain === filterDomain;
-    const matchesQual = filterQualification === 'All' || c.qualification === filterQualification;
-    const matchesStatus = filterStatus === 'All' || c.status === filterStatus;
-
-    return matchesSearch && matchesDomain && matchesQual && matchesStatus;
-  });
-
-  // Firm filtering
-  const filteredFirms = firmRequests.filter(f => {
-    return firmStatusFilter === 'All' || f.status === firmStatusFilter;
-  });
+  const activePipelineCount = candidates.filter(
+    (c) => c.status?.includes('Shortlisted') || c.status?.includes('Interview')
+  ).length;
+  const placedCount = candidates.filter((c) => c.status?.includes('Placed')).length;
+  const openMandatesCount = firmRequests.filter((f) => f.status !== 'Closed').length;
 
   return (
-    <div 
-      className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 animate-in fade-in"
+    <div
+      className="fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-xl flex items-center justify-center p-2 sm:p-4"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
       role="dialog"
       aria-modal="true"
-      aria-labelledby="admin-portal-title"
+      aria-labelledby="admin-console-title"
     >
-      <div className="rounded-3xl max-w-7xl w-full h-[95vh] flex flex-col bg-white text-slate-900 shadow-2xl border border-slate-200 overflow-hidden relative">
-        
-        {/* Top Header Bar */}
-        <div className="bg-[#101426] text-white px-6 py-4 flex items-center justify-between border-b border-white/10 shrink-0">
+      <div className="rounded-3xl max-w-7xl w-full h-[94vh] flex flex-col bg-[#FAF7F0] text-[#0D1017] border-2 border-[#0D1017] shadow-2xl overflow-hidden relative">
+        {/* Top Command Header */}
+        <div className="bg-[#0D1017] text-white px-5 py-4 flex items-center justify-between border-b border-white/10 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#4563FF] to-[#D4FF5A] flex items-center justify-center text-[#101426] font-display font-black text-lg">
+            <div className="w-10 h-10 rounded-xl bg-[#C8FF32] text-[#090B10] flex items-center justify-center font-display font-extrabold text-base">
               FT
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 id="admin-portal-title" className="font-display font-bold text-base text-white">FinTalent Partners Admin Portal</h2>
-                <span className="text-[10px] bg-[#10B981]/20 text-[#10B981] font-mono px-2 py-0.5 rounded-full border border-[#10B981]/30">
-                  Supabase Live
+                <h2 id="admin-console-title" className="font-display font-extrabold text-base sm:text-lg">
+                  Staff Recruitment Command Console
+                </h2>
+                <span className="text-[10px] font-mono bg-[#12B886]/20 text-[#12B886] px-2 py-0.5 rounded-full">
+                  Live Sync
                 </span>
               </div>
-              <p className="text-xs text-slate-400">Executive Pipeline & Mandates Desk</p>
+              <p className="text-[11px] text-slate-400">
+                Manage candidates, sync live status notes &amp; publish open mandates
+              </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {isAuthenticated && (
               <button
+                type="button"
                 onClick={handleLogout}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white text-xs font-semibold border border-white/10 transition cursor-pointer min-h-[36px]"
+                className="px-3 py-1.5 rounded-xl bg-white/8 hover:bg-white/15 text-xs font-bold flex items-center gap-1.5 cursor-pointer"
               >
                 <LogOut className="w-3.5 h-3.5" />
-                <span>Log Out</span>
+                <span className="hidden sm:inline">Log Out</span>
               </button>
             )}
             <button
+              type="button"
               onClick={onClose}
-              className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-white/10 transition cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-[#4563FF] outline-none"
-              aria-label="Close Admin Portal"
+              className="w-10 h-10 rounded-xl hover:bg-white/10 flex items-center justify-center cursor-pointer"
+              aria-label="Close Staff Console"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
         </div>
 
-        {/* Update feedback toast */}
         {updateFeedback && (
-          <div className="absolute top-16 right-6 z-50 bg-[#10B981] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-xl flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
-            <CheckCircle2 className="w-4 h-4" />
+          <div className="absolute top-16 right-6 z-50 bg-[#0D1017] text-[#C8FF32] border border-[#C8FF32]/40 px-4 py-2.5 rounded-xl text-xs font-mono font-bold shadow-xl flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-[#12B886]" />
             <span>{updateFeedback}</span>
           </div>
         )}
 
-        {/* Body Container */}
         {!isAuthenticated ? (
-          /* Login Screen */
-          <div className="flex-1 overflow-y-auto p-6 sm:p-12 flex items-center justify-center bg-slate-50">
-            <div className="max-w-md w-full bg-white p-8 rounded-3xl border border-slate-200 shadow-xl space-y-6">
+          <div className="flex-1 flex items-center justify-center p-6">
+            <div className="max-w-md w-full bg-white p-8 rounded-3xl border-[1.5px] border-[#0D1017] shadow-[6px_6px_0px_0px_#0D1017] space-y-6">
               <div className="text-center space-y-2">
-                <div className="w-14 h-14 rounded-2xl bg-[#101426] text-[#D4FF5A] mx-auto flex items-center justify-center">
+                <div className="w-14 h-14 rounded-2xl bg-[#0D1017] text-[#C8FF32] mx-auto flex items-center justify-center">
                   <Lock className="w-7 h-7" />
                 </div>
-                <h3 className="text-2xl font-black text-slate-900 font-display">Staff Access Portal</h3>
-                <p className="text-xs text-slate-500">
-                  Authenticate to manage candidate profiles, update stages, and view firm mandates.
+                <h3 className="font-display font-extrabold text-2xl">
+                  Authorized Staff Sign-In
+                </h3>
+                <p className="text-xs text-slate-600">
+                  Access live candidate applications, resumes &amp; firm mandates.
                 </p>
               </div>
 
               {authError && (
-                <div role="alert" className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2 font-semibold">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
                   <span>{authError}</span>
                 </div>
               )}
 
               <form onSubmit={handleLogin} className="space-y-4">
                 <div>
-                  <label htmlFor="admin-email-input" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                    Email Address
-                  </label>
+                  <label className="block text-xs font-bold uppercase mb-1">Staff Email</label>
                   <input
-                    id="admin-email-input"
                     type="email"
                     required
                     value={adminEmail}
                     onChange={(e) => setAdminEmail(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-[#4563FF] focus:ring-2 focus:ring-[#4563FF]/20 outline-none"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm outline-none focus:border-[#3B5BFF]"
                   />
                 </div>
-
                 <div>
-                  <label htmlFor="admin-password-input" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                    Password
-                  </label>
+                  <label className="block text-xs font-bold uppercase mb-1">Access Pin / Password</label>
                   <input
-                    id="admin-password-input"
                     type="password"
                     required
                     value={adminPassword}
                     onChange={(e) => setAdminPassword(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-[#4563FF] focus:ring-2 focus:ring-[#4563FF]/20 outline-none"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm outline-none focus:border-[#3B5BFF]"
                   />
                 </div>
-
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-[11px] text-slate-600">
-                  <span className="font-bold text-slate-800">Default Authorized Credentials:</span>
-                  <div className="mt-1 font-mono text-[#4563FF] font-bold">
-                    admin@fintalentpartners.com / admin123
-                  </div>
+                <div className="p-3 rounded-xl bg-[#FAF7F0] border border-slate-200 text-[11px] font-mono">
+                  Demo Staff Key: <strong>admin@fintalentpartners.com / admin123</strong>
                 </div>
-
                 <button
                   type="submit"
-                  className="w-full bg-[#101426] hover:bg-slate-800 text-white font-display font-bold py-3.5 rounded-xl text-sm transition shadow-lg cursor-pointer min-h-[48px] focus-visible:ring-2 focus-visible:ring-[#4563FF] outline-none"
+                  className="neo-btn-pop w-full py-3.5 rounded-xl bg-[#C8FF32] text-[#090B10] border-[1.5px] border-[#0D1017] font-display font-extrabold text-sm cursor-pointer"
                 >
-                  Authenticate & Open Dashboard
+                  Open Staff Console →
                 </button>
               </form>
             </div>
           </div>
         ) : (
-          /* SaaS Dashboard with Sidebar */
-          <div className="flex-1 flex overflow-hidden">
-            
-            {/* Sidebar */}
-            <aside className="w-64 bg-slate-50 border-r border-slate-200 p-4 flex flex-col justify-between hidden md:flex shrink-0">
-              <div className="space-y-2">
-                <div className="px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                  Navigation
-                </div>
-
+          <div className="flex-1 flex flex-col overflow-hidden">
+            {/* Top KPI & Tab Bar */}
+            <div className="px-6 py-4 bg-white border-b border-slate-200 flex flex-wrap items-center justify-between gap-4 shrink-0">
+              <div className="flex items-center gap-2">
                 <button
+                  type="button"
                   onClick={() => setActiveTab('candidates')}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                  className={`px-4 py-2 rounded-xl text-xs font-display font-extrabold flex items-center gap-2 cursor-pointer transition ${
                     activeTab === 'candidates'
-                      ? 'bg-[#101426] text-white shadow-sm'
-                      : 'text-slate-700 hover:bg-slate-100'
+                      ? 'bg-[#0D1017] text-[#C8FF32]'
+                      : 'bg-[#FAF7F0] text-slate-700 hover:bg-slate-200/70'
                   }`}
                 >
-                  <div className="flex items-center gap-2.5">
-                    <Users className="w-4 h-4 text-[#4563FF]" />
-                    <span>Candidate Pipeline</span>
-                  </div>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full ${activeTab === 'candidates' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'}`}>
-                    {candidates.length}
-                  </span>
+                  <Users className="w-4 h-4" />
+                  <span>Candidates ({candidates.length})</span>
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => setActiveTab('firms')}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                  className={`px-4 py-2 rounded-xl text-xs font-display font-extrabold flex items-center gap-2 cursor-pointer transition ${
                     activeTab === 'firms'
-                      ? 'bg-[#101426] text-white shadow-sm'
-                      : 'text-slate-700 hover:bg-slate-100'
+                      ? 'bg-[#FF6B4A] text-white'
+                      : 'bg-[#FAF7F0] text-slate-700 hover:bg-slate-200/70'
                   }`}
                 >
-                  <div className="flex items-center gap-2.5">
-                    <Building2 className="w-4 h-4 text-[#10B981]" />
-                    <span>Employer Mandates</span>
-                  </div>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full ${activeTab === 'firms' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'}`}>
-                    {firmRequests.length}
-                  </span>
+                  <Building2 className="w-4 h-4" />
+                  <span>Mandates ({firmRequests.length})</span>
                 </button>
               </div>
 
-              {/* Sidebar bottom */}
-              <div className="p-3 bg-white rounded-2xl border border-slate-200 text-xs text-slate-600 space-y-1">
-                <div className="flex items-center gap-2 font-bold text-slate-900">
-                  <Database className="w-3.5 h-3.5 text-[#4563FF]" />
-                  <span>Cloud Database</span>
-                </div>
-                <p className="text-[11px] text-slate-500">
-                  Connected to Supabase PostgreSQL and Resumes Storage.
-                </p>
-              </div>
-            </aside>
+              {/* Quick Metrics + Toolbar */}
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+                <span className="hidden lg:inline-block px-3 py-1.5 rounded-lg bg-[#FAF7F0] font-mono font-bold">
+                  Active Stage: {activePipelineCount} · Placed: {placedCount} · Open Jobs: {openMandatesCount}
+                </span>
 
-            {/* Main Content Area */}
-            <main className="flex-1 flex flex-col overflow-hidden bg-white">
-              
-              {/* Mobile Tab Switcher */}
-              <div className="md:hidden flex items-center gap-2 p-3 bg-slate-100 border-b border-slate-200">
                 <button
-                  onClick={() => setActiveTab('candidates')}
-                  className={`flex-1 py-2 text-xs font-bold rounded-lg ${
-                    activeTab === 'candidates' ? 'bg-[#101426] text-white' : 'bg-white text-slate-700'
-                  }`}
+                  type="button"
+                  onClick={() => setShowNewRoleModal(true)}
+                  className="px-3.5 py-2 rounded-xl bg-[#FF6B4A] hover:bg-[#f25937] text-white font-bold inline-flex items-center gap-1.5 cursor-pointer"
                 >
-                  Candidates ({candidates.length})
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Publish Job</span>
                 </button>
-                <button
-                  onClick={() => setActiveTab('firms')}
-                  className={`flex-1 py-2 text-xs font-bold rounded-lg ${
-                    activeTab === 'firms' ? 'bg-[#101426] text-white' : 'bg-white text-slate-700'
-                  }`}
-                >
-                  Firms ({firmRequests.length})
-                </button>
-              </div>
 
-              {/* Action Bar */}
-              <div className="px-6 py-3.5 border-b border-slate-200 flex flex-wrap items-center justify-between gap-4 bg-slate-50/50">
-                <div className="flex items-center gap-3">
-                  <h3 className="font-display font-bold text-base text-slate-900">
-                    {activeTab === 'candidates' ? 'Candidates Registry' : 'Employer Mandates'}
-                  </h3>
-                  <span className="text-xs text-slate-500">
-                    Showing {activeTab === 'candidates' ? filteredCandidates.length : filteredFirms.length} records
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  {activeTab === 'candidates' && (
-                    <button
-                      onClick={handleExportCsv}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 rounded-lg text-xs font-bold border border-slate-300 transition cursor-pointer"
-                    >
-                      <Download className="w-3.5 h-3.5 text-[#4563FF]" />
-                      <span>Export CSV</span>
-                    </button>
-                  )}
+                {activeTab === 'candidates' && (
                   <button
-                    onClick={loadData}
-                    disabled={isLoadingData}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#4563FF] hover:bg-[#324fec] text-white rounded-lg text-xs font-bold transition cursor-pointer"
+                    type="button"
+                    onClick={handleExportCsv}
+                    className="px-3.5 py-2 rounded-xl bg-white border border-slate-300 font-bold inline-flex items-center gap-1.5 cursor-pointer hover:bg-slate-50"
                   >
-                    <RefreshCw className={`w-3.5 h-3.5 ${isLoadingData ? 'animate-spin' : ''}`} />
-                    <span>Sync Live</span>
+                    <Download className="w-3.5 h-3.5 text-[#3B5BFF]" />
+                    <span>CSV</span>
                   </button>
-                </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={loadData}
+                  disabled={isLoadingData}
+                  className="px-3.5 py-2 rounded-xl bg-[#3B5BFF] text-white font-bold inline-flex items-center gap-1.5 cursor-pointer"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isLoadingData ? 'animate-spin' : ''}`} />
+                  <span>Sync</span>
+                </button>
               </div>
+            </div>
 
-              {/* TAB 1: CANDIDATES */}
-              {activeTab === 'candidates' && (
-                <div className="flex-1 flex flex-col overflow-hidden p-6 space-y-4">
-                  {/* Search and Filters */}
-                  <div className="flex flex-wrap items-center gap-3">
-                    <div className="flex-1 min-w-[220px] relative">
-                      <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                      <input
-                        type="text"
-                        placeholder="Search candidate by name, phone, email, location..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-300 focus:border-[#4563FF] focus:ring-1 focus:ring-[#4563FF] outline-none"
-                      />
-                    </div>
-
-                    <select
-                      value={filterDomain}
-                      onChange={(e) => setFilterDomain(e.target.value)}
-                      className="text-xs py-2 px-3 rounded-xl border border-slate-300 bg-white font-medium text-slate-700 outline-none cursor-pointer"
-                    >
-                      <option value="All">All Domains</option>
-                      <option value="Statutory Audit & Assurance">Statutory Audit</option>
-                      <option value="Direct Taxation & Litigations">Direct Tax</option>
-                      <option value="Indirect Tax / GST">Indirect Tax / GST</option>
-                      <option value="FP&A & Corporate Finance">FP&A & Corporate Finance</option>
-                      <option value="Accounting, Finalization & ERP (Tally/SAP)">Accounting & ERP</option>
-                    </select>
-
-                    <select
-                      value={filterQualification}
-                      onChange={(e) => setFilterQualification(e.target.value)}
-                      className="text-xs py-2 px-3 rounded-xl border border-slate-300 bg-white font-medium text-slate-700 outline-none cursor-pointer"
-                    >
-                      <option value="All">All Qualifications</option>
-                      <option value="Qualified CA">Qualified CA</option>
-                      <option value="CA Inter / Semi-Qualified">CA Inter</option>
-                      <option value="CA Article Assistant / Trainee">CA Article</option>
-                      <option value="CMA (Cost Accountant)">CMA</option>
-                      <option value="MBA (Finance)">MBA Finance</option>
-                    </select>
-
-                    <select
-                      value={filterStatus}
-                      onChange={(e) => setFilterStatus(e.target.value)}
-                      className="text-xs py-2 px-3 rounded-xl border border-slate-300 bg-white font-medium text-slate-700 outline-none cursor-pointer"
-                    >
-                      <option value="All">All Statuses</option>
-                      {STAGES.map(s => (
-                        <option key={s.id} value={s.label}>{s.label}</option>
-                      ))}
-                    </select>
+            {activeTab === 'candidates' ? (
+              <div className="flex-1 flex flex-col overflow-hidden p-4 sm:p-6 space-y-4">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <div className="flex-1 min-w-[200px] relative">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+                    <input
+                      type="text"
+                      placeholder="Search name, phone, email, city..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-white border border-slate-300 outline-none focus:border-[#3B5BFF]"
+                    />
                   </div>
 
-                  {/* Candidates Table */}
-                  <div className="flex-1 overflow-auto rounded-2xl border border-slate-200">
-                    {filteredCandidates.length === 0 ? (
-                      <div className="p-12 text-center text-slate-500 space-y-2">
-                        <Users className="w-10 h-10 text-slate-300 mx-auto" />
-                        <p className="font-semibold text-sm">No candidates match your criteria.</p>
-                      </div>
-                    ) : (
-                      <table className="w-full text-left border-collapse text-xs">
-                        <thead className="bg-slate-100 text-slate-700 sticky top-0 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200 z-10">
-                          <tr>
-                            <th className="py-3 px-4">Candidate & Contact</th>
-                            <th className="py-3 px-4">Qualification</th>
-                            <th className="py-3 px-4">Domain & Exp</th>
-                            <th className="py-3 px-4">DOB</th>
-                            <th className="py-3 px-4">Comp / Location</th>
-                            <th className="py-3 px-4">Resume</th>
-                            <th className="py-3 px-4">Pipeline Status</th>
-                            <th className="py-3 px-4 text-right">Remarks</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                          {filteredCandidates.map((c) => (
-                            <tr key={c.id} className="hover:bg-slate-50 transition">
-                              <td className="py-3 px-4">
-                                <div className="font-bold text-slate-900 text-sm">{c.full_name}</div>
-                                <div className="text-slate-500 font-mono text-[11px] mt-0.5">
-                                  +91 {c.phone} · {c.email}
-                                </div>
-                              </td>
+                  <select
+                    value={filterDomain}
+                    onChange={(e) => setFilterDomain(e.target.value)}
+                    className="text-xs py-2 px-3 rounded-xl border border-slate-300 bg-white font-semibold cursor-pointer"
+                  >
+                    <option value="All">All Domains</option>
+                    {PRACTICE_DOMAINS.map((d) => (
+                      <option key={d} value={d}>
+                        {d}
+                      </option>
+                    ))}
+                  </select>
 
-                              <td className="py-3 px-4">
-                                <span className="inline-block px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 font-bold border border-slate-200 text-[11px]">
-                                  {c.qualification}
-                                </span>
-                              </td>
+                  <select
+                    value={filterQualification}
+                    onChange={(e) => setFilterQualification(e.target.value)}
+                    className="text-xs py-2 px-3 rounded-xl border border-slate-300 bg-white font-semibold cursor-pointer"
+                  >
+                    <option value="All">All Degrees</option>
+                    {QUALIFICATIONS.map((q) => (
+                      <option key={q} value={q}>
+                        {q}
+                      </option>
+                    ))}
+                  </select>
 
-                              <td className="py-3 px-4">
-                                <div className="font-semibold text-slate-800">{c.domain}</div>
-                                <div className="text-slate-500 text-[11px]">{c.experience_years} years exp</div>
-                              </td>
+                  <select
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value)}
+                    className="text-xs py-2 px-3 rounded-xl border border-slate-300 bg-white font-semibold cursor-pointer"
+                  >
+                    <option value="All">All Stages</option>
+                    {STAGES.map((s) => (
+                      <option key={s.id} value={s.label}>
+                        {s.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-                              <td className="py-3 px-4 font-mono text-slate-600">
-                                {c.dob}
-                              </td>
-
-                              <td className="py-3 px-4">
-                                <div className="font-bold text-slate-900">{c.expected_ctc}</div>
-                                <div className="text-slate-500 text-[11px]">{c.current_location}</div>
-                              </td>
-
-                              <td className="py-3 px-4">
-                                {c.resume_url ? (
-                                  <a
-                                    href={c.resume_url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#4563FF]/10 hover:bg-[#4563FF]/20 text-[#4563FF] font-bold rounded-lg border border-[#4563FF]/20 transition"
-                                  >
-                                    <FileText className="w-3.5 h-3.5" />
-                                    <span>PDF</span>
-                                    <ExternalLink className="w-2.5 h-2.5" />
-                                  </a>
-                                ) : (
-                                  <span className="text-slate-400 italic">No File</span>
-                                )}
-                              </td>
-
-                              <td className="py-3 px-4">
-                                <select
-                                  value={c.status || 'Application Received'}
-                                  onChange={(e) => handleStatusChange(c.id, e.target.value)}
-                                  className={`w-full py-1.5 pl-2.5 pr-6 rounded-lg text-xs font-bold border outline-none cursor-pointer transition ${
-                                    c.status?.includes('Placed')
-                                      ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
-                                      : c.status?.includes('Interview')
-                                      ? 'bg-purple-50 text-purple-800 border-purple-300'
-                                      : c.status?.includes('Shortlisted')
-                                      ? 'bg-blue-50 text-blue-800 border-blue-300'
-                                      : c.status?.includes('Screening')
-                                      ? 'bg-amber-50 text-amber-800 border-amber-300'
-                                      : 'bg-slate-50 text-slate-800 border-slate-300'
-                                  }`}
+                <div className="flex-1 overflow-auto rounded-2xl bg-white border border-slate-200">
+                  {filteredCandidates.length === 0 ? (
+                    <div className="p-12 text-center text-slate-500 space-y-2">
+                      <Users className="w-10 h-10 text-slate-300 mx-auto" />
+                      <p className="font-bold text-sm">No candidate records match current filters.</p>
+                    </div>
+                  ) : (
+                    <table className="w-full text-left border-collapse text-xs">
+                      <thead className="bg-slate-100 text-slate-700 sticky top-0 uppercase font-mono text-[10px] border-b border-slate-200 z-10">
+                        <tr>
+                          <th className="py-3 px-4">Candidate</th>
+                          <th className="py-3 px-4">Degree &amp; Domain</th>
+                          <th className="py-3 px-4">DOB Key</th>
+                          <th className="py-3 px-4">Comp &amp; City</th>
+                          <th className="py-3 px-4">CV</th>
+                          <th className="py-3 px-4">Live Stage</th>
+                          <th className="py-3 px-4 text-right">Quick Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {filteredCandidates.map((c) => (
+                          <tr key={c.id} className="hover:bg-slate-50">
+                            <td className="py-3 px-4">
+                              <div className="font-bold text-slate-900 text-sm">{c.full_name}</div>
+                              <div className="text-slate-500 font-mono text-[11px]">
+                                +91 {c.phone} · {c.email}
+                              </div>
+                            </td>
+                            <td className="py-3 px-4">
+                              <span className="inline-block px-2 py-0.5 rounded-md bg-slate-100 font-bold text-[11px]">
+                                {c.qualification}
+                              </span>
+                              <div className="text-slate-600 mt-0.5">
+                                {c.domain} ({c.experience_years}y)
+                              </div>
+                            </td>
+                            <td className="py-3 px-4 font-mono text-slate-600">{c.dob}</td>
+                            <td className="py-3 px-4">
+                              <div className="font-bold">{c.expected_ctc}</div>
+                              <div className="text-slate-500 text-[11px]">{c.current_location}</div>
+                            </td>
+                            <td className="py-3 px-4">
+                              {c.resume_url ? (
+                                <a
+                                  href={c.resume_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#3B5BFF]/10 text-[#3B5BFF] font-bold"
                                 >
-                                  {STAGES.map(s => (
-                                    <option key={s.id} value={s.label}>
-                                      {s.label}
-                                    </option>
-                                  ))}
-                                </select>
-                              </td>
-
-                              <td className="py-3 px-4 text-right">
+                                  <FileText className="w-3.5 h-3.5" />
+                                  <span>PDF</span>
+                                  <ExternalLink className="w-2.5 h-2.5" />
+                                </a>
+                              ) : (
+                                <span className="text-slate-400">—</span>
+                              )}
+                            </td>
+                            <td className="py-3 px-4">
+                              <select
+                                value={c.status || 'Application Received'}
+                                onChange={(e) => handleStatusChange(c.id, e.target.value)}
+                                className="py-1.5 px-2.5 rounded-lg text-xs font-bold border border-slate-300 bg-white cursor-pointer"
+                              >
+                                {STAGES.map((s) => (
+                                  <option key={s.id} value={s.label}>
+                                    {s.label}
+                                  </option>
+                                ))}
+                              </select>
+                            </td>
+                            <td className="py-3 px-4 text-right">
+                              <div className="inline-flex items-center gap-1.5">
+                                <a
+                                  href={`https://wa.me/91${c.phone}?text=${encodeURIComponent(
+                                    `Hi ${c.full_name}, reaching out from Amii Ma'am's desk at FinTalent Partners regarding your ${c.domain} profile.`
+                                  )}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="p-1.5 rounded-lg bg-[#12B886] text-white"
+                                  title="WhatsApp Candidate"
+                                >
+                                  <MessageCircle className="w-3.5 h-3.5 fill-current" />
+                                </a>
                                 <button
+                                  type="button"
                                   onClick={() => {
                                     setEditingCandidate(c);
                                     setTempNotes(c.admin_notes || '');
                                   }}
-                                  className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-bold transition cursor-pointer"
+                                  className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 font-bold inline-flex items-center gap-1 cursor-pointer"
                                 >
                                   <Edit3 className="w-3.5 h-3.5" />
-                                  <span>{c.admin_notes ? 'Notes ✓' : 'Add Note'}</span>
+                                  <span>{c.admin_notes ? 'Note ✓' : 'Note'}</span>
                                 </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* TAB 2: FIRMS */}
-              {activeTab === 'firms' && (
-                <div className="flex-1 overflow-auto p-6 space-y-4">
-                  {filteredFirms.length === 0 ? (
-                    <div className="p-12 text-center text-slate-500 space-y-2">
-                      <Building2 className="w-10 h-10 text-slate-300 mx-auto" />
-                      <p className="font-semibold text-sm">No firm mandates submitted yet.</p>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {filteredFirms.map((f) => (
-                        <div
-                          key={f.id}
-                          className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-3"
-                        >
-                          <div className="flex items-start justify-between gap-3">
-                            <div>
-                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
-                                {f.org_type || 'CA / Audit Firm'}
-                              </span>
-                              <h4 className="text-base font-bold text-slate-900 mt-1">
-                                {f.organization_name}
-                              </h4>
-                            </div>
-
-                            <select
-                              value={f.status || 'Open'}
-                              onChange={(e) => handleFirmStatusChange(f.id, e.target.value)}
-                              className={`text-xs font-bold py-1 px-2.5 rounded-lg border outline-none cursor-pointer ${
-                                f.status === 'Closed'
-                                  ? 'bg-slate-100 text-slate-600 border-slate-300'
-                                  : f.status === 'In Progress'
-                                  ? 'bg-amber-50 text-amber-800 border-amber-300'
-                                  : 'bg-emerald-50 text-emerald-800 border-emerald-300'
-                              }`}
-                            >
-                              <option value="Open">Open</option>
-                              <option value="In Progress">In Progress</option>
-                              <option value="Closed">Closed</option>
-                            </select>
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-2 text-xs py-2 border-y border-slate-100">
-                            <div>
-                              <span className="text-slate-400 block text-[10px] uppercase">Role Required</span>
-                              <span className="font-bold text-slate-800">{f.role_needed}</span>
-                            </div>
-                            <div>
-                              <span className="text-slate-400 block text-[10px] uppercase">Practice Area</span>
-                              <span className="font-semibold text-slate-700">{f.domain}</span>
-                            </div>
-                            <div>
-                              <span className="text-slate-400 block text-[10px] uppercase">Budget</span>
-                              <span className="font-semibold text-slate-700">{f.budget_range}</span>
-                            </div>
-                            <div>
-                              <span className="text-slate-400 block text-[10px] uppercase">City</span>
-                              <span className="font-semibold text-slate-700">{f.city}</span>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center justify-between pt-1">
-                            <div className="text-xs">
-                              <span className="text-slate-500">{f.contact_person}</span>
-                              <div className="font-mono text-slate-900 font-bold mt-0.5">
-                                +91 {f.contact_phone}
                               </div>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                              <a
-                                href={`tel:+91${f.contact_phone}`}
-                                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition"
-                                title="Call Contact Person"
-                              >
-                                <Phone className="w-4 h-4" />
-                              </a>
-                              <a
-                                href={`https://wa.me/91${f.contact_phone}?text=${encodeURIComponent(
-                                  `Hi ${f.contact_person}, this is FinTalent Partners following up on your requirement for ${f.role_needed} at ${f.organization_name}.`
-                                )}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="p-2 rounded-xl bg-[#10B981] text-white hover:bg-[#0ea372] transition"
-                                title="Chat on WhatsApp"
-                              >
-                                <MessageCircle className="w-4 h-4 fill-current" />
-                              </a>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   )}
                 </div>
-              )}
+              </div>
+            ) : (
+              <div className="flex-1 overflow-auto p-4 sm:p-6 space-y-4">
+                <div className="flex items-center gap-2">
+                  {['All', 'Open', 'In Progress', 'Closed'].map((st) => (
+                    <button
+                      key={st}
+                      type="button"
+                      onClick={() => setFirmStatusFilter(st)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer ${
+                        firmStatusFilter === st
+                          ? 'bg-[#0D1017] text-white'
+                          : 'bg-white border border-slate-200 text-slate-600'
+                      }`}
+                    >
+                      {st}
+                    </button>
+                  ))}
+                </div>
 
-            </main>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {filteredFirms.map((f) => (
+                    <div
+                      key={f.id}
+                      className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs space-y-3 flex flex-col justify-between"
+                    >
+                      <div className="space-y-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100">
+                              {f.org_type}
+                            </span>
+                            <h4 className="font-display font-bold text-base mt-1">
+                              {f.organization_name}
+                            </h4>
+                          </div>
+                          <select
+                            value={f.status || 'Open'}
+                            onChange={(e) => handleFirmStatusChange(f.id, e.target.value)}
+                            className="text-xs font-bold py-1 px-2 rounded-lg border border-slate-300 bg-slate-50 cursor-pointer"
+                          >
+                            <option value="Open">Open</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Closed">Closed</option>
+                          </select>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 text-xs py-2 border-y border-slate-100">
+                          <div>
+                            <span className="text-[10px] text-slate-400 block uppercase">Role</span>
+                            <strong>{f.role_needed}</strong>
+                          </div>
+                          <div>
+                            <span className="text-[10px] text-slate-400 block uppercase">Budget</span>
+                            <strong className="font-mono">{f.budget_range}</strong>
+                          </div>
+                          <div>
+                            <span className="text-[10px] text-slate-400 block uppercase">Domain</span>
+                            <span>{f.domain}</span>
+                          </div>
+                          <div>
+                            <span className="text-[10px] text-slate-400 block uppercase">City</span>
+                            <span>{f.city}</span>
+                          </div>
+                        </div>
+
+                        {f.notes && (
+                          <p className="text-[11px] bg-amber-50 text-amber-900 px-3 py-1.5 rounded-lg font-medium">
+                            {f.notes}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-between pt-1">
+                        <div className="text-xs">
+                          <span className="text-slate-500 block">{f.contact_person}</span>
+                          <strong className="font-mono">+91 {f.contact_phone}</strong>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <a
+                            href={`tel:+91${f.contact_phone}`}
+                            className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200"
+                            title="Call"
+                          >
+                            <Phone className="w-4 h-4" />
+                          </a>
+                          <a
+                            href={`https://wa.me/91${f.contact_phone}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2 rounded-xl bg-[#12B886] text-white"
+                            title="WhatsApp"
+                          >
+                            <MessageCircle className="w-4 h-4 fill-current" />
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
-        {/* Modal for Editing Internal Remarks */}
+        {/* HR Notes Modal */}
         {editingCandidate && (
-          <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 z-40">
-            <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4 animate-in fade-in">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-40">
+            <div className="bg-white rounded-3xl max-w-lg w-full p-6 border-2 border-[#0D1017] space-y-4">
               <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="font-display font-bold text-slate-900 text-base">
-                    HR Internal Remarks for {editingCandidate.full_name}
-                  </h4>
-                  <p className="text-xs text-slate-500">
-                    Visible to candidate in their live application tracker.
-                  </p>
-                </div>
+                <h4 className="font-display font-bold text-base">
+                  Live Status Note for {editingCandidate.full_name}
+                </h4>
                 <button
+                  type="button"
                   onClick={() => setEditingCandidate(null)}
-                  className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
+                  className="p-1.5 rounded-lg hover:bg-slate-100 cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
-
               <textarea
                 rows={4}
                 value={tempNotes}
                 onChange={(e) => setTempNotes(e.target.value)}
-                placeholder="e.g. Cleared technical screening. Interview scheduled with Partner at Deloitte Alumni CA Firm on Friday 3:00 PM."
-                className="w-full p-3.5 rounded-xl border border-slate-300 text-xs sm:text-sm focus:border-[#4563FF] focus:ring-1 focus:ring-[#4563FF] outline-none text-slate-900"
+                placeholder="e.g. Cleared screening! Partner interview scheduled Thursday at 4:00 PM."
+                className="w-full p-3.5 rounded-xl border border-slate-300 text-sm outline-none focus:border-[#3B5BFF]"
               />
-
-              <div className="flex items-center justify-end gap-2 pt-2">
+              <div className="flex justify-end gap-2">
                 <button
+                  type="button"
                   onClick={() => setEditingCandidate(null)}
-                  className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl"
+                  className="px-4 py-2 text-xs font-bold rounded-xl hover:bg-slate-100 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
+                  type="button"
                   onClick={handleSaveNotes}
                   disabled={isSavingNotes}
-                  className="px-5 py-2.5 text-xs font-bold bg-[#4563FF] hover:bg-[#324fec] text-white rounded-xl shadow-md flex items-center gap-1.5 cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl bg-[#3B5BFF] text-white text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer"
                 >
                   <Save className="w-3.5 h-3.5" />
-                  <span>{isSavingNotes ? 'Saving...' : 'Save & Sync Remarks'}</span>
+                  <span>{isSavingNotes ? 'Syncing...' : 'Save & Sync Live'}</span>
                 </button>
               </div>
             </div>
           </div>
         )}
 
+        {/* Quick Publish Role Modal */}
+        {showNewRoleModal && (
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-40">
+            <form
+              onSubmit={handlePublishNewRole}
+              className="bg-white rounded-3xl max-w-lg w-full p-6 border-2 border-[#0D1017] space-y-4"
+            >
+              <div className="flex items-center justify-between">
+                <h4 className="font-display font-extrabold text-lg">
+                  Publish New Role to Live Board
+                </h4>
+                <button
+                  type="button"
+                  onClick={() => setShowNewRoleModal(false)}
+                  className="p-1.5 rounded-lg hover:bg-slate-100 cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div>
+                  <label className="font-bold block mb-1">Firm / Company *</label>
+                  <input
+                    required
+                    value={newOrg}
+                    onChange={(e) => setNewOrg(e.target.value)}
+                    placeholder="Walker Chandiok Alumni LLP"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold block mb-1">Org Type</label>
+                  <select
+                    value={newOrgType}
+                    onChange={(e) => setNewOrgType(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white"
+                  >
+                    {ORG_TYPES.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="font-bold block mb-1">Role Title *</label>
+                  <input
+                    required
+                    value={newRole}
+                    onChange={(e) => setNewRole(e.target.value)}
+                    placeholder="Audit Manager / FP&A Lead"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold block mb-1">Domain</label>
+                  <select
+                    value={newDomain}
+                    onChange={(e) => setNewDomain(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white"
+                  >
+                    {PRACTICE_DOMAINS.map((d) => (
+                      <option key={d} value={d}>
+                        {d}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="font-bold block mb-1">Compensation</label>
+                  <input
+                    value={newBudget}
+                    onChange={(e) => setNewBudget(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold block mb-1">City</label>
+                  <input
+                    value={newCity}
+                    onChange={(e) => setNewCity(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold block mb-1">Contact Name</label>
+                  <input
+                    value={newContact}
+                    onChange={(e) => setNewContact(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold block mb-1">Contact Phone</label>
+                  <input
+                    value={newPhone}
+                    onChange={(e) => setNewPhone(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300"
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowNewRoleModal(false)}
+                  className="px-4 py-2 text-xs font-bold rounded-xl hover:bg-slate-100 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 rounded-xl bg-[#C8FF32] text-[#090B10] border border-[#0D1017] font-display font-extrabold text-xs cursor-pointer"
+                >
+                  Publish Live →
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
       </div>
     </div>
   );

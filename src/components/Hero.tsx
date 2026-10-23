@@ -1,297 +1,410 @@
 import React from 'react';
-import { 
-  ArrowRight, Search, CheckCircle2, ShieldCheck, 
-  TrendingUp, Award, UserCheck, Briefcase 
+import { motion } from 'motion/react';
+import {
+  ArrowRight,
+  Search,
+  Sparkles,
+  Zap,
+  CheckCircle2,
+  Briefcase,
+  Users,
+  Clock,
+  ShieldCheck,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { PRACTICE_DOMAINS } from '../lib/supabase';
 
 interface HeroProps {
-  onCandidateClick: () => void;
-  onEmployerClick: () => void;
+  persona: 'candidate' | 'recruiter';
+  onPersonaChange: (mode: 'candidate' | 'recruiter') => void;
+  searchQuery: string;
+  onSearchChange: (q: string) => void;
+  selectedDomainFilter: string;
+  onQuickDomainSelect: (domain: string) => void;
+  onJumpToExchange: () => void;
+  onCandidateApplyClick: () => void;
+  onEmployerPostClick: () => void;
   onTrackerClick: () => void;
+  openRolesCount: number;
+  vettedTalentCount: number;
 }
 
-export const Hero: React.FC<HeroProps> = ({ 
-  onCandidateClick, 
-  onEmployerClick,
-  onTrackerClick 
+const SHORT_DOMAIN_PILLS = [
+  { label: 'All Roles', full: 'All' },
+  { label: 'Statutory Audit', full: 'Statutory Audit & Assurance' },
+  { label: 'FP&A & Startup', full: 'FP&A & Corporate Finance' },
+  { label: 'Direct Tax', full: 'Direct Taxation & Litigations' },
+  { label: 'GST & Indirect', full: 'Indirect Tax / GST' },
+  { label: 'CA Articleship', full: 'CA Articleship & Trainee Roles' },
+  { label: 'SAP & Finalization', full: 'Accounting, Finalization & ERP (Tally/SAP)' },
+];
+
+export const Hero: React.FC<HeroProps> = ({
+  persona,
+  onPersonaChange,
+  searchQuery,
+  onSearchChange,
+  selectedDomainFilter,
+  onQuickDomainSelect,
+  onJumpToExchange,
+  onCandidateApplyClick,
+  onEmployerPostClick,
+  onTrackerClick,
+  openRolesCount,
+  vettedTalentCount,
 }) => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
+  const isCandidate = persona === 'candidate';
 
   return (
-    <section 
-      className={`relative overflow-hidden pt-14 pb-20 lg:pt-20 lg:pb-28 border-b transition-colors duration-200 ${
-        isDark 
-          ? 'bg-mesh-dark text-white border-white/10' 
-          : 'bg-mesh-light text-[#101426] border-slate-200'
-      }`}
-    >
-      {/* Subtle grid pattern overlay */}
-      <div 
-        className={`absolute inset-0 pointer-events-none opacity-40 ${
-          isDark ? 'grid-pattern-dark' : 'grid-pattern-light'
-        }`} 
-      />
+    <section className="px-3 sm:px-6 pt-3 pb-8">
+      <div
+        className={`max-w-7xl mx-auto relative rounded-[2rem] overflow-hidden border transition-all ${
+          isDark
+            ? 'border-white/15 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.85)]'
+            : 'border-[2px] border-[#0D1017] shadow-[8px_8px_0px_0px_#0D1017]'
+        }`}
+      >
+        {/* Full-Bleed Custom Art-Directed Background Photograph */}
+        <div
+          className="absolute inset-0 bg-cover bg-center scale-[1.02] transition-transform duration-700"
+          style={{
+            backgroundImage: `url('/images/hero-finance-studio.jpg')`,
+          }}
+        />
 
-      {/* Decorative ambient glowing orbs */}
-      <div 
-        className={`absolute -top-32 -left-32 w-96 h-96 rounded-full blur-3xl pointer-events-none ${
-          isDark ? 'bg-[#4563FF]/25' : 'bg-[#4563FF]/15'
-        }`} 
-      />
-      <div 
-        className={`absolute top-1/2 -right-32 w-96 h-96 rounded-full blur-3xl pointer-events-none ${
-          isDark ? 'bg-[#D4FF5A]/15' : 'bg-[#10B981]/10'
-        }`} 
-      />
+        {/* Directional Contrast Veil so photography shines on right & copy pops with AAA contrast */}
+        <div
+          className={`absolute inset-0 ${
+            isDark
+              ? 'bg-gradient-to-r from-[#090B10]/95 via-[#090B10]/85 to-[#090B10]/55'
+              : 'bg-gradient-to-r from-[#0B0E17]/92 via-[#0B0E17]/80 to-[#0B0E17]/48'
+          }`}
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(200,255,50,0.14),transparent_42%),radial-gradient(circle_at_bottom_right,rgba(255,107,74,0.18),transparent_45%)] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-          
-          {/* Left Column: Asymmetric Typography & Action Block (col-span-7) */}
-          <div className="lg:col-span-7 space-y-6 sm:space-y-7 text-left">
-            {/* Small animated announcement label */}
-            <div 
-              className={`inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border backdrop-blur-md shadow-xs text-xs font-semibold tracking-wide ${
-                isDark 
-                  ? 'bg-white/5 border-white/15 text-slate-300' 
-                  : 'bg-white/90 border-slate-300 text-slate-800'
-              }`}
+        {/* Content Grid */}
+        <div className="relative z-10 px-5 sm:px-10 lg:px-14 py-10 sm:py-14 lg:py-16 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center text-white">
+          {/* Left 7 Columns: Instant Persona Switch + Bold Headline + Zero-Turnaround Search */}
+          <div className="lg:col-span-7 space-y-6">
+            {/* Funky Floating Status Stickers */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35 }}
+              className="flex flex-wrap items-center gap-2"
             >
-              <span className="w-2 h-2 rounded-full bg-[#10B981] animate-ping" />
-              <span className={`font-display font-bold uppercase tracking-wider text-[11px] ${
-                isDark ? 'text-[#D4FF5A]' : 'text-[#4563FF]'
-              }`}>
-                THE FINANCE TALENT NETWORK
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C8FF32] text-[#090B10] font-display font-extrabold text-[11px] uppercase tracking-wider shadow-sm">
+                <Zap className="w-3.5 h-3.5 fill-current" />
+                Zero-Friction Finance Hiring
               </span>
-              <span className="opacity-30">/</span>
-              <span className="font-medium text-[11px]">
-                ICAI Compliant
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/12 backdrop-blur-md border border-white/15 text-xs font-mono text-white">
+                <span className="w-2 h-2 rounded-full bg-[#12B886] animate-ping" />
+                48h Shortlist Turnaround
               </span>
-            </div>
-
-            {/* Massive Funky Headline */}
-            <h1 className="font-display font-extrabold text-4xl sm:text-6xl lg:text-7xl leading-[1.08] tracking-tight uppercase">
-              <span className={isDark ? 'text-white' : 'text-[#101426]'}>
-                GOOD PEOPLE.
-              </span><br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4563FF] via-[#7B91FF] to-[#B9A7FF]">
-                GREAT FINANCE.
-              </span><br />
-              <span className={
-                isDark 
-                  ? 'text-[#D4FF5A] drop-shadow-[0_0_25px_rgba(212,255,90,0.35)]' 
-                  : 'text-[#059669]'
-              }>
-                PERFECT FIT.
+              <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FF6B4A]/25 backdrop-blur-md border border-[#FF6B4A]/40 text-xs font-bold text-[#FFD2C7]">
+                ICAI Verified Desk
               </span>
-            </h1>
+            </motion.div>
 
-            {/* Supporting Copy */}
-            <p className={`text-base sm:text-lg max-w-2xl leading-relaxed font-normal ${
-              isDark ? 'text-slate-300' : 'text-slate-700'
-            }`}>
-              FinTalent Partners connects premier CA firms, corporate conglomerates, and venture-backed startups with carefully screened Chartered Accountants, Tax Advisors, Audit Leads, and Corporate Finance specialists across India.
-            </p>
-
-            {/* Two Prominent CTAs + Secondary Action */}
-            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-              {/* Primary CTA 1: Candidates */}
+            {/* Persona Mode Switcher Right Above Headline */}
+            <div
+              className="inline-flex p-1.5 rounded-2xl bg-black/45 backdrop-blur-xl border border-white/15 gap-1"
+              role="tablist"
+              aria-label="Choose Candidate or Recruiter View"
+            >
               <button
-                onClick={onCandidateClick}
-                className="group inline-flex items-center justify-center gap-3 px-7 py-4 rounded-xl bg-[#D4FF5A] hover:bg-[#bbf036] text-[#101426] font-display font-extrabold text-base shadow-md shadow-[#D4FF5A]/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer min-h-[48px] focus-visible:ring-2 focus-visible:ring-[#4563FF] outline-none"
-              >
-                <span>I'm Looking for Opportunities</span>
-                <ArrowRight className="w-4 h-4 text-[#101426] group-hover:translate-x-1 transition-transform" />
-              </button>
-
-              {/* Primary CTA 2: Employers */}
-              <button
-                onClick={onEmployerClick}
-                className="group inline-flex items-center justify-center gap-3 px-7 py-4 rounded-xl bg-[#4563FF] hover:bg-[#324fec] text-white font-display font-bold text-base shadow-md shadow-[#4563FF]/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer border border-[#6b84ff]/30 min-h-[48px] focus-visible:ring-2 focus-visible:ring-[#D4FF5A] outline-none"
-              >
-                <span>I'm Hiring Finance Talent</span>
-                <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
-
-            {/* Secondary Action: Track My Application */}
-            <div className={`pt-1 flex flex-wrap items-center gap-2 sm:gap-3 text-sm ${
-              isDark ? 'text-slate-400' : 'text-slate-600'
-            }`}>
-              <span>Already registered?</span>
-              <button
-                onClick={onTrackerClick}
-                className={`inline-flex items-center gap-1.5 font-bold transition-colors underline underline-offset-4 cursor-pointer focus-visible:ring-2 focus-visible:ring-[#4563FF] rounded-sm outline-none ${
-                  isDark 
-                    ? 'text-[#D4FF5A] hover:text-white decoration-[#D4FF5A]/50' 
-                    : 'text-[#4563FF] hover:text-[#101426] decoration-[#4563FF]/50'
+                type="button"
+                role="tab"
+                aria-selected={isCandidate}
+                onClick={() => onPersonaChange('candidate')}
+                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-display font-bold flex items-center gap-2 transition cursor-pointer ${
+                  isCandidate
+                    ? 'bg-[#C8FF32] text-[#090B10] shadow-md'
+                    : 'text-slate-300 hover:text-white'
                 }`}
               >
-                <Search className="w-3.5 h-3.5" />
-                <span>Track Application Live</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <Briefcase className="w-4 h-4" />
+                <span>I&apos;m Looking for a Job</span>
               </button>
-            </div>
-          </div>
 
-          {/* Right Column: Original Funky Floating Talent Composition (col-span-5) */}
-          <div className="lg:col-span-5 relative">
-            <div className="relative mx-auto max-w-md lg:max-w-none">
-              
-              {/* Outer decorative card */}
-              <div 
-                className={`relative p-6 sm:p-8 rounded-3xl border backdrop-blur-xl shadow-2xl overflow-hidden transition-colors ${
-                  isDark 
-                    ? 'bg-white/[0.03] border-white/10' 
-                    : 'bg-white/95 border-slate-200/90'
+              <button
+                type="button"
+                role="tab"
+                aria-selected={!isCandidate}
+                onClick={() => onPersonaChange('recruiter')}
+                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-display font-bold flex items-center gap-2 transition cursor-pointer ${
+                  !isCandidate
+                    ? 'bg-[#FF6B4A] text-white shadow-md'
+                    : 'text-slate-300 hover:text-white'
                 }`}
               >
-                {/* Header of talent card */}
-                <div className={`flex items-center justify-between pb-5 border-b ${
-                  isDark ? 'border-white/10' : 'border-slate-200'
-                }`}>
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-3 h-3 rounded-full bg-[#10B981] animate-pulse" />
-                    <span className={`font-display font-bold text-xs uppercase tracking-wider ${
-                      isDark ? 'text-slate-300' : 'text-slate-700'
-                    }`}>
-                      Live Talent Marketplace
+                <Users className="w-4 h-4" />
+                <span>I&apos;m Hiring Talent</span>
+              </button>
+            </div>
+
+            {/* Expressive Headline */}
+            <motion.div
+              key={persona}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.28 }}
+              className="space-y-3"
+            >
+              {isCandidate ? (
+                <>
+                  <h1 className="font-display font-extrabold text-3xl sm:text-5xl lg:text-[3.55rem] leading-[1.03] tracking-tight">
+                    Find top CA, Tax &amp; <br className="hidden sm:block" />
+                    Finance roles.{' '}
+                    <span className="text-[#C8FF32] underline decoration-[#FF6B4A] decoration-4 underline-offset-4">
+                      Apply in 60s.
                     </span>
-                  </div>
-                  <span className={`text-[11px] font-mono px-2.5 py-0.5 rounded-full border ${
-                    isDark 
-                      ? 'bg-[#4563FF]/20 text-[#B9A7FF] border-[#4563FF]/30' 
-                      : 'bg-[#4563FF]/10 text-[#4563FF] border-[#4563FF]/20 font-bold'
-                  }`}>
-                    48h Shortlist
-                  </span>
-                </div>
+                  </h1>
+                  <p className="text-sm sm:text-base text-slate-200 max-w-xl leading-relaxed">
+                    Skip 10-step portals. Browse live mandates across Top CA Firms, MNCs &amp; Series A–D Startups, drop your PDF once, and track your interview stage live with zero fees.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h1 className="font-display font-extrabold text-3xl sm:text-5xl lg:text-[3.55rem] leading-[1.03] tracking-tight">
+                    Pre-vetted CAs &amp; <br className="hidden sm:block" />
+                    Finance leads in{' '}
+                    <span className="text-[#FF856A] underline decoration-[#C8FF32] decoration-4 underline-offset-4">
+                      48 hours flat.
+                    </span>
+                  </h1>
+                  <p className="text-sm sm:text-base text-slate-200 max-w-xl leading-relaxed">
+                    Stop sifting through 200 mismatched resumes. Inspect ICAI-screened Audit Managers, Tax Counsel, FP&amp;A Leads &amp; Articles — request CVs in one click.
+                  </p>
+                </>
+              )}
+            </motion.div>
 
-                {/* Candidate Spotlight Profile */}
-                <div 
-                  className={`mt-5 p-4 rounded-2xl border space-y-3 relative group transition-colors ${
-                    isDark 
-                      ? 'bg-[#101426]/90 border-white/15 hover:border-[#D4FF5A]/50' 
-                      : 'bg-slate-50 border-slate-200 hover:border-[#4563FF]'
+            {/* Instant Zero-Turnaround Search Bar */}
+            <div className="p-2 rounded-2xl bg-white/12 backdrop-blur-xl border border-white/20 shadow-2xl">
+              <div className="flex flex-col sm:flex-row gap-2">
+                <div className="flex-1 relative flex items-center">
+                  <Search className="w-4 h-4 text-[#C8FF32] absolute left-3.5 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => onSearchChange(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') onJumpToExchange();
+                    }}
+                    placeholder={
+                      isCandidate
+                        ? 'Search role, city or skill — e.g. Audit, FP&A, Mumbai, 20 LPA...'
+                        : 'Search talent by CA, CMA, GST, SAP, Mumbai, Immediate...'
+                    }
+                    className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-black/45 text-white placeholder:text-slate-300/80 text-sm outline-none border border-white/10 focus:border-[#C8FF32]"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={onJumpToExchange}
+                  className={`neo-btn-pop px-6 py-3.5 rounded-xl font-display font-extrabold text-sm flex items-center justify-center gap-2 shrink-0 cursor-pointer ${
+                    isCandidate
+                      ? 'bg-[#C8FF32] text-[#090B10]'
+                      : 'bg-[#FF6B4A] text-white'
                   }`}
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#4563FF] to-[#D4FF5A] flex items-center justify-center font-display font-bold text-lg text-[#101426] shadow-md">
-                        CA
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className={`font-display font-bold text-base ${
-                            isDark ? 'text-white' : 'text-[#101426]'
-                          }`}>
-                            Rohit A.
-                          </h3>
-                          <span className="text-[10px] bg-[#10B981]/20 text-[#10B981] font-bold px-2 py-0.5 rounded-full border border-[#10B981]/30">
-                            Verified ✓
-                          </span>
-                        </div>
-                        <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                          Statutory Audit Senior · Mumbai
-                        </p>
-                      </div>
-                    </div>
-                    <span className={`font-mono text-xs font-bold ${
-                      isDark ? 'text-[#D4FF5A]' : 'text-[#4563FF]'
-                    }`}>
-                      14-16 LPA
-                    </span>
-                  </div>
-
-                  <div className={`pt-1 text-xs space-y-1.5 ${
-                    isDark ? 'text-slate-300' : 'text-slate-700'
-                  }`}>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className={`w-3.5 h-3.5 shrink-0 ${isDark ? 'text-[#D4FF5A]' : 'text-[#10B981]'}`} />
-                      <span>ICAI Qualified (1st Attempt) · Big 4 Articleship</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className={`w-3.5 h-3.5 shrink-0 ${isDark ? 'text-[#D4FF5A]' : 'text-[#10B981]'}`} />
-                      <span>Ind AS 115/116 & CARO 2020 Finalization</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Floating Interactive Skill/Role Tags */}
-                <div className="mt-5 space-y-2.5">
-                  <span className={`text-[10px] font-bold uppercase tracking-wider block ${
-                    isDark ? 'text-slate-400' : 'text-slate-600'
-                  }`}>
-                    Specialized Domains in Active Search:
+                  <span>
+                    {isCandidate
+                      ? `Explore ${openRolesCount} Jobs`
+                      : `View ${vettedTalentCount} Profiles`}
                   </span>
-                  <div className="flex flex-wrap gap-2">
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold ${
-                      isDark 
-                        ? 'bg-[#4563FF]/20 text-[#B9A7FF] border-[#4563FF]/40' 
-                        : 'bg-[#4563FF]/10 text-[#4563FF] border-[#4563FF]/25'
-                    }`}>
-                      <ShieldCheck className="w-3.5 h-3.5" />
-                      Statutory Audit
-                    </span>
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold ${
-                      isDark 
-                        ? 'bg-[#D4FF5A]/15 text-[#D4FF5A] border-[#D4FF5A]/30' 
-                        : 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                    }`}>
-                      <TrendingUp className="w-3.5 h-3.5" />
-                      FP&A Analyst
-                    </span>
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold ${
-                      isDark 
-                        ? 'bg-[#10B981]/20 text-[#10B981] border-[#10B981]/40' 
-                        : 'bg-teal-50 text-teal-800 border-teal-200'
-                    }`}>
-                      <Award className="w-3.5 h-3.5" />
-                      GST Specialist
-                    </span>
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold ${
-                      isDark 
-                        ? 'bg-white/10 text-slate-200 border-white/20' 
-                        : 'bg-slate-100 text-slate-800 border-slate-200'
-                    }`}>
-                      <Briefcase className="w-3.5 h-3.5" />
-                      Corporate Finance
-                    </span>
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold ${
-                      isDark 
-                        ? 'bg-[#B9A7FF]/20 text-[#B9A7FF] border-[#B9A7FF]/40' 
-                        : 'bg-indigo-50 text-indigo-800 border-indigo-200'
-                    }`}>
-                      <UserCheck className="w-3.5 h-3.5" />
-                      CA Finalist
-                    </span>
-                  </div>
-                </div>
-
-                {/* 3 Micro-Metrics at the bottom of the card */}
-                <div className={`mt-6 pt-4 border-t grid grid-cols-3 gap-2 text-center ${
-                  isDark ? 'border-white/10' : 'border-slate-200'
-                }`}>
-                  <div className={`p-2 rounded-xl ${isDark ? 'bg-white/[0.04]' : 'bg-slate-50'}`}>
-                    <div className={`font-display font-bold text-lg ${isDark ? 'text-white' : 'text-[#101426]'}`}>40+</div>
-                    <div className={`text-[10px] uppercase tracking-tight ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Partner Firms</div>
-                  </div>
-                  <div className={`p-2 rounded-xl ${isDark ? 'bg-white/[0.04]' : 'bg-slate-50'}`}>
-                    <div className={`font-display font-bold text-lg ${isDark ? 'text-[#D4FF5A]' : 'text-[#4563FF]'}`}>48 Hrs</div>
-                    <div className={`text-[10px] uppercase tracking-tight ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Shortlist Time</div>
-                  </div>
-                  <div className={`p-2 rounded-xl ${isDark ? 'bg-white/[0.04]' : 'bg-slate-50'}`}>
-                    <div className={`font-display font-bold text-lg ${isDark ? 'text-[#B9A7FF]' : 'text-[#10B981]'}`}>100%</div>
-                    <div className={`text-[10px] uppercase tracking-tight ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Pre-Vetted</div>
-                  </div>
-                </div>
-
+                  <ArrowRight className="w-4 h-4" />
+                </button>
               </div>
+
+              {/* 1-Tap Domain Filter Pills */}
+              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-2.5 px-1 pb-0.5">
+                {SHORT_DOMAIN_PILLS.map((pill) => {
+                  const active = selectedDomainFilter === pill.full;
+                  return (
+                    <button
+                      key={pill.full}
+                      type="button"
+                      onClick={() => onQuickDomainSelect(pill.full)}
+                      className={`px-3 py-1 rounded-lg text-[11px] font-bold whitespace-nowrap transition cursor-pointer ${
+                        active
+                          ? 'bg-white text-[#090B10]'
+                          : 'bg-black/35 text-slate-200 hover:bg-black/60 border border-white/10'
+                      }`}
+                    >
+                      {pill.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Direct Fast Action Strip */}
+            <div className="flex flex-wrap items-center gap-4 pt-1 text-xs sm:text-sm">
+              <button
+                type="button"
+                onClick={isCandidate ? onCandidateApplyClick : onEmployerPostClick}
+                className="inline-flex items-center gap-2 font-display font-bold text-[#C8FF32] hover:underline underline-offset-4 cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>
+                  {isCandidate
+                    ? 'Or skip browsing & drop your Resume PDF directly (60s) →'
+                    : 'Or post a custom Hiring Mandate directly to Amii Ma’am (45s) →'}
+                </span>
+              </button>
+
+              <span className="text-white/30 hidden sm:inline">|</span>
+
+              <button
+                type="button"
+                onClick={onTrackerClick}
+                className="inline-flex items-center gap-1.5 font-semibold text-white/90 hover:text-[#C8FF32] transition cursor-pointer"
+              >
+                <Clock className="w-3.5 h-3.5 text-[#12B886]" />
+                <span>Already applied? Live Status Check</span>
+              </button>
             </div>
           </div>
 
+          {/* Right 5 Columns: Funky Visual Card with Custom Artwork Backdrop */}
+          <div className="lg:col-span-5">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, delay: 0.08 }}
+              className="relative rounded-3xl overflow-hidden border border-white/20 shadow-2xl bg-[#0D101B]/90 backdrop-blur-xl"
+            >
+              {/* Dynamic Funky Header Visual using our Generated Artwork */}
+              <div
+                className="h-40 sm:h-44 bg-cover bg-center relative flex items-end p-5"
+                style={{
+                  backgroundImage: isCandidate
+                    ? `url('/images/candidate-card-bg.jpg')`
+                    : `url('/images/recruiter-card-bg.jpg')`,
+                }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0D101B] via-[#0D101B]/45 to-transparent" />
+                <div className="relative z-10 w-full flex items-end justify-between gap-3">
+                  <div>
+                    <span className="inline-block text-[10px] font-mono font-bold uppercase tracking-widest px-2.5 py-1 rounded-full bg-black/65 text-[#C8FF32] border border-white/15 backdrop-blur-md">
+                      {isCandidate ? 'CANDIDATE EXPRESS DESK' : 'EXECUTIVE HIRING DESK'}
+                    </span>
+                    <h2 className="font-display font-extrabold text-xl text-white mt-1.5 leading-tight">
+                      {isCandidate
+                        ? '1 Profile → 40+ Top Firms'
+                        : '3-Step Vetted Shortlist'}
+                    </h2>
+                  </div>
+                  <div className="px-3 py-1.5 rounded-xl bg-[#C8FF32] text-[#090B10] font-mono font-extrabold text-xs shrink-0 shadow-lg">
+                    {isCandidate ? '100% FREE' : '48H SLA'}
+                  </div>
+                </div>
+              </div>
+
+              {/* Card Body: Zero-Turnaround Steps + Instant CTA */}
+              <div className="p-5 sm:p-6 space-y-5">
+                <div className="space-y-3">
+                  {isCandidate ? (
+                    <>
+                      <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/[0.05] border border-white/10">
+                        <span className="w-7 h-7 rounded-lg bg-[#C8FF32]/20 text-[#C8FF32] font-mono font-bold text-xs flex items-center justify-center shrink-0">
+                          01
+                        </span>
+                        <div className="text-xs">
+                          <strong className="text-white block">Pick a Role or Drop Your CV</strong>
+                          <span className="text-slate-400">Single-screen form — takes under 60 seconds</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/[0.05] border border-white/10">
+                        <span className="w-7 h-7 rounded-lg bg-[#3B5BFF]/25 text-[#93A6FF] font-mono font-bold text-xs flex items-center justify-center shrink-0">
+                          02
+                        </span>
+                        <div className="text-xs">
+                          <strong className="text-white block">Direct Partner Shortlisting</strong>
+                          <span className="text-slate-400">Matched to CA Partners &amp; Corporate CFOs</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/[0.05] border border-white/10">
+                        <span className="w-7 h-7 rounded-lg bg-[#12B886]/25 text-[#38D9A9] font-mono font-bold text-xs flex items-center justify-center shrink-0">
+                          03
+                        </span>
+                        <div className="text-xs">
+                          <strong className="text-white block">Track 5-Stage Progress Live</strong>
+                          <span className="text-slate-400">Use Mobile + DOB anytime for instant updates</span>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/[0.05] border border-white/10">
+                        <span className="w-7 h-7 rounded-lg bg-[#FF6B4A]/25 text-[#FF9B85] font-mono font-bold text-xs flex items-center justify-center shrink-0">
+                          01
+                        </span>
+                        <div className="text-xs">
+                          <strong className="text-white block">Share Role in 45 Seconds</strong>
+                          <span className="text-slate-400">Tap a preset role or message Amii Ma’am directly</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/[0.05] border border-white/10">
+                        <span className="w-7 h-7 rounded-lg bg-[#C8FF32]/20 text-[#C8FF32] font-mono font-bold text-xs flex items-center justify-center shrink-0">
+                          02
+                        </span>
+                        <div className="text-xs">
+                          <strong className="text-white block">Receive 3–5 Screened CVs in 48h</strong>
+                          <span className="text-slate-400">ICAI attempt count, articleship &amp; CTC pre-checked</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/[0.05] border border-white/10">
+                        <span className="w-7 h-7 rounded-lg bg-[#12B886]/25 text-[#38D9A9] font-mono font-bold text-xs flex items-center justify-center shrink-0">
+                          03
+                        </span>
+                        <div className="text-xs">
+                          <strong className="text-white block">Zero Upfront Retainer</strong>
+                          <span className="text-slate-400">Pay only on successful joining + replacement cover</span>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* Dual Action Buttons Inside Spotlight Card */}
+                <div className="grid grid-cols-2 gap-2.5 pt-1">
+                  <button
+                    type="button"
+                    onClick={onCandidateApplyClick}
+                    className="neo-btn-pop py-3 px-4 rounded-xl bg-[#C8FF32] text-[#090B10] font-display font-extrabold text-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <span>Drop CV (60s)</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onEmployerPostClick}
+                    className="neo-btn-pop py-3 px-4 rounded-xl bg-[#3B5BFF] hover:bg-[#2F4DF0] text-white font-display font-extrabold text-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <span>Post Mandate</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                {/* Bottom Trust Metrics */}
+                <div className="pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-300 font-mono">
+                  <span className="inline-flex items-center gap-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#12B886]" />
+                    {PRACTICE_DOMAINS.length} Core Domains
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#C8FF32]" />
+                    BKC · CP · Indiranagar
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>
