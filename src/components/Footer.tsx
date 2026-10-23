@@ -2,10 +2,9 @@ import React from 'react';
 import {
   Mail,
   Phone,
-  MapPin,
   Lock,
   MessageCircle,
-  ArrowUpRight,
+  MapPin,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import {
@@ -13,22 +12,17 @@ import {
   DISPLAY_PHONE,
   buildWhatsAppUrl,
 } from '../lib/supabase';
+import { AppRoute } from './Header';
 
 interface FooterProps {
+  onNavigate: (page: AppRoute) => void;
   onOpenAdmin: () => void;
-  onExploreJobs: () => void;
-  onBrowseTalent: () => void;
-  onNavigateCandidate: () => void;
-  onNavigateEmployer: () => void;
   onOpenTracker: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
+  onNavigate,
   onOpenAdmin,
-  onExploreJobs,
-  onBrowseTalent,
-  onNavigateCandidate,
-  onNavigateEmployer,
   onOpenTracker,
 }) => {
   const { theme } = useTheme();
@@ -39,42 +33,44 @@ export const Footer: React.FC<FooterProps> = ({
   );
 
   return (
-    <footer className="px-3 sm:px-6 pb-8 pt-6" role="contentinfo">
+    <footer className="px-3 sm:px-6 pb-6 pt-2" role="contentinfo">
       <div
-        className={`max-w-7xl mx-auto rounded-[2rem] p-8 sm:p-12 border ${
+        className={`max-w-7xl mx-auto rounded-[1.8rem] p-6 sm:p-8 border ${
           isDark
             ? 'bg-[#0D101B] border-white/12 text-slate-300'
             : 'bg-[#0D1017] border-[#0D1017] text-slate-300'
         }`}
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-10 border-b border-white/10">
-          {/* Brand Column */}
-          <div className="lg:col-span-5 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#C8FF32] text-[#090B10] font-display font-extrabold text-lg flex items-center justify-center relative">
-                FT
-                <span className="w-2 h-2 rounded-full bg-[#FF6B4A] absolute top-1.5 right-1.5" />
-              </div>
-              <span className="font-display font-extrabold text-2xl text-white tracking-tight">
-                FinTalent <span className="text-[#C8FF32]">Partners</span>
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-white/10">
+          {/* Brand + Desks */}
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={() => onNavigate('home')}
+                className="flex items-center gap-2.5 cursor-pointer"
+              >
+                <div className="w-9 h-9 rounded-xl bg-[#C8FF32] text-[#090B10] font-display font-extrabold text-base flex items-center justify-center">
+                  FT
+                </div>
+                <span className="font-display font-extrabold text-xl text-white tracking-tight">
+                  FinTalent <span className="text-[#C8FF32]">Partners</span>
+                </span>
+              </button>
+              <span className="inline-flex items-center gap-1.5 text-xs text-slate-400 font-mono">
+                <MapPin className="w-3.5 h-3.5 text-[#FF6B4A]" />
+                Mumbai BKC · Delhi CP · Bengaluru
               </span>
             </div>
 
-            <p className="text-xs sm:text-sm text-slate-400 max-w-md leading-relaxed">
-              Modern executive search &amp; fast-turnaround placement studio bridging Qualified CAs, Tax Specialists, Audit Leads, and Articles with premier firms &amp; corporates across India.
-            </p>
-
-            <div className="flex flex-wrap gap-3 pt-1 text-xs font-mono text-white">
-              <a
-                href="tel:+919821262613"
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/6 hover:bg-white/12 border border-white/10 transition"
-              >
+            <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-slate-300">
+              <a href="tel:+919821262613" className="inline-flex items-center gap-1.5 hover:text-[#C8FF32]">
                 <Phone className="w-3.5 h-3.5 text-[#12B886]" />
                 {DISPLAY_PHONE}
               </a>
               <a
                 href={`mailto:${CONTACT_EMAIL}`}
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/6 hover:bg-white/12 border border-white/10 transition"
+                className="inline-flex items-center gap-1.5 hover:text-[#C8FF32]"
               >
                 <Mail className="w-3.5 h-3.5 text-[#3B5BFF]" />
                 {CONTACT_EMAIL}
@@ -82,93 +78,41 @@ export const Footer: React.FC<FooterProps> = ({
             </div>
           </div>
 
-          {/* Instant Actions */}
-          <div className="lg:col-span-4 space-y-3">
-            <h3 className="font-display font-bold text-xs uppercase tracking-wider text-[#C8FF32]">
-              Zero-Friction Actions
-            </h3>
-            <ul className="space-y-2.5 text-xs sm:text-sm">
-              <li>
-                <button
-                  type="button"
-                  onClick={onExploreJobs}
-                  className="hover:text-[#C8FF32] transition cursor-pointer inline-flex items-center gap-1.5"
-                >
-                  <span>Live Open Roles Board</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 opacity-60" />
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  onClick={onBrowseTalent}
-                  className="hover:text-[#C8FF32] transition cursor-pointer inline-flex items-center gap-1.5"
-                >
-                  <span>Browse Pre-Vetted Talent Pool</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 opacity-60" />
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  onClick={onNavigateCandidate}
-                  className="hover:text-[#C8FF32] transition cursor-pointer"
-                >
-                  60-Second Candidate Fast Apply
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  onClick={onNavigateEmployer}
-                  className="hover:text-[#C8FF32] transition cursor-pointer"
-                >
-                  45-Second Recruiter Mandate Desk
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  onClick={onOpenTracker}
-                  className="text-[#C8FF32] font-bold hover:underline cursor-pointer"
-                >
-                  Track Live Application Status →
-                </button>
-              </li>
-            </ul>
-          </div>
+          {/* Sub-Page Links + Direct WhatsApp */}
+          <div className="flex flex-wrap items-center gap-2 text-xs font-bold">
+            {(
+              [
+                { id: 'jobs', label: 'Open Jobs' },
+                { id: 'talent', label: 'Talent Pool' },
+                { id: 'apply', label: '60s Apply' },
+                { id: 'hire', label: 'Hire 48h' },
+                { id: 'domains', label: 'Domains' },
+                { id: 'about', label: 'About & FAQ' },
+              ] as { id: AppRoute; label: string }[]
+            ).map((link) => (
+              <button
+                key={link.id}
+                type="button"
+                onClick={() => onNavigate(link.id)}
+                className="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/12 text-slate-200 hover:text-[#C8FF32] transition cursor-pointer"
+              >
+                {link.label}
+              </button>
+            ))}
 
-          {/* Regional Hubs */}
-          <div className="lg:col-span-3 space-y-3">
-            <h3 className="font-display font-bold text-xs uppercase tracking-wider text-[#FF6B4A]">
-              Search Desks
-            </h3>
-            <div className="space-y-2.5 text-xs text-slate-400">
-              <p className="flex items-start gap-2">
-                <MapPin className="w-3.5 h-3.5 text-[#C8FF32] shrink-0 mt-0.5" />
-                <span>
-                  <strong className="text-white">Mumbai:</strong> Bandra Kurla Complex (BKC)
-                </span>
-              </p>
-              <p className="flex items-start gap-2">
-                <MapPin className="w-3.5 h-3.5 text-[#3B5BFF] shrink-0 mt-0.5" />
-                <span>
-                  <strong className="text-white">Delhi NCR:</strong> Connaught Place
-                </span>
-              </p>
-              <p className="flex items-start gap-2">
-                <MapPin className="w-3.5 h-3.5 text-[#12B886] shrink-0 mt-0.5" />
-                <span>
-                  <strong className="text-white">Bengaluru:</strong> 100ft Rd, Indiranagar
-                </span>
-              </p>
-            </div>
+            <button
+              type="button"
+              onClick={onOpenTracker}
+              className="px-3 py-2 rounded-xl bg-[#3B5BFF]/20 hover:bg-[#3B5BFF]/30 text-[#9FB0FF] transition cursor-pointer"
+            >
+              Track Status
+            </button>
 
             <a
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-3 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#C8FF32] text-[#090B10] font-display font-extrabold text-xs cursor-pointer"
+              className="px-3.5 py-2 rounded-xl bg-[#C8FF32] text-[#090B10] font-display font-extrabold inline-flex items-center gap-1.5 cursor-pointer"
             >
               <MessageCircle className="w-3.5 h-3.5 fill-current" />
               <span>WhatsApp Amii Ma&apos;am</span>
@@ -176,16 +120,16 @@ export const Footer: React.FC<FooterProps> = ({
           </div>
         </div>
 
-        {/* Bottom Legal + Staff Console Trigger */}
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+        {/* Bottom Legal + Staff Console */}
+        <div className="pt-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
           <p>
-            © {new Date().getFullYear()} FinTalent Partners LLP · Led by Amii Ma&apos;am · ICAI Confidential Search
+            © {new Date().getFullYear()} FinTalent Partners LLP · Principal Search Lead: Amii Ma&apos;am · ICAI Confidential
           </p>
 
           <button
             type="button"
             onClick={onOpenAdmin}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/6 hover:bg-white/12 text-slate-300 hover:text-[#C8FF32] border border-white/10 transition cursor-pointer"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/6 hover:bg-white/12 text-slate-300 hover:text-[#C8FF32] border border-white/10 transition cursor-pointer"
           >
             <Lock className="w-3.5 h-3.5" />
             <span className="font-mono font-bold text-[11px]">Staff Admin Console</span>

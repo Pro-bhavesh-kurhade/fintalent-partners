@@ -94,7 +94,7 @@ export const Specializations: React.FC<SpecializationsProps> = ({ onSelectDomain
   const isDark = theme === 'dark';
 
   return (
-    <section id="specializations" className="px-3 sm:px-6 py-12 sm:py-16 scroll-mt-20">
+    <section id="specializations" className="px-3 sm:px-6 pt-5 pb-12 scroll-mt-20">
       <div className="max-w-7xl mx-auto space-y-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="space-y-2">

@@ -178,11 +178,13 @@ fintalent-partners/
 │       └── workspace-abstract-bg.jpg
 ├── src/
 │   ├── components/
-│   │   ├── Header.tsx              # Floating capsule navigation + theme switch
-│   │   ├── Hero.tsx                # Dual-persona hero + instant search & filters
+│   │   ├── Header.tsx              # Persistent header with clean sub-page tabs
+│   │   ├── Hero.tsx                # Focused, clutter-free main landing hero
 │   │   ├── CredibilityStrip.tsx    # High-contrast kinetic ticker tape
-│   │   ├── LiveExchange.tsx        # Real-time Open Roles & Pre-Vetted Talent board
-│   │   ├── ActionStudio.tsx        # Unified single-screen Candidate/Recruiter studio
+│   │   ├── HomeGatewayCards.tsx    # 4-card clean home gateway to all sub-pages
+│   │   ├── SubPageBar.tsx          # Instant "Back to Home" + cross-page top bar
+│   │   ├── LiveExchange.tsx        # /jobs & /talent dedicated live match board
+│   │   ├── ActionStudio.tsx        # /apply & /hire dedicated single-screen studio
 │   │   ├── CandidateForm.tsx       # 60-second CV drop with 1-tap presets
 │   │   ├── EmployerForm.tsx        # 45-second hiring mandate form with role presets
 │   │   ├── Specializations.tsx     # 6-vertical interactive finance bento grid

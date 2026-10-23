@@ -119,7 +119,7 @@ export const LiveExchange: React.FC<LiveExchangeProps> = ({
   };
 
   return (
-    <section id="live-exchange" className="px-3 sm:px-6 py-10 sm:py-14 scroll-mt-20">
+    <section id="live-exchange" className="px-3 sm:px-6 pt-5 pb-12 scroll-mt-20">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Top Row: Title + Dual Marketplace Switcher */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
