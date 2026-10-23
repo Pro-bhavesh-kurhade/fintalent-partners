@@ -1,38 +1,88 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { CredibilityStrip } from './components/CredibilityStrip';
+import { LiveExchange } from './components/LiveExchange';
+import { ActionStudio } from './components/ActionStudio';
 import { Specializations } from './components/Specializations';
-import { MarketplaceSplit } from './components/MarketplaceSplit';
-import { CandidateForm } from './components/CandidateForm';
-import { EmployerForm } from './components/EmployerForm';
 import { TrustSection } from './components/TrustSection';
 import { Footer } from './components/Footer';
-import { StatusTrackerModal } from './components/StatusTrackerModal';
-import { AdminPortal } from './components/AdminPortal';
+
+const StatusTrackerModal = lazy(() =>
+  import('./components/StatusTrackerModal').then((m) => ({ default: m.StatusTrackerModal }))
+);
+const AdminPortal = lazy(() =>
+  import('./components/AdminPortal').then((m) => ({ default: m.AdminPortal }))
+);
+import {
+  DEFAULT_SAMPLE_FIRMS,
+  DEFAULT_VETTED_TALENT,
+  FirmRequest,
+  VettedTalentProfile,
+  Candidate,
+  fetchAllCandidates,
+  fetchAllFirmRequests,
+  buildPublicTalentPool,
+} from './lib/supabase';
 
 function MainApp() {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
-  // Modal states
+  // Dual persona state ('candidate' | 'recruiter') synced cleanly across Hero, Live Board & Studio
+  const [persona, setPersona] = useState<'candidate' | 'recruiter'>('candidate');
+  const [activeBoardTab, setActiveBoardTab] = useState<'jobs' | 'talent'>('jobs');
+  const [activeStudioTab, setActiveStudioTab] = useState<'candidate' | 'employer'>('candidate');
+
+  // Shared instant search & domain filter
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedDomainFilter, setSelectedDomainFilter] = useState('All');
+
+  // Live Marketplace Data
+  const [openRoles, setOpenRoles] = useState<FirmRequest[]>(DEFAULT_SAMPLE_FIRMS);
+  const [vettedTalent, setVettedTalent] = useState<VettedTalentProfile[]>(DEFAULT_VETTED_TALENT);
+
+  // Fast-fill context passed when clicking a job or candidate card
+  const [formInitialDomain, setFormInitialDomain] = useState<string | null>(null);
+  const [selectedRoleForApply, setSelectedRoleForApply] = useState<FirmRequest | null>(null);
+  const [shortlistingTalent, setShortlistingTalent] = useState<VettedTalentProfile | null>(null);
+
+  // Modals
   const [isTrackerOpen, setIsTrackerOpen] = useState(false);
   const [trackerPhone, setTrackerPhone] = useState('');
   const [trackerDob, setTrackerDob] = useState('');
-
   const [isAdminOpen, setIsAdminOpen] = useState(false);
 
-  // Pre-selected domain when clicked from specializations
-  const [selectedDomain, setSelectedDomain] = useState<string | null>(null);
+  const syncMarketplaceData = useCallback(async () => {
+    const [firms, cands] = await Promise.all([
+      fetchAllFirmRequests(),
+      fetchAllCandidates(),
+    ]);
+    setOpenRoles(firms);
+    setVettedTalent(buildPublicTalentPool(cands));
+  }, []);
 
-  // Check URL hash on load for #admin or #track
+  useEffect(() => {
+    syncMarketplaceData();
+  }, [syncMarketplaceData]);
+
+  // URL Hash support (#admin, #track, #candidate-form, #employer-form)
   useEffect(() => {
     const handleHash = () => {
-      if (window.location.hash === '#admin') {
+      const h = window.location.hash;
+      if (h === '#admin') {
         setIsAdminOpen(true);
-      } else if (window.location.hash === '#track') {
+      } else if (h === '#track') {
         setIsTrackerOpen(true);
+      } else if (h === '#employer-form') {
+        setPersona('recruiter');
+        setActiveStudioTab('employer');
+        document.getElementById('action-studio')?.scrollIntoView({ behavior: 'smooth' });
+      } else if (h === '#candidate-form') {
+        setPersona('candidate');
+        setActiveStudioTab('candidate');
+        document.getElementById('action-studio')?.scrollIntoView({ behavior: 'smooth' });
       }
     };
     handleHash();
@@ -40,101 +90,206 @@ function MainApp() {
     return () => window.removeEventListener('hashchange', handleHash);
   }, []);
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+  const scrollTo = (id: string) => {
+    requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    });
   };
 
-  const handleOpenTrackerWithData = (phone: string, dob: string) => {
-    setTrackerPhone(phone);
-    setTrackerDob(dob);
+  const handlePersonaSwitch = (mode: 'candidate' | 'recruiter') => {
+    setPersona(mode);
+    setActiveBoardTab(mode === 'candidate' ? 'jobs' : 'talent');
+    setActiveStudioTab(mode === 'candidate' ? 'candidate' : 'employer');
+  };
+
+  const handleQuickApplyRole = (role: FirmRequest) => {
+    setSelectedRoleForApply(role);
+    setFormInitialDomain(role.domain);
+    setActiveStudioTab('candidate');
+    scrollTo('action-studio');
+  };
+
+  const handleShortlistTalent = (profile: VettedTalentProfile) => {
+    setShortlistingTalent(profile);
+    setActiveStudioTab('employer');
+    scrollTo('action-studio');
+  };
+
+  const handleSelectDomainCard = (domain: string) => {
+    setFormInitialDomain(domain);
+    setActiveStudioTab('candidate');
+    scrollTo('action-studio');
+  };
+
+  const handleOpenTracker = (ph = '', db = '') => {
+    setTrackerPhone(ph);
+    setTrackerDob(db);
     setIsTrackerOpen(true);
   };
 
-  const handleSelectDomain = (domain: string) => {
-    setSelectedDomain(domain);
-    scrollToSection('candidate-form');
+  const handleCandidateSubmitted = (newCand: Candidate) => {
+    setVettedTalent((prev) => buildPublicTalentPool([newCand]).slice(0, 1).concat(prev));
   };
 
+  const handleMandateCreated = (newMandate: FirmRequest) => {
+    setOpenRoles((prev) => [newMandate, ...prev]);
+  };
+
+  const activeOpenRolesCount = openRoles.filter((r) => r.status !== 'Closed').length;
+
   return (
-    <div 
+    <div
       className={`min-h-screen font-sans antialiased flex flex-col overflow-x-hidden transition-colors duration-200 ${
-        isDark 
-          ? 'bg-[#101426] text-slate-100 selection:bg-[#D4FF5A] selection:text-[#101426]' 
-          : 'bg-[#F7F6F2] text-[#101426] selection:bg-[#4563FF] selection:text-white'
+        isDark
+          ? 'bg-[#090B10] studio-grain text-slate-100 selection:bg-[#C8FF32] selection:text-[#090B10]'
+          : 'bg-[#FAF7F0] studio-grain-light text-[#0D1017] selection:bg-[#C8FF32] selection:text-[#0D1017]'
       }`}
     >
-      {/* Global Header with Light/Dark Mode Switcher */}
+      {/* Floating Studio Navigation Pill */}
       <Header
-        onOpenTracker={() => setIsTrackerOpen(true)}
-        onNavigateCandidate={() => scrollToSection('candidate-form')}
-        onNavigateEmployer={() => scrollToSection('employer-form')}
+        openRolesCount={activeOpenRolesCount}
+        onOpenTracker={() => handleOpenTracker()}
+        onExploreJobs={() => {
+          setPersona('candidate');
+          setActiveBoardTab('jobs');
+          scrollTo('live-exchange');
+        }}
+        onBrowseTalent={() => {
+          setPersona('recruiter');
+          setActiveBoardTab('talent');
+          scrollTo('live-exchange');
+        }}
+        onNavigateCandidate={() => {
+          setActiveStudioTab('candidate');
+          scrollTo('action-studio');
+        }}
+        onNavigateEmployer={() => {
+          setActiveStudioTab('employer');
+          scrollTo('action-studio');
+        }}
       />
 
-      {/* Main Content */}
       <main className="flex-1">
-        {/* Section 1: Hero Section */}
+        {/* 1. Architectural Hero + Instant Role/Talent Finder */}
         <Hero
-          onCandidateClick={() => scrollToSection('candidate-form')}
-          onEmployerClick={() => scrollToSection('employer-form')}
-          onTrackerClick={() => setIsTrackerOpen(true)}
+          persona={persona}
+          onPersonaChange={handlePersonaSwitch}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          selectedDomainFilter={selectedDomainFilter}
+          onQuickDomainSelect={(d) => {
+            setSelectedDomainFilter(d);
+            scrollTo('live-exchange');
+          }}
+          onJumpToExchange={() => scrollTo('live-exchange')}
+          onCandidateApplyClick={() => {
+            setActiveStudioTab('candidate');
+            scrollTo('action-studio');
+          }}
+          onEmployerPostClick={() => {
+            setActiveStudioTab('employer');
+            scrollTo('action-studio');
+          }}
+          onTrackerClick={() => handleOpenTracker()}
+          openRolesCount={activeOpenRolesCount}
+          vettedTalentCount={vettedTalent.length}
         />
 
-        {/* Section 2: Credibility Strip Marquee */}
+        {/* 2. High-Contrast Kinetic Ticker */}
         <CredibilityStrip />
 
-        {/* Section 3: Practice Domains & Specializations (Bento Grid) */}
-        <Specializations onSelectDomain={handleSelectDomain} />
-
-        {/* Section 4: Two-Sided Talent Marketplace */}
-        <MarketplaceSplit
-          onCandidateClick={() => scrollToSection('candidate-form')}
-          onEmployerClick={() => scrollToSection('employer-form')}
-          onTrackerClick={() => setIsTrackerOpen(true)}
+        {/* 3. Live Dual Marketplace Board (Jobs for Candidates <-> Vetted Pool for Recruiters) */}
+        <LiveExchange
+          activeBoardTab={activeBoardTab}
+          onTabChange={(tab) => {
+            setActiveBoardTab(tab);
+            setPersona(tab === 'jobs' ? 'candidate' : 'recruiter');
+          }}
+          openRoles={openRoles}
+          vettedTalent={vettedTalent}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          selectedDomain={selectedDomainFilter}
+          onDomainChange={setSelectedDomainFilter}
+          onQuickApplyRole={handleQuickApplyRole}
+          onShortlistTalent={handleShortlistTalent}
         />
 
-        {/* Section 5: Candidate Resume Submission Form (Anchor: #candidate-form) */}
-        <CandidateForm
-          onTrackNow={handleOpenTrackerWithData}
-          initialDomain={selectedDomain}
+        {/* 4. Single-Screen Express Action Studio (60s Apply / 45s Mandate / 1-Tap Tracker) */}
+        <ActionStudio
+          activeStudioTab={activeStudioTab}
+          onTabChange={setActiveStudioTab}
+          initialDomain={formInitialDomain}
+          selectedRole={selectedRoleForApply}
+          onClearSelectedRole={() => setSelectedRoleForApply(null)}
+          shortlistingTalent={shortlistingTalent}
+          onClearShortlistTalent={() => setShortlistingTalent(null)}
+          onCandidateSubmitted={handleCandidateSubmitted}
+          onMandateCreated={handleMandateCreated}
+          onOpenTracker={handleOpenTracker}
         />
 
-        {/* Section 6: Employer / CA Firm Requirement Form (Anchor: #employer-form) */}
-        <EmployerForm />
+        {/* 5. 6 Practice Verticals Bento Grid */}
+        <Specializations onSelectDomain={handleSelectDomainCard} />
 
-        {/* Section 7: Editorial About Amii Ma'am & FAQ Section */}
+        {/* 6. Practice Principal Desk (Amii Ma'am) & Snappy FAQ */}
         <TrustSection />
       </main>
 
-      {/* Global Footer */}
+      {/* 7. Sleek Studio Footer + Staff Console Access */}
       <Footer
         onOpenAdmin={() => setIsAdminOpen(true)}
-        onNavigateCandidate={() => scrollToSection('candidate-form')}
-        onNavigateEmployer={() => scrollToSection('employer-form')}
-        onOpenTracker={() => setIsTrackerOpen(true)}
-      />
-
-      {/* Candidate Status Tracker Modal */}
-      <StatusTrackerModal
-        isOpen={isTrackerOpen}
-        onClose={() => setIsTrackerOpen(false)}
-        initialPhone={trackerPhone}
-        initialDob={trackerDob}
-        onSwitchToApply={() => scrollToSection('candidate-form')}
-      />
-
-      {/* Admin Portal Modal */}
-      <AdminPortal
-        isOpen={isAdminOpen}
-        onClose={() => {
-          setIsAdminOpen(false);
-          if (window.location.hash === '#admin') {
-            window.history.pushState(null, '', window.location.pathname);
-          }
+        onExploreJobs={() => {
+          setActiveBoardTab('jobs');
+          scrollTo('live-exchange');
         }}
+        onBrowseTalent={() => {
+          setActiveBoardTab('talent');
+          scrollTo('live-exchange');
+        }}
+        onNavigateCandidate={() => {
+          setActiveStudioTab('candidate');
+          scrollTo('action-studio');
+        }}
+        onNavigateEmployer={() => {
+          setActiveStudioTab('employer');
+          scrollTo('action-studio');
+        }}
+        onOpenTracker={() => handleOpenTracker()}
       />
+
+      <Suspense fallback={null}>
+        {isTrackerOpen && (
+          <StatusTrackerModal
+            isOpen={isTrackerOpen}
+            onClose={() => {
+              setIsTrackerOpen(false);
+              if (window.location.hash === '#track') {
+                window.history.pushState(null, '', window.location.pathname);
+              }
+            }}
+            initialPhone={trackerPhone}
+            initialDob={trackerDob}
+            onSwitchToApply={() => {
+              setActiveStudioTab('candidate');
+              scrollTo('action-studio');
+            }}
+          />
+        )}
+
+        {isAdminOpen && (
+          <AdminPortal
+            isOpen={isAdminOpen}
+            onClose={() => {
+              setIsAdminOpen(false);
+              if (window.location.hash === '#admin') {
+                window.history.pushState(null, '', window.location.pathname);
+              }
+            }}
+            onDataChanged={syncMarketplaceData}
+          />
+        )}
+      </Suspense>
     </div>
   );
 }

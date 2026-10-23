@@ -1,7 +1,12 @@
 import React from 'react';
-import { 
-  ShieldCheck, Scale, Receipt, TrendingUp, 
-  Calculator, Users, ArrowUpRight, Sparkles 
+import {
+  ShieldCheck,
+  Scale,
+  Receipt,
+  TrendingUp,
+  Calculator,
+  Users,
+  ArrowUpRight,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
@@ -12,105 +17,75 @@ interface SpecializationsProps {
 export const ROLES_DATA = [
   {
     domain: 'Statutory Audit & Assurance',
-    accentColorDark: 'from-[#101426] to-[#1E293B]',
-    accentColorLight: 'from-white to-blue-50/40',
-    borderColorDark: 'border-[#4563FF]/40',
-    borderColorLight: 'border-[#4563FF]/30',
-    tagColorDark: 'bg-[#4563FF]/20 text-[#B9A7FF] border-[#4563FF]/30',
-    tagColorLight: 'bg-[#4563FF]/10 text-[#4563FF] border-[#4563FF]/25',
+    badge: 'High Velocity',
+    accentBg: 'bg-[#3B5BFF]',
+    accentText: 'text-white',
     icon: ShieldCheck,
-    iconColor: 'text-[#4563FF]',
-    tag: 'High Demand',
-    averageCtc: '10 - 22 LPA',
-    colSpan: 'lg:col-span-8',
-    roles: ['Audit Senior / Manager', 'Ind AS Specialist', 'CARO 2020 Reviewer'],
-    description: 'Statutory audits for listed entities, large corporates, CARO 2020 compliance, IFRS/Ind AS conversions, and internal financial controls (IFC).',
-    hirers: 'Top 20 CA Firms & MNC Shared Services',
+    averageCtc: '12 – 24 LPA',
+    colSpan: 'lg:col-span-6',
+    roles: ['Audit Senior / Manager', 'Ind AS Reviewer', 'IFC & CARO 2020'],
+    description:
+      'Listed & large-corporate statutory audits, Ind AS conversions, and partner-track assurance leadership.',
   },
   {
     domain: 'FP&A & Corporate Finance',
-    accentColorDark: 'from-[#101426] via-[#101426] to-[#1A2544]',
-    accentColorLight: 'from-white to-emerald-50/40',
-    borderColorDark: 'border-[#D4FF5A]/40',
-    borderColorLight: 'border-emerald-300',
-    tagColorDark: 'bg-[#D4FF5A]/20 text-[#D4FF5A] border-[#D4FF5A]/40',
-    tagColorLight: 'bg-emerald-50 text-emerald-800 border-emerald-300',
+    badge: 'VC & Unicorns',
+    accentBg: 'bg-[#C8FF32]',
+    accentText: 'text-[#090B10]',
     icon: TrendingUp,
-    iconColor: 'text-[#10B981]',
-    tag: 'VC & High-Growth',
-    averageCtc: '14 - 30 LPA',
-    colSpan: 'lg:col-span-4',
-    roles: ['FP&A Manager', 'Valuation Modeler', 'M&A Due Diligence'],
-    description: 'Annual operating plans (AOP), rolling forecasts, unit economics, fundraising pitch decks, cash runway optimization, and DCF valuations.',
-    hirers: 'Series A-D Startups & Global MNCs',
+    averageCtc: '16 – 32 LPA',
+    colSpan: 'lg:col-span-6',
+    roles: ['FP&A Lead', 'Strategic Finance', 'M&A Valuation'],
+    description:
+      'Annual operating plans, SaaS unit economics, investor decks, runway modeling, and CFO-office mandates.',
   },
   {
     domain: 'Direct Taxation & Litigations',
-    accentColorDark: 'from-[#101426] to-[#1F2338]',
-    accentColorLight: 'from-white to-purple-50/40',
-    borderColorDark: 'border-[#B9A7FF]/40',
-    borderColorLight: 'border-purple-200',
-    tagColorDark: 'bg-[#B9A7FF]/20 text-[#B9A7FF] border-[#B9A7FF]/40',
-    tagColorLight: 'bg-purple-50 text-purple-800 border-purple-200',
+    badge: 'Advisory',
+    accentBg: 'bg-[#FF6B4A]',
+    accentText: 'text-white',
     icon: Scale,
-    iconColor: 'text-[#B9A7FF]',
-    tag: 'Active Hiring',
-    averageCtc: '9 - 24 LPA',
+    averageCtc: '10 – 22 LPA',
     colSpan: 'lg:col-span-4',
-    roles: ['Tax Litigation Counsel', 'Transfer Pricing', 'Faceless Appeals'],
-    description: 'Corporate income tax advisory, scrutiny assessments (Sec 143/147), search & seizure, and international tax treaties (DTAA).',
-    hirers: 'Boutique Tax Firms & Conglomerates',
+    roles: ['Tax Counsel', 'Transfer Pricing', 'DTAA & Appeals'],
+    description:
+      'Corporate tax structuring, faceless assessments, ITAT pleadings, and international cross-border tax.',
   },
   {
     domain: 'Indirect Tax / GST',
-    accentColorDark: 'from-[#101426] to-[#0D2422]',
-    accentColorLight: 'from-white to-teal-50/40',
-    borderColorDark: 'border-[#10B981]/40',
-    borderColorLight: 'border-teal-200',
-    tagColorDark: 'bg-[#10B981]/20 text-[#10B981] border-[#10B981]/40',
-    tagColorLight: 'bg-teal-50 text-teal-800 border-teal-200',
+    badge: 'Pan-India Surge',
+    accentBg: 'bg-[#12B886]',
+    accentText: 'text-white',
     icon: Receipt,
-    iconColor: 'text-[#10B981]',
-    tag: 'Continuous Surge',
-    averageCtc: '8 - 20 LPA',
+    averageCtc: '9 – 20 LPA',
     colSpan: 'lg:col-span-4',
-    roles: ['GST Lead', 'ITC Reconciliation', 'Show Cause Advisor'],
-    description: 'GST compliance audits, GST 9/9C finalization, department audit handling, and High Court / Appellate filings.',
-    hirers: 'Pan-India CA Firms & Corporates',
+    roles: ['GST Manager', 'SCN Drafting', '9/9C Audit Lead'],
+    description:
+      'Departmental audit representation, refund claims, show-cause replies, and multi-state GST compliance.',
   },
   {
     domain: 'CA Articleship & Trainee Roles',
-    accentColorDark: 'from-[#101426] to-[#251D3A]',
-    accentColorLight: 'from-white to-amber-50/40',
-    borderColorDark: 'border-[#B9A7FF]/30',
-    borderColorLight: 'border-amber-200',
-    tagColorDark: 'bg-[#B9A7FF]/15 text-slate-200 border-[#B9A7FF]/30',
-    tagColorLight: 'bg-amber-50 text-amber-800 border-amber-200',
+    badge: 'ICAI Stipend+',
+    accentBg: 'bg-[#7C5CFF]',
+    accentText: 'text-white',
     icon: Users,
-    iconColor: 'text-[#B9A7FF]',
-    tag: 'ICAI Compliant',
-    averageCtc: '₹12K - ₹45K/mo Stipend',
+    averageCtc: '₹15K – ₹40K / mo',
     colSpan: 'lg:col-span-4',
-    roles: ['1st Year Article', 'Transfer Case Article', 'Industrial Trainee'],
-    description: 'Pre-screened CA Inter students with completed ITT & Orientation. Multi-disciplinary audit and taxation exposure.',
-    hirers: 'Sole Proprietors to Category 1 CA Firms',
+    roles: ['1st Yr Article', 'Transfer Case', 'Industrial Trainee'],
+    description:
+      'Curated CA Inter articleship seats and corporate industrial training with guaranteed exam leave.',
   },
   {
     domain: 'Accounting, Finalization & ERP (Tally/SAP)',
-    accentColorDark: 'from-[#101426] to-[#162238]',
-    accentColorLight: 'from-white to-sky-50/40',
-    borderColorDark: 'border-[#4563FF]/30',
-    borderColorLight: 'border-sky-200',
-    tagColorDark: 'bg-white/10 text-white border-white/20',
-    tagColorLight: 'bg-sky-50 text-sky-800 border-sky-200',
+    badge: 'Core Controllership',
+    accentBg: 'bg-[#F59F00]',
+    accentText: 'text-[#090B10]',
     icon: Calculator,
-    iconColor: 'text-[#4563FF]',
-    tag: 'Core Essential',
-    averageCtc: '6 - 16 LPA',
+    averageCtc: '8 – 18 LPA',
     colSpan: 'lg:col-span-12',
-    roles: ['Finance Controller', 'Senior Accountant', 'SAP FICO Lead', 'Tally Finalization'],
-    description: 'Balance sheet finalization, Schedule III preparation, audit coordination, payroll TDS, bank reconciliation, and ERP migration (SAP S/4 HANA & Zoho Books).',
-    hirers: 'SMEs, CA Back-Offices & Corporates',
+    roles: ['Finance Controller', 'SAP S/4 HANA FICO', 'Schedule III Close', 'R2R Lead'],
+    description:
+      'End-to-end books closure, Schedule III financial statements, plant costing, and SAP / ERP transitions.',
   },
 ];
 
@@ -119,67 +94,26 @@ export const Specializations: React.FC<SpecializationsProps> = ({ onSelectDomain
   const isDark = theme === 'dark';
 
   return (
-    <section 
-      id="specializations" 
-      className={`py-20 lg:py-28 border-b scroll-mt-20 relative overflow-hidden transition-colors duration-200 ${
-        isDark 
-          ? 'bg-[#101426] text-white border-white/10' 
-          : 'bg-[#F7F6F2] text-[#101426] border-slate-200'
-      }`}
-    >
-      {/* Background ambient accents */}
-      <div 
-        className={`absolute top-1/4 -left-48 w-96 h-96 rounded-full blur-3xl pointer-events-none ${
-          isDark ? 'bg-[#4563FF]/10' : 'bg-[#4563FF]/5'
-        }`} 
-      />
-      <div 
-        className={`absolute bottom-10 right-0 w-96 h-96 rounded-full blur-3xl pointer-events-none ${
-          isDark ? 'bg-[#D4FF5A]/10' : 'bg-[#10B981]/5'
-        }`} 
-      />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
-          <div className="space-y-3 max-w-2xl">
-            <div 
-              className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold ${
-                isDark 
-                  ? 'bg-white/5 border-white/10 text-[#D4FF5A]' 
-                  : 'bg-white border-slate-300 text-[#4563FF] shadow-2xs'
-              }`}
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span className="font-display font-bold uppercase tracking-wider text-[11px]">
-                CURATED PRACTICE AREAS
-              </span>
-            </div>
-            <h2 className="font-display font-extrabold text-3xl sm:text-5xl tracking-tight uppercase leading-[1.1]">
-              <span className={isDark ? 'text-white' : 'text-[#101426]'}>
-                EXPLORE FINANCE
-              </span> <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4563FF] via-[#7B91FF] to-[#10B981]">
-                CAREER DOMAINS
+    <section id="specializations" className="px-3 sm:px-6 py-12 sm:py-16 scroll-mt-20">
+      <div className="max-w-7xl mx-auto space-y-10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div className="space-y-2">
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#FF6B4A]">
+              ✦ 6 Specialized Finance Verticals
+            </span>
+            <h2 className="font-display font-extrabold text-3xl sm:text-5xl tracking-tight">
+              Pick Your Vertical.{' '}
+              <span className={isDark ? 'text-[#C8FF32]' : 'text-[#3B5BFF]'}>
+                1-Tap Fast Apply.
               </span>
             </h2>
-            <p className={`text-sm sm:text-base leading-relaxed ${
-              isDark ? 'text-slate-300' : 'text-slate-700'
-            }`}>
-              Every practice is overseen by specialized recruiters who understand ICAI regulations, technical standards, and institutional talent benchmarks.
-            </p>
           </div>
-
-          <div className={`text-xs font-mono hidden md:block ${
-            isDark ? 'text-slate-400' : 'text-slate-500'
-          }`}>
-            <span>[ SELECT A DOMAIN TO PREFILL CANDIDATE FORM ]</span>
-          </div>
+          <p className={`text-xs sm:text-sm max-w-md ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+            Click any domain card below to pre-select that specialization in the 60-second application studio.
+          </p>
         </div>
 
-        {/* Bento Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
           {ROLES_DATA.map((item) => {
             const Icon = item.icon;
             return (
@@ -187,7 +121,6 @@ export const Specializations: React.FC<SpecializationsProps> = ({ onSelectDomain
                 key={item.domain}
                 role="button"
                 tabIndex={0}
-                aria-label={`Select domain ${item.domain} and apply`}
                 onClick={() => onSelectDomain(item.domain)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -195,109 +128,77 @@ export const Specializations: React.FC<SpecializationsProps> = ({ onSelectDomain
                     onSelectDomain(item.domain);
                   }
                 }}
-                className={`${item.colSpan} group cursor-pointer relative rounded-3xl p-7 sm:p-8 bg-gradient-to-b ${
-                  isDark ? item.accentColorDark : item.accentColorLight
-                } border ${
-                  isDark ? item.borderColorDark : item.borderColorLight
-                } shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col justify-between overflow-hidden hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-[#4563FF] outline-none`}
+                className={`${item.colSpan} group rounded-3xl p-6 sm:p-7 flex flex-col justify-between cursor-pointer transition-all outline-none ${
+                  isDark
+                    ? 'bg-[#111522] border border-white/12 hover:border-[#C8FF32]/65 shadow-xl'
+                    : 'bg-white border-[1.5px] border-[#0D1017] shadow-[5px_5px_0px_0px_#0D1017] hover:-translate-y-1'
+                }`}
               >
-                <div>
-                  {/* Top bar inside card */}
-                  <div className="flex items-start justify-between gap-4 mb-6">
-                    <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center group-hover:scale-110 transition-all ${
-                      isDark ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200 shadow-2xs'
-                    }`}>
-                      <Icon className={`w-6 h-6 ${item.iconColor}`} />
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div
+                      className={`w-11 h-11 rounded-2xl ${item.accentBg} ${item.accentText} flex items-center justify-center shadow-md group-hover:scale-105 transition-transform`}
+                    >
+                      <Icon className="w-5 h-5" />
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span className={`text-[11px] font-display font-bold px-3 py-1 rounded-full border ${
-                        isDark ? item.tagColorDark : item.tagColorLight
-                      }`}>
-                        {item.tag}
+                      <span
+                        className={`text-[11px] font-mono font-bold px-3 py-1 rounded-full ${
+                          isDark
+                            ? 'bg-white/8 text-slate-200 border border-white/10'
+                            : 'bg-[#FAF7F0] text-[#0D1017] border border-[#0D1017]/20'
+                        }`}
+                      >
+                        {item.averageCtc}
                       </span>
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
-                        isDark 
-                          ? 'bg-white/5 group-hover:bg-[#D4FF5A]' 
-                          : 'bg-slate-100 group-hover:bg-[#4563FF]'
-                      }`}>
-                        <ArrowUpRight className={`w-4 h-4 transition-colors ${
-                          isDark 
-                            ? 'text-slate-300 group-hover:text-[#101426]' 
-                            : 'text-slate-600 group-hover:text-white'
-                        }`} />
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center transition ${
+                          isDark
+                            ? 'bg-white/8 group-hover:bg-[#C8FF32] group-hover:text-[#090B10]'
+                            : 'bg-[#FAF7F0] group-hover:bg-[#0D1017] group-hover:text-[#C8FF32]'
+                        }`}
+                      >
+                        <ArrowUpRight className="w-4 h-4" />
                       </div>
                     </div>
                   </div>
 
-                  {/* Title & Description */}
-                  <h3 className={`font-display font-extrabold text-xl sm:text-2xl transition-colors ${
-                    isDark 
-                      ? 'text-white group-hover:text-[#D4FF5A]' 
-                      : 'text-[#101426] group-hover:text-[#4563FF]'
-                  }`}>
-                    {item.domain}
-                  </h3>
-
-                  <p className={`text-xs sm:text-sm mt-2.5 leading-relaxed ${
-                    isDark ? 'text-slate-300' : 'text-slate-600'
-                  }`}>
-                    {item.description}
-                  </p>
+                  <div>
+                    <span className="text-[10px] font-mono uppercase tracking-widest opacity-60">
+                      {item.badge}
+                    </span>
+                    <h3 className="font-display font-extrabold text-xl sm:text-2xl mt-0.5">
+                      {item.domain}
+                    </h3>
+                    <p
+                      className={`text-xs sm:text-sm mt-2 leading-relaxed ${
+                        isDark ? 'text-slate-400' : 'text-slate-600'
+                      }`}
+                    >
+                      {item.description}
+                    </p>
+                  </div>
                 </div>
 
-                {/* Bottom specs */}
-                <div className={`mt-8 pt-6 border-t space-y-4 ${
-                  isDark ? 'border-white/10' : 'border-slate-200'
-                }`}>
-                  <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
-                    <div>
-                      <span className={`block text-[10px] uppercase tracking-wider ${
-                        isDark ? 'text-slate-400' : 'text-slate-500'
-                      }`}>
-                        Average Comp:
-                      </span>
-                      <span className={`font-display font-bold text-sm ${
-                        isDark ? 'text-[#D4FF5A]' : 'text-[#4563FF]'
-                      }`}>
-                        {item.averageCtc}
-                      </span>
-                    </div>
-                    <div className="text-right">
-                      <span className={`block text-[10px] uppercase tracking-wider ${
-                        isDark ? 'text-slate-400' : 'text-slate-500'
-                      }`}>
-                        Hiring Clients:
-                      </span>
-                      <span className={`font-medium ${
-                        isDark ? 'text-slate-200' : 'text-slate-700'
-                      }`}>
-                        {item.hirers}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Common openings tags */}
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    {item.roles.map((role) => (
-                      <span
-                        key={role}
-                        className={`text-[11px] font-medium px-2.5 py-1 rounded-lg border transition-colors ${
-                          isDark 
-                            ? 'bg-white/5 text-slate-300 border-white/10 group-hover:border-white/20' 
-                            : 'bg-white text-slate-700 border-slate-200 group-hover:border-slate-300 shadow-2xs'
-                        }`}
-                      >
-                        {role}
-                      </span>
-                    ))}
-                  </div>
+                <div className="pt-5 mt-5 border-t border-current/10 flex flex-wrap gap-1.5">
+                  {item.roles.map((r) => (
+                    <span
+                      key={r}
+                      className={`text-[11px] font-semibold px-2.5 py-1 rounded-lg ${
+                        isDark
+                          ? 'bg-white/6 text-slate-200'
+                          : 'bg-[#FAF7F0] text-[#0D1017] border border-[#0D1017]/12'
+                      }`}
+                    >
+                      {r}
+                    </span>
+                  ))}
                 </div>
               </div>
             );
           })}
         </div>
-
       </div>
     </section>
   );

@@ -1,9 +1,23 @@
 import React from 'react';
-import { Mail, Phone, MapPin, Lock, ExternalLink, Sparkles } from 'lucide-react';
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Lock,
+  MessageCircle,
+  ArrowUpRight,
+} from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import {
+  CONTACT_EMAIL,
+  DISPLAY_PHONE,
+  buildWhatsAppUrl,
+} from '../lib/supabase';
 
 interface FooterProps {
   onOpenAdmin: () => void;
+  onExploreJobs: () => void;
+  onBrowseTalent: () => void;
   onNavigateCandidate: () => void;
   onNavigateEmployer: () => void;
   onOpenTracker: () => void;
@@ -11,6 +25,8 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({
   onOpenAdmin,
+  onExploreJobs,
+  onBrowseTalent,
   onNavigateCandidate,
   onNavigateEmployer,
   onOpenTracker,
@@ -18,184 +34,163 @@ export const Footer: React.FC<FooterProps> = ({
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
-  const WHATSAPP_URL =
-    "https://wa.me/919821262613?text=Hi%20Amii%20Ma%27am%2C%20reaching%20out%20via%20FinTalent%20Partners";
+  const whatsappUrl = buildWhatsAppUrl(
+    "Hi Amii Ma'am, reaching out via FinTalent Partners!"
+  );
 
   return (
-    <footer 
-      role="contentinfo"
-      className={`text-xs border-t transition-colors duration-200 relative overflow-hidden ${
-        isDark 
-          ? 'bg-[#0A0D1A] text-slate-400 border-white/10' 
-          : 'bg-[#F4F3EE] text-slate-600 border-slate-200'
-      }`}
-    >
-      {/* Decorative ambient gradient */}
-      <div 
-        className={`absolute bottom-0 left-1/3 w-96 h-96 rounded-full blur-3xl pointer-events-none ${
-          isDark ? 'bg-[#4563FF]/10' : 'bg-[#4563FF]/5'
-        }`} 
-      />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
-          
-          {/* Brand info (col-span-2) */}
-          <div className="lg:col-span-2 space-y-5">
-            <div className="flex items-center gap-3.5">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#4563FF] to-[#D4FF5A] p-0.5 shadow-md">
-                <div className={`w-full h-full rounded-[10px] flex items-center justify-center font-display font-extrabold text-lg ${
-                  isDark ? 'bg-[#101426] text-white' : 'bg-[#101426] text-white'
-                }`}>
-                  F<span className="text-[#D4FF5A]">T</span>
-                </div>
+    <footer className="px-3 sm:px-6 pb-8 pt-6" role="contentinfo">
+      <div
+        className={`max-w-7xl mx-auto rounded-[2rem] p-8 sm:p-12 border ${
+          isDark
+            ? 'bg-[#0D101B] border-white/12 text-slate-300'
+            : 'bg-[#0D1017] border-[#0D1017] text-slate-300'
+        }`}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-10 border-b border-white/10">
+          {/* Brand Column */}
+          <div className="lg:col-span-5 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#C8FF32] text-[#090B10] font-display font-extrabold text-lg flex items-center justify-center relative">
+                FT
+                <span className="w-2 h-2 rounded-full bg-[#FF6B4A] absolute top-1.5 right-1.5" />
               </div>
-              <span className={`font-display font-black text-2xl tracking-tight uppercase ${
-                isDark ? 'text-white' : 'text-[#101426]'
-              }`}>
-                FinTalent <span className="text-[#4563FF]">Partners</span>
+              <span className="font-display font-extrabold text-2xl text-white tracking-tight">
+                FinTalent <span className="text-[#C8FF32]">Partners</span>
               </span>
             </div>
-            
-            <p className={`leading-relaxed text-xs max-w-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-              Executive Search Practice specialized in Chartered Accountancy Firms, Big 4 Alumni Networks, Fortune 500 Corporates, and VC-funded Startups across India.
+
+            <p className="text-xs sm:text-sm text-slate-400 max-w-md leading-relaxed">
+              Modern executive search &amp; fast-turnaround placement studio bridging Qualified CAs, Tax Specialists, Audit Leads, and Articles with premier firms &amp; corporates across India.
             </p>
 
-            <div className={`space-y-2.5 text-xs pt-1 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-              <div className="flex items-center gap-2.5">
-                <Phone className="w-3.5 h-3.5 text-[#10B981] shrink-0" />
-                <span>Executive Search Lead (Amii Ma'am): <strong className={isDark ? 'text-white font-mono' : 'text-[#101426] font-mono'}>+91 98212 62613</strong></span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <Mail className="w-3.5 h-3.5 text-[#4563FF] shrink-0" />
-                <span>recruitment@fintalentpartners.com</span>
-              </div>
+            <div className="flex flex-wrap gap-3 pt-1 text-xs font-mono text-white">
+              <a
+                href="tel:+919821262613"
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/6 hover:bg-white/12 border border-white/10 transition"
+              >
+                <Phone className="w-3.5 h-3.5 text-[#12B886]" />
+                {DISPLAY_PHONE}
+              </a>
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/6 hover:bg-white/12 border border-white/10 transition"
+              >
+                <Mail className="w-3.5 h-3.5 text-[#3B5BFF]" />
+                {CONTACT_EMAIL}
+              </a>
             </div>
           </div>
 
-          {/* Practice Domains */}
-          <div>
-            <h3 className={`font-display font-bold uppercase text-xs tracking-wider mb-4 ${
-              isDark ? 'text-white' : 'text-[#101426]'
-            }`}>
-              Practice Domains
+          {/* Instant Actions */}
+          <div className="lg:col-span-4 space-y-3">
+            <h3 className="font-display font-bold text-xs uppercase tracking-wider text-[#C8FF32]">
+              Zero-Friction Actions
             </h3>
-            <ul className="space-y-2.5">
-              <li><span className={`transition cursor-pointer ${isDark ? 'hover:text-[#D4FF5A]' : 'hover:text-[#4563FF]'}`}>Statutory Audit & Assurance</span></li>
-              <li><span className={`transition cursor-pointer ${isDark ? 'hover:text-[#D4FF5A]' : 'hover:text-[#4563FF]'}`}>Direct Tax & Litigations</span></li>
-              <li><span className={`transition cursor-pointer ${isDark ? 'hover:text-[#D4FF5A]' : 'hover:text-[#4563FF]'}`}>GST & Indirect Taxation</span></li>
-              <li><span className={`transition cursor-pointer ${isDark ? 'hover:text-[#D4FF5A]' : 'hover:text-[#4563FF]'}`}>FP&A & Corporate Finance</span></li>
-              <li><span className={`transition cursor-pointer ${isDark ? 'hover:text-[#D4FF5A]' : 'hover:text-[#4563FF]'}`}>Accounting & SAP Finalization</span></li>
-              <li><span className={`transition cursor-pointer ${isDark ? 'hover:text-[#D4FF5A]' : 'hover:text-[#4563FF]'}`}>CA Articleship Placements</span></li>
-            </ul>
-          </div>
-
-          {/* Quick Access */}
-          <div>
-            <h3 className={`font-display font-bold uppercase text-xs tracking-wider mb-4 ${
-              isDark ? 'text-white' : 'text-[#101426]'
-            }`}>
-              Quick Links
-            </h3>
-            <ul className="space-y-2.5">
+            <ul className="space-y-2.5 text-xs sm:text-sm">
+              <li>
+                <button
+                  type="button"
+                  onClick={onExploreJobs}
+                  className="hover:text-[#C8FF32] transition cursor-pointer inline-flex items-center gap-1.5"
+                >
+                  <span>Live Open Roles Board</span>
+                  <ArrowUpRight className="w-3.5 h-3.5 opacity-60" />
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={onBrowseTalent}
+                  className="hover:text-[#C8FF32] transition cursor-pointer inline-flex items-center gap-1.5"
+                >
+                  <span>Browse Pre-Vetted Talent Pool</span>
+                  <ArrowUpRight className="w-3.5 h-3.5 opacity-60" />
+                </button>
+              </li>
               <li>
                 <button
                   type="button"
                   onClick={onNavigateCandidate}
-                  className={`transition text-left cursor-pointer ${isDark ? 'hover:text-[#D4FF5A]' : 'hover:text-[#4563FF]'}`}
+                  className="hover:text-[#C8FF32] transition cursor-pointer"
                 >
-                  Submit Profile (Candidates)
+                  60-Second Candidate Fast Apply
                 </button>
               </li>
               <li>
                 <button
                   type="button"
                   onClick={onNavigateEmployer}
-                  className={`transition text-left cursor-pointer ${isDark ? 'hover:text-[#D4FF5A]' : 'hover:text-[#4563FF]'}`}
+                  className="hover:text-[#C8FF32] transition cursor-pointer"
                 >
-                  Hire Finance Talent (Employers)
+                  45-Second Recruiter Mandate Desk
                 </button>
               </li>
               <li>
                 <button
                   type="button"
                   onClick={onOpenTracker}
-                  className={`font-bold hover:underline flex items-center gap-1.5 cursor-pointer ${
-                    isDark ? 'text-[#D4FF5A]' : 'text-[#4563FF]'
-                  }`}
+                  className="text-[#C8FF32] font-bold hover:underline cursor-pointer"
                 >
-                  <span>Track Application Status</span>
+                  Track Live Application Status →
                 </button>
-              </li>
-              <li>
-                <a
-                  href={WHATSAPP_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`transition flex items-center gap-1.5 ${isDark ? 'hover:text-[#D4FF5A]' : 'hover:text-[#4563FF]'}`}
-                  aria-label="WhatsApp Amii Ma'am on +91 9821262613"
-                >
-                  <span>WhatsApp Amii Ma'am</span>
-                  <ExternalLink className="w-3 h-3" />
-                </a>
               </li>
             </ul>
           </div>
 
-          {/* Regional Desks */}
-          <div>
-            <h3 className={`font-display font-bold uppercase text-xs tracking-wider mb-4 ${
-              isDark ? 'text-white' : 'text-[#101426]'
-            }`}>
-              Executive Desks
+          {/* Regional Hubs */}
+          <div className="lg:col-span-3 space-y-3">
+            <h3 className="font-display font-bold text-xs uppercase tracking-wider text-[#FF6B4A]">
+              Search Desks
             </h3>
-            <div className={`space-y-2.5 text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-              <div className="flex items-start gap-2">
-                <MapPin className="w-3.5 h-3.5 text-[#10B981] shrink-0 mt-0.5" />
-                <span><strong className={isDark ? 'text-white' : 'text-[#101426]'}>Mumbai:</strong> Bandra Kurla Complex (BKC)</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <MapPin className="w-3.5 h-3.5 text-[#4563FF] shrink-0 mt-0.5" />
-                <span><strong className={isDark ? 'text-white' : 'text-[#101426]'}>Delhi NCR:</strong> Barakhamba Road, Connaught Place</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <MapPin className="w-3.5 h-3.5 text-[#B9A7FF] shrink-0 mt-0.5" />
-                <span><strong className={isDark ? 'text-white' : 'text-[#101426]'}>Bengaluru:</strong> 100ft Road, Indiranagar</span>
-              </div>
+            <div className="space-y-2.5 text-xs text-slate-400">
+              <p className="flex items-start gap-2">
+                <MapPin className="w-3.5 h-3.5 text-[#C8FF32] shrink-0 mt-0.5" />
+                <span>
+                  <strong className="text-white">Mumbai:</strong> Bandra Kurla Complex (BKC)
+                </span>
+              </p>
+              <p className="flex items-start gap-2">
+                <MapPin className="w-3.5 h-3.5 text-[#3B5BFF] shrink-0 mt-0.5" />
+                <span>
+                  <strong className="text-white">Delhi NCR:</strong> Connaught Place
+                </span>
+              </p>
+              <p className="flex items-start gap-2">
+                <MapPin className="w-3.5 h-3.5 text-[#12B886] shrink-0 mt-0.5" />
+                <span>
+                  <strong className="text-white">Bengaluru:</strong> 100ft Rd, Indiranagar
+                </span>
+              </p>
             </div>
-          </div>
 
-        </div>
-
-        {/* Bottom bar with discrete Admin Portal link */}
-        <div className={`pt-8 mt-12 border-t flex flex-col sm:flex-row items-center justify-between gap-4 text-xs ${
-          isDark ? 'border-white/10' : 'border-slate-200'
-        }`}>
-          <div className={`text-center sm:text-left ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
-            © {new Date().getFullYear()} FinTalent Partners LLP. Head of Practice: Amii Ma'am. ICAI compliant & confidential.
-          </div>
-
-          <div className="flex items-center gap-4">
-            <span className={`hidden sm:inline ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-              Protected by Supabase Cloud
-            </span>
-            <button
-              type="button"
-              onClick={onOpenAdmin}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition cursor-pointer ${
-                isDark 
-                  ? 'bg-white/5 hover:bg-white/10 text-slate-400 hover:text-[#D4FF5A] border-white/10' 
-                  : 'bg-white hover:bg-slate-50 text-slate-600 hover:text-[#4563FF] border-slate-300 shadow-sm'
-              }`}
-              title="Restricted Staff Portal"
-              aria-label="Open staff admin portal"
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#C8FF32] text-[#090B10] font-display font-extrabold text-xs cursor-pointer"
             >
-              <Lock className="w-3 h-3" />
-              <span className="font-medium text-[11px]">Admin Portal</span>
-            </button>
+              <MessageCircle className="w-3.5 h-3.5 fill-current" />
+              <span>WhatsApp Amii Ma&apos;am</span>
+            </a>
           </div>
         </div>
 
+        {/* Bottom Legal + Staff Console Trigger */}
+        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+          <p>
+            © {new Date().getFullYear()} FinTalent Partners LLP · Led by Amii Ma&apos;am · ICAI Confidential Search
+          </p>
+
+          <button
+            type="button"
+            onClick={onOpenAdmin}
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/6 hover:bg-white/12 text-slate-300 hover:text-[#C8FF32] border border-white/10 transition cursor-pointer"
+          >
+            <Lock className="w-3.5 h-3.5" />
+            <span className="font-mono font-bold text-[11px]">Staff Admin Console</span>
+          </button>
+        </div>
       </div>
     </footer>
   );

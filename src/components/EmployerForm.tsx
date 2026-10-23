@@ -1,26 +1,77 @@
-import React, { useState } from 'react';
-import { 
-  Building2, MessageCircle, Send, CheckCircle2, AlertCircle, 
-  Loader2, Clock, ShieldCheck 
+import React, { useState, useEffect } from 'react';
+import {
+  MessageCircle,
+  Send,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+  ShieldCheck,
+  Zap,
+  X,
+  Users,
 } from 'lucide-react';
-import { submitFirmRequirement } from '../lib/supabase';
+import {
+  submitFirmRequirement,
+  ORG_TYPES,
+  PRACTICE_DOMAINS,
+  VettedTalentProfile,
+  FirmRequest,
+  buildWhatsAppUrl,
+} from '../lib/supabase';
 import { useTheme } from '../context/ThemeContext';
 
-export const ORG_TYPES = [
-  'CA / Audit Firm',
-  'Corporate / MNC',
-  'Startup / MSME',
-] as const;
+interface EmployerFormProps {
+  shortlistingTalent?: VettedTalentProfile | null;
+  onClearShortlistTalent?: () => void;
+  onMandateCreated?: (mandate: FirmRequest) => void;
+}
 
-export const EMPLOYER_DOMAINS = [
-  'Statutory Audit & Assurance',
-  'Direct Taxation & Litigations',
-  'Indirect Tax / GST',
-  'FP&A & Corporate Finance',
-  'Accounting, Finalization & ERP (Tally/SAP)',
-] as const;
+const ROLE_PRESETS = [
+  {
+    label: 'Statutory Audit Senior',
+    role: 'Senior Statutory Audit Manager',
+    domain: 'Statutory Audit & Assurance',
+    budget: '15 - 22 LPA',
+  },
+  {
+    label: 'Startup FP&A Lead',
+    role: 'FP&A & Strategic Finance Lead',
+    domain: 'FP&A & Corporate Finance',
+    budget: '22 - 30 LPA',
+  },
+  {
+    label: 'GST Litigation Lead',
+    role: 'GST Advisory & Litigation Manager',
+    domain: 'Indirect Tax / GST',
+    budget: '12 - 18 LPA',
+  },
+  {
+    label: 'Direct Tax Manager',
+    role: 'Direct Tax & Transfer Pricing Lead',
+    domain: 'Direct Taxation & Litigations',
+    budget: '14 - 20 LPA',
+  },
+  {
+    label: 'CA Article Trainee',
+    role: 'CA Article Assistant / Industrial Trainee',
+    domain: 'CA Articleship & Trainee Roles',
+    budget: '₹20,000 - ₹35,000 / mo',
+  },
+  {
+    label: 'SAP / Controller',
+    role: 'Finance Controller (SAP FICO / R2R)',
+    domain: 'Accounting, Finalization & ERP (Tally/SAP)',
+    budget: '14 - 20 LPA',
+  },
+];
 
-export const EmployerForm: React.FC = () => {
+const CITY_PRESETS = ['Mumbai (BKC)', 'Bengaluru', 'Delhi NCR', 'Pune', 'Remote / Hybrid'];
+
+export const EmployerForm: React.FC<EmployerFormProps> = ({
+  shortlistingTalent,
+  onClearShortlistTalent,
+  onMandateCreated,
+}) => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
@@ -28,48 +79,58 @@ export const EmployerForm: React.FC = () => {
   const [orgType, setOrgType] = useState<string>(ORG_TYPES[0]);
   const [contactPerson, setContactPerson] = useState('');
   const [phone, setPhone] = useState('');
-  const [roleNeeded, setRoleNeeded] = useState('');
-  const [domain, setDomain] = useState<string>(EMPLOYER_DOMAINS[0]);
-  const [budgetRange, setBudgetRange] = useState('');
-  const [city, setCity] = useState('');
+  const [roleNeeded, setRoleNeeded] = useState('Senior Statutory Audit Manager');
+  const [domain, setDomain] = useState<string>(PRACTICE_DOMAINS[0]);
+  const [budgetRange, setBudgetRange] = useState('15 - 22 LPA');
+  const [city, setCity] = useState('Mumbai (BKC)');
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Pre-calculated WhatsApp message for Amii Ma'am (+91 9821262613)
-  const generateWhatsAppUrl = () => {
-    const role = roleNeeded.trim() || 'Finance Professional';
-    const firm = orgName.trim() || 'our Organization';
-    const message = `Hi Amii Ma'am (FinTalent Partners), we have an urgent hiring requirement for ${role} at ${firm}. Please connect with us for shortlisting matching candidates.`;
-    return `https://wa.me/919821262613?text=${encodeURIComponent(message)}`;
-  };
+  useEffect(() => {
+    if (shortlistingTalent) {
+      setRoleNeeded(`${shortlistingTalent.qualification} — ${shortlistingTalent.domain.split('&')[0].trim()}`);
+      if (PRACTICE_DOMAINS.includes(shortlistingTalent.domain as any)) {
+        setDomain(shortlistingTalent.domain);
+      }
+      setBudgetRange(shortlistingTalent.expected_ctc);
+      setCity(shortlistingTalent.city);
+      setIsSuccess(false);
+    }
+  }, [shortlistingTalent]);
+
+  const whatsappDirectUrl = buildWhatsAppUrl(
+    shortlistingTalent
+      ? `Hi Amii Ma'am, we want to shortlist candidate ${shortlistingTalent.code} (${shortlistingTalent.display_name} · ${shortlistingTalent.qualification}) for ${orgName.trim() || 'our team'}. Please share the full CV!`
+      : `Hi Amii Ma'am, urgent hiring mandate from ${orgName.trim() || 'our organization'}: ${roleNeeded.trim() || 'Finance Specialist'} (${city} · Budget: ${budgetRange}). Please share vetted CVs.`
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
 
     if (!orgName.trim()) {
-      setErrorMsg('Please enter your Organization / Firm name.');
+      setErrorMsg('Please enter your CA Firm or Company name.');
       return;
     }
     if (!contactPerson.trim()) {
-      setErrorMsg('Please provide the Contact Person name.');
+      setErrorMsg('Please enter your Name / Designation.');
       return;
     }
     const cleanPhone = phone.replace(/\D/g, '');
     if (cleanPhone.length < 10) {
-      setErrorMsg('Please enter a valid 10-digit mobile number.');
+      setErrorMsg('Please enter a valid 10-digit contact mobile number.');
       return;
     }
     if (!roleNeeded.trim()) {
-      setErrorMsg('Please specify the role needed.');
+      setErrorMsg('Please enter or select the role needed.');
       return;
     }
 
     try {
       setIsSubmitting(true);
-      await submitFirmRequirement({
+      const res = await submitFirmRequirement({
         organization_name: orgName.trim(),
         org_type: orgType,
         contact_person: contactPerson.trim(),
@@ -77,443 +138,335 @@ export const EmployerForm: React.FC = () => {
         role_needed: roleNeeded.trim(),
         domain,
         budget_range: budgetRange.trim() || 'Open to discussion',
-        city: city.trim() || 'Mumbai / Pan-India',
+        city: city.trim() || 'Mumbai',
+        notes: shortlistingTalent
+          ? `Requested candidate ${shortlistingTalent.code} (${shortlistingTalent.display_name})`
+          : undefined,
       });
 
+      if (res.data) {
+        onMandateCreated?.(res.data);
+      }
       setIsSuccess(true);
     } catch (err: any) {
-      console.error('Employer submission error:', err);
-      setErrorMsg(err.message || 'Failed to submit requirement. Please try via WhatsApp directly.');
+      setErrorMsg(err.message || 'Could not save mandate — please tap WhatsApp Desk instead.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleReset = () => {
-    setOrgName('');
-    setContactPerson('');
-    setPhone('');
-    setRoleNeeded('');
-    setBudgetRange('');
-    setCity('');
-    setIsSuccess(false);
-    setErrorMsg(null);
-  };
+  const inputBaseClass = isDark
+    ? 'bg-black/45 border-white/15 focus:border-[#FF6B4A] text-white placeholder:text-slate-500'
+    : 'bg-[#FAF7F0] border-[#0D1017]/25 focus:border-[#FF6B4A] text-[#0D1017] placeholder:text-slate-400';
 
-  return (
-    <section 
-      id="employer-form" 
-      className={`py-20 lg:py-28 border-b scroll-mt-20 relative overflow-hidden transition-colors duration-200 ${
-        isDark 
-          ? 'bg-[#101426] text-white border-white/10' 
-          : 'bg-white text-[#101426] border-slate-200'
-      }`}
-    >
-      {/* Decorative ambient gradients */}
-      <div 
-        className={`absolute top-1/2 left-0 w-80 h-80 rounded-full blur-3xl pointer-events-none ${
-          isDark ? 'bg-[#4563FF]/15' : 'bg-[#4563FF]/5'
-        }`} 
-      />
-      <div 
-        className={`absolute bottom-0 right-10 w-80 h-80 rounded-full blur-3xl pointer-events-none ${
-          isDark ? 'bg-[#D4FF5A]/10' : 'bg-[#10B981]/5'
-        }`} 
-      />
-
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
-        {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
-          <div 
-            className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold ${
-              isDark 
-                ? 'bg-white/5 border-white/10 text-[#4563FF]' 
-                : 'bg-[#4563FF]/10 border-[#4563FF]/20 text-[#4563FF] shadow-2xs'
-            }`}
-          >
-            <Building2 className="w-3.5 h-3.5" />
-            <span className="font-display font-bold uppercase tracking-wider text-[11px]">
-              FAST 60-SECOND MANDATE SUBMISSION
-            </span>
-          </div>
-          <h2 className="font-display font-black text-3xl sm:text-5xl tracking-tight uppercase">
-            HIRE PREMIER FINANCE & CA TALENT
-          </h2>
-          <p className={`text-sm sm:text-base leading-relaxed ${
-            isDark ? 'text-slate-300' : 'text-slate-600'
-          }`}>
-            Submit your hiring requirements directly to our executive search desk led by Amii Ma'am. Receive pre-screened profiles within 48 hours.
+  if (isSuccess) {
+    return (
+      <div id="employer-form" className="py-8 text-center space-y-6 scroll-mt-24">
+        <div className="w-16 h-16 rounded-2xl bg-[#12B886]/20 text-[#12B886] border border-[#12B886]/35 mx-auto flex items-center justify-center">
+          <CheckCircle2 className="w-9 h-9" />
+        </div>
+        <div className="max-w-lg mx-auto space-y-2">
+          <span className="inline-block text-[11px] font-mono font-bold uppercase px-3 py-1 rounded-full bg-[#12B886]/15 text-[#12B886]">
+            Live on FinTalent Mandate Desk
+          </span>
+          <h3 className="font-display font-extrabold text-2xl sm:text-3xl">
+            Mandate Live! 48h Shortlist Initiated.
+          </h3>
+          <p className="text-sm opacity-80 leading-relaxed">
+            Your mandate for <strong>{roleNeeded}</strong> at <strong>{orgName}</strong> is now live on the Open Roles board and queued on Amii Ma&apos;am&apos;s executive desk for callback on <strong>+91 {phone}</strong>.
           </p>
         </div>
 
-        {/* Executive Container Box */}
-        <div 
-          className={`rounded-3xl overflow-hidden shadow-2xl border transition-colors ${
-            isDark 
-              ? 'bg-[#12162A] border-white/15' 
-              : 'bg-[#F7F6F2] border-slate-200/90'
-          }`}
-        >
-          
-          {/* Top highlight bar */}
-          <div className={`p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b ${
-            isDark 
-              ? 'bg-white/[0.02] border-white/10' 
-              : 'bg-white border-slate-200'
-          }`}>
-            <div>
-              <span className={`text-[11px] uppercase tracking-wider font-bold block mb-1 ${
-                isDark ? 'text-[#D4FF5A]' : 'text-[#4563FF]'
-              }`}>
-                EXECUTIVE SERVICE GUARANTEE
-              </span>
-              <h3 className={`font-display font-bold text-sm sm:text-base ${
-                isDark ? 'text-white' : 'text-[#101426]'
-              }`}>
-                Pre-Vetted Profiles · 48-Hour Turnaround · Dedicated Account Lead
-              </h3>
-            </div>
-            
-            <a
-              href={generateWhatsAppUrl()}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-[#D4FF5A] hover:bg-[#bbf036] text-[#101426] font-display font-bold px-4 py-2.5 rounded-xl text-xs sm:text-sm shadow-md transition cursor-pointer min-h-[44px] focus-visible:ring-2 focus-visible:ring-[#4563FF] outline-none"
-            >
-              <MessageCircle className="w-4 h-4 fill-current shrink-0" />
-              <span>WhatsApp Amii Ma'am</span>
-            </a>
-          </div>
-
-          {isSuccess ? (
-            /* Success confirmation card */
-            <div className="p-8 sm:p-12 text-center space-y-6">
-              <div className="w-16 h-16 rounded-2xl bg-[#10B981]/20 text-[#10B981] mx-auto flex items-center justify-center border border-[#10B981]/30">
-                <CheckCircle2 className="w-10 h-10" />
-              </div>
-              <div className="max-w-md mx-auto space-y-2">
-                <h3 className={`font-display font-black text-2xl sm:text-3xl uppercase tracking-tight ${
-                  isDark ? 'text-white' : 'text-[#101426]'
-                }`}>
-                  HIRING MANDATE RECEIVED!
-                </h3>
-                <p className={`text-sm leading-relaxed ${
-                  isDark ? 'text-slate-300' : 'text-slate-600'
-                }`}>
-                  Thank you for submitting your mandate for <strong>{roleNeeded}</strong> at <strong>{orgName}</strong>. Amii Ma'am and our senior CA recruitment desk are curating matching candidate profiles.
-                </p>
-              </div>
-
-              <div className={`p-5 rounded-2xl border max-w-lg mx-auto text-left space-y-2.5 text-xs ${
-                isDark ? 'bg-white/5 border-white/10 text-slate-300' : 'bg-white border-slate-200 text-slate-700'
-              }`}>
-                <div className={`flex items-center gap-2 font-display font-bold text-sm ${
-                  isDark ? 'text-white' : 'text-[#101426]'
-                }`}>
-                  <Clock className="w-4 h-4 text-[#4563FF]" />
-                  <span>Next Steps:</span>
-                </div>
-                <p>1. Our account manager will verify candidate availability for {city || 'your location'}.</p>
-                <p>2. You will receive an initial batch of 3 to 5 pre-screened resumes within 24 to 48 hours.</p>
-                <p>3. Direct phone reachout scheduled to {phone}.</p>
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-                <a
-                  href={generateWhatsAppUrl()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#D4FF5A] hover:bg-[#bbf036] text-[#101426] font-display font-bold py-3.5 px-6 rounded-xl text-sm shadow-md transition cursor-pointer min-h-[44px]"
-                >
-                  <MessageCircle className="w-4 h-4 fill-current" />
-                  <span>Connect With Amii Ma'am on WhatsApp</span>
-                </a>
-                <button
-                  onClick={handleReset}
-                  className={`w-full sm:w-auto px-6 py-3.5 rounded-xl border font-semibold text-sm transition cursor-pointer min-h-[44px] ${
-                    isDark ? 'border-white/20 hover:bg-white/10 text-white' : 'border-slate-300 hover:bg-slate-200 text-slate-800'
-                  }`}
-                >
-                  Submit Another Mandate
-                </button>
-              </div>
-            </div>
-          ) : (
-            /* Submission Form */
-            <form onSubmit={handleSubmit} className="p-6 sm:p-10 space-y-6" noValidate>
-              {errorMsg && (
-                <div 
-                  role="alert"
-                  className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-500 flex items-start gap-3"
-                >
-                  <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
-                  <div className="text-sm font-semibold">{errorMsg}</div>
-                </div>
-              )}
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {/* 1. Organization Name */}
-                <div>
-                  <label 
-                    htmlFor="employer-org-name"
-                    className={`block text-xs font-bold uppercase tracking-wider mb-2 ${
-                      isDark ? 'text-slate-300' : 'text-slate-700'
-                    }`}
-                  >
-                    Organization / Firm Name <span className="text-rose-500">*</span>
-                  </label>
-                  <input
-                    id="employer-org-name"
-                    type="text"
-                    required
-                    placeholder="e.g. S.K. Kapoor & Co. / Nexus FinTech"
-                    value={orgName}
-                    onChange={(e) => setOrgName(e.target.value)}
-                    className={`w-full px-4 py-3 rounded-xl border text-sm transition outline-none ${
-                      isDark 
-                        ? 'border-white/15 bg-white/5 focus:bg-white/10 focus:border-[#4563FF] text-white' 
-                        : 'border-slate-300 bg-white focus:border-[#4563FF] text-slate-900'
-                    }`}
-                  />
-                </div>
-
-                {/* 2. Organization Type */}
-                <div>
-                  <label 
-                    htmlFor="employer-org-type"
-                    className={`block text-xs font-bold uppercase tracking-wider mb-2 ${
-                      isDark ? 'text-slate-300' : 'text-slate-700'
-                    }`}
-                  >
-                    Organization Type <span className="text-rose-500">*</span>
-                  </label>
-                  <select
-                    id="employer-org-type"
-                    value={orgType}
-                    onChange={(e) => setOrgType(e.target.value)}
-                    className={`w-full px-4 py-3 rounded-xl border text-sm transition outline-none cursor-pointer ${
-                      isDark 
-                        ? 'border-white/15 bg-[#12162A] focus:border-[#4563FF] text-white' 
-                        : 'border-slate-300 bg-white focus:border-[#4563FF] text-slate-900'
-                    }`}
-                  >
-                    {ORG_TYPES.map((type) => (
-                      <option key={type} value={type} className={isDark ? 'bg-[#12162A] text-white' : 'bg-white text-slate-900'}>
-                        {type}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* 3. Contact Person */}
-                <div>
-                  <label 
-                    htmlFor="employer-contact-name"
-                    className={`block text-xs font-bold uppercase tracking-wider mb-2 ${
-                      isDark ? 'text-slate-300' : 'text-slate-700'
-                    }`}
-                  >
-                    Contact Person Name <span className="text-rose-500">*</span>
-                  </label>
-                  <input
-                    id="employer-contact-name"
-                    type="text"
-                    required
-                    placeholder="e.g. CA Saurabh Jain (Partner)"
-                    value={contactPerson}
-                    onChange={(e) => setContactPerson(e.target.value)}
-                    className={`w-full px-4 py-3 rounded-xl border text-sm transition outline-none ${
-                      isDark 
-                        ? 'border-white/15 bg-white/5 focus:bg-white/10 focus:border-[#4563FF] text-white' 
-                        : 'border-slate-300 bg-white focus:border-[#4563FF] text-slate-900'
-                    }`}
-                  />
-                </div>
-
-                {/* 4. Contact Phone */}
-                <div>
-                  <label 
-                    htmlFor="employer-contact-phone"
-                    className={`block text-xs font-bold uppercase tracking-wider mb-2 ${
-                      isDark ? 'text-slate-300' : 'text-slate-700'
-                    }`}
-                  >
-                    Contact Phone Number <span className="text-rose-500">*</span>
-                  </label>
-                  <div className={`flex rounded-xl border overflow-hidden ${
-                    isDark ? 'border-white/15 bg-white/5' : 'border-slate-300 bg-white'
-                  }`}>
-                    <span className={`px-4 font-bold text-xs flex items-center border-r ${
-                      isDark ? 'bg-white/10 text-slate-300 border-white/10' : 'bg-slate-100 text-slate-600 border-slate-300'
-                    }`}>
-                      +91
-                    </span>
-                    <input
-                      id="employer-contact-phone"
-                      type="tel"
-                      inputMode="numeric"
-                      autoComplete="tel"
-                      required
-                      maxLength={10}
-                      placeholder="9876543210"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                      className={`w-full px-4 py-3 text-sm outline-none font-mono bg-transparent ${
-                        isDark ? 'text-white' : 'text-slate-900'
-                      }`}
-                    />
-                  </div>
-                </div>
-
-                {/* 5. Role Needed */}
-                <div>
-                  <label 
-                    htmlFor="employer-role-needed"
-                    className={`block text-xs font-bold uppercase tracking-wider mb-2 ${
-                      isDark ? 'text-slate-300' : 'text-slate-700'
-                    }`}
-                  >
-                    Role / Position Needed <span className="text-rose-500">*</span>
-                  </label>
-                  <input
-                    id="employer-role-needed"
-                    type="text"
-                    required
-                    placeholder="e.g. Statutory Audit Senior / Tax Manager"
-                    value={roleNeeded}
-                    onChange={(e) => setRoleNeeded(e.target.value)}
-                    className={`w-full px-4 py-3 rounded-xl border text-sm transition outline-none ${
-                      isDark 
-                        ? 'border-white/15 bg-white/5 focus:bg-white/10 focus:border-[#4563FF] text-white' 
-                        : 'border-slate-300 bg-white focus:border-[#4563FF] text-slate-900'
-                    }`}
-                  />
-                </div>
-
-                {/* 6. Domain */}
-                <div>
-                  <label 
-                    htmlFor="employer-domain"
-                    className={`block text-xs font-bold uppercase tracking-wider mb-2 ${
-                      isDark ? 'text-slate-300' : 'text-slate-700'
-                    }`}
-                  >
-                    Domain / Practice Area <span className="text-rose-500">*</span>
-                  </label>
-                  <select
-                    id="employer-domain"
-                    value={domain}
-                    onChange={(e) => setDomain(e.target.value)}
-                    className={`w-full px-4 py-3 rounded-xl border text-sm transition outline-none cursor-pointer ${
-                      isDark 
-                        ? 'border-white/15 bg-[#12162A] focus:border-[#4563FF] text-white' 
-                        : 'border-slate-300 bg-white focus:border-[#4563FF] text-slate-900'
-                    }`}
-                  >
-                    {EMPLOYER_DOMAINS.map((d) => (
-                      <option key={d} value={d} className={isDark ? 'bg-[#12162A] text-white' : 'bg-white text-slate-900'}>
-                        {d}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* 7. Target Budget */}
-                <div>
-                  <label 
-                    htmlFor="employer-budget"
-                    className={`block text-xs font-bold uppercase tracking-wider mb-2 ${
-                      isDark ? 'text-slate-300' : 'text-slate-700'
-                    }`}
-                  >
-                    Target Budget / Salary / Stipend Range <span className="text-rose-500">*</span>
-                  </label>
-                  <input
-                    id="employer-budget"
-                    type="text"
-                    required
-                    placeholder="e.g. 10 - 14 LPA (or ₹15,000/mo stipend)"
-                    value={budgetRange}
-                    onChange={(e) => setBudgetRange(e.target.value)}
-                    className={`w-full px-4 py-3 rounded-xl border text-sm transition outline-none ${
-                      isDark 
-                        ? 'border-white/15 bg-white/5 focus:bg-white/10 focus:border-[#4563FF] text-white' 
-                        : 'border-slate-300 bg-white focus:border-[#4563FF] text-slate-900'
-                    }`}
-                  />
-                </div>
-
-                {/* 8. City */}
-                <div>
-                  <label 
-                    htmlFor="employer-city"
-                    className={`block text-xs font-bold uppercase tracking-wider mb-2 ${
-                      isDark ? 'text-slate-300' : 'text-slate-700'
-                    }`}
-                  >
-                    City / Job Location <span className="text-rose-500">*</span>
-                  </label>
-                  <input
-                    id="employer-city"
-                    type="text"
-                    required
-                    placeholder="e.g. Mumbai (BKC / Nariman Point) / Bengaluru"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    className={`w-full px-4 py-3 rounded-xl border text-sm transition outline-none ${
-                      isDark 
-                        ? 'border-white/15 bg-white/5 focus:bg-white/10 focus:border-[#4563FF] text-white' 
-                        : 'border-slate-300 bg-white focus:border-[#4563FF] text-slate-900'
-                    }`}
-                  />
-                </div>
-              </div>
-
-              {/* DUAL ACTION BUTTONS */}
-              <div className={`pt-4 border-t flex flex-col sm:flex-row items-center gap-4 ${
-                isDark ? 'border-white/10' : 'border-slate-200'
-              }`}>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full sm:flex-1 flex items-center justify-center gap-2.5 px-6 py-4 rounded-xl bg-[#4563FF] hover:bg-[#324fec] text-white font-display font-bold text-sm shadow-md transition active:scale-[0.99] disabled:opacity-60 cursor-pointer min-h-[48px] focus-visible:ring-2 focus-visible:ring-[#D4FF5A] outline-none"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin text-white" />
-                      <span>Recording Mandate in Supabase...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-4 h-4 text-white" />
-                      <span>Submit Requirement</span>
-                    </>
-                  )}
-                </button>
-
-                <a
-                  href={generateWhatsAppUrl()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-[#D4FF5A] hover:bg-[#bbf036] text-[#101426] font-display font-extrabold text-sm shadow-md transition active:scale-[0.99] cursor-pointer min-h-[48px] focus-visible:ring-2 focus-visible:ring-[#4563FF] outline-none"
-                >
-                  <MessageCircle className="w-4 h-4 fill-current" />
-                  <span>WhatsApp Desk (+91 9821262613)</span>
-                </a>
-              </div>
-
-              <div className={`text-center text-xs flex items-center justify-center gap-2 pt-1 ${
-                isDark ? 'text-slate-400' : 'text-slate-500'
-              }`}>
-                <ShieldCheck className="w-3.5 h-3.5 text-[#10B981]" />
-                <span>Zero upfront retainer · Success-linked fee models · NDA Protected</span>
-              </div>
-            </form>
-          )}
-
+        <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <a
+            href={whatsappDirectUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="neo-btn-pop inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[#C8FF32] text-[#090B10] font-display font-extrabold text-sm cursor-pointer"
+          >
+            <MessageCircle className="w-4 h-4 fill-current" />
+            <span>Ping Amii Ma&apos;am on WhatsApp Now</span>
+          </a>
+          <button
+            type="button"
+            onClick={() => {
+              setIsSuccess(false);
+              setOrgName('');
+              setContactPerson('');
+              setPhone('');
+            }}
+            className="px-5 py-3.5 rounded-xl border border-current/20 text-xs font-bold cursor-pointer"
+          >
+            Post Another Role
+          </button>
         </div>
       </div>
-    </section>
+    );
+  }
+
+  return (
+    <div id="employer-form" className="scroll-mt-24">
+      <form onSubmit={handleSubmit} noValidate className="space-y-6">
+        {/* Candidate Shortlist Banner if triggered from Talent Pool */}
+        {shortlistingTalent && (
+          <div className="p-4 rounded-2xl bg-[#FF6B4A]/15 border border-[#FF6B4A]/45 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-[#FF6B4A] text-white flex items-center justify-center shrink-0">
+                <Users className="w-4 h-4" />
+              </div>
+              <div className="text-xs sm:text-sm">
+                <span className="font-mono uppercase text-[10px] font-bold tracking-wider block text-[#FF6B4A]">
+                  Instant Candidate Shortlist Request · {shortlistingTalent.code}
+                </span>
+                <strong className="font-display font-extrabold">
+                  {shortlistingTalent.display_name} ({shortlistingTalent.qualification} · {shortlistingTalent.expected_ctc})
+                </strong>
+              </div>
+            </div>
+            {onClearShortlistTalent && (
+              <button
+                type="button"
+                onClick={onClearShortlistTalent}
+                className="p-1.5 rounded-lg hover:bg-black/20 cursor-pointer"
+                aria-label="Clear candidate selection"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        )}
+
+        {errorMsg && (
+          <div
+            role="alert"
+            className="p-4 rounded-2xl bg-rose-500/15 border border-rose-500/40 text-rose-500 flex items-start gap-2.5 text-xs sm:text-sm font-semibold"
+          >
+            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+            <span>{errorMsg}</span>
+          </div>
+        )}
+
+        {/* 1-Tap Role Presets (Zero Typing Turnaround!) */}
+        <div className="space-y-2">
+          <label className="block text-xs font-mono font-bold uppercase tracking-wider opacity-80">
+            01 · 1-Tap Role Quick-Fill (Auto-Sets Role, Practice Area &amp; Typical CTC)
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {ROLE_PRESETS.map((preset) => {
+              const active = roleNeeded === preset.role;
+              return (
+                <button
+                  key={preset.label}
+                  type="button"
+                  onClick={() => {
+                    setRoleNeeded(preset.role);
+                    setDomain(preset.domain);
+                    setBudgetRange(preset.budget);
+                  }}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-bold border inline-flex items-center gap-1.5 transition cursor-pointer ${
+                    active
+                      ? 'bg-[#FF6B4A] text-white border-[#FF6B4A] shadow-sm'
+                      : isDark
+                      ? 'bg-white/[0.04] text-slate-300 border-white/12 hover:border-white/30'
+                      : 'bg-white text-slate-700 border-[#0D1017]/20 hover:border-[#0D1017]'
+                  }`}
+                >
+                  <Zap className="w-3 h-3" />
+                  <span>{preset.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Organization Type Pills */}
+        <div className="space-y-2">
+          <label className="block text-xs font-mono font-bold uppercase tracking-wider opacity-80">
+            02 · Organization Type
+          </label>
+          <div className="grid grid-cols-3 gap-2.5 max-w-xl">
+            {ORG_TYPES.map((type) => {
+              const active = orgType === type;
+              return (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => setOrgType(type)}
+                  className={`py-2.5 px-3 rounded-xl text-xs font-display font-bold border transition cursor-pointer ${
+                    active
+                      ? isDark
+                        ? 'bg-[#C8FF32] text-[#090B10] border-[#C8FF32]'
+                        : 'bg-[#0D1017] text-[#C8FF32] border-[#0D1017]'
+                      : isDark
+                      ? 'bg-white/[0.04] text-slate-300 border-white/12'
+                      : 'bg-white text-slate-700 border-[#0D1017]/20'
+                  }`}
+                >
+                  {type}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Clean 2x3 Grid of Inputs */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div>
+            <label htmlFor="emp-org" className="block text-xs font-bold mb-1.5">
+              CA Firm / Company Name <span className="text-[#FF6B4A]">*</span>
+            </label>
+            <input
+              id="emp-org"
+              type="text"
+              required
+              placeholder="S.K. Kapoor & Co. / FinStack AI"
+              value={orgName}
+              onChange={(e) => setOrgName(e.target.value)}
+              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm outline-none transition ${inputBaseClass}`}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="emp-person" className="block text-xs font-bold mb-1.5">
+              Your Name &amp; Role <span className="text-[#FF6B4A]">*</span>
+            </label>
+            <input
+              id="emp-person"
+              type="text"
+              required
+              placeholder="CA Saurabh Jain (Partner)"
+              value={contactPerson}
+              onChange={(e) => setContactPerson(e.target.value)}
+              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm outline-none transition ${inputBaseClass}`}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="emp-phone" className="block text-xs font-bold mb-1.5">
+              Direct Mobile / WhatsApp <span className="text-[#FF6B4A]">*</span>
+            </label>
+            <div className={`flex rounded-xl border overflow-hidden ${inputBaseClass}`}>
+              <span className="px-3 text-xs font-mono font-bold flex items-center border-r border-current/15 opacity-75">
+                +91
+              </span>
+              <input
+                id="emp-phone"
+                type="tel"
+                inputMode="numeric"
+                maxLength={10}
+                required
+                placeholder="9820099887"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                className="w-full px-3 py-2.5 text-sm font-mono bg-transparent outline-none"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="emp-role" className="block text-xs font-bold mb-1.5">
+              Position Title Needed <span className="text-[#FF6B4A]">*</span>
+            </label>
+            <input
+              id="emp-role"
+              type="text"
+              required
+              value={roleNeeded}
+              onChange={(e) => setRoleNeeded(e.target.value)}
+              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm outline-none transition ${inputBaseClass}`}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="emp-budget" className="block text-xs font-bold mb-1.5">
+              CTC / Stipend Budget
+            </label>
+            <input
+              id="emp-budget"
+              type="text"
+              value={budgetRange}
+              onChange={(e) => setBudgetRange(e.target.value)}
+              placeholder="15 - 22 LPA"
+              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-mono outline-none transition ${inputBaseClass}`}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="emp-city" className="block text-xs font-bold mb-1.5">
+              Work Location
+            </label>
+            <input
+              id="emp-city"
+              type="text"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              placeholder="Mumbai (BKC)"
+              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm outline-none transition ${inputBaseClass}`}
+            />
+            <div className="flex flex-wrap gap-1 mt-1.5">
+              {CITY_PRESETS.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setCity(c)}
+                  className={`px-2 py-0.5 rounded-md text-[11px] font-bold cursor-pointer ${
+                    city === c
+                      ? 'bg-[#FF6B4A] text-white'
+                      : isDark
+                      ? 'bg-white/6 text-slate-400 hover:text-white'
+                      : 'bg-slate-200/70 text-slate-700'
+                  }`}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Submit & Instant WhatsApp Desk Buttons */}
+        <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="neo-btn-pop flex-1 py-4 px-6 rounded-2xl bg-[#FF6B4A] hover:bg-[#f25937] text-white font-display font-extrabold text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-xl cursor-pointer disabled:opacity-60"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                <span>Publishing Mandate...</span>
+              </>
+            ) : (
+              <>
+                <Send className="w-4 h-4" />
+                <span>
+                  {shortlistingTalent
+                    ? `Request ${shortlistingTalent.code} Full CV & Callback`
+                    : 'Publish Mandate & Get 48h Shortlist'}
+                </span>
+              </>
+            )}
+          </button>
+
+          <a
+            href={whatsappDirectUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="neo-btn-pop py-4 px-6 rounded-2xl bg-[#C8FF32] hover:bg-[#b8f21e] text-[#090B10] font-display font-extrabold text-sm flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <MessageCircle className="w-4 h-4 fill-current" />
+            <span>Instant WhatsApp Desk</span>
+          </a>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] opacity-70 pt-1">
+          <span className="inline-flex items-center gap-1.5">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#12B886]" />
+            Zero upfront retainer · 90-day replacement cover · NDA protected
+          </span>
+          <span className="font-mono">Published mandates go live on Open Roles Board</span>
+        </div>
+      </form>
+    </div>
   );
 };

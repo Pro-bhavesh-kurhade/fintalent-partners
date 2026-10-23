@@ -1,5 +1,13 @@
 import React, { useEffect } from 'react';
-import { CheckCircle2, Search, ArrowRight, ShieldCheck, X, Phone, Calendar } from 'lucide-react';
+import {
+  CheckCircle2,
+  Search,
+  ArrowRight,
+  ShieldCheck,
+  X,
+  Phone,
+  Calendar,
+} from 'lucide-react';
 import { fireCelebrationConfetti } from '../lib/confetti';
 import { useTheme } from '../context/ThemeContext';
 
@@ -15,6 +23,7 @@ interface CelebrationModalProps {
 export const CelebrationModal: React.FC<CelebrationModalProps> = ({
   isOpen,
   onClose,
+  candidateName,
   phone,
   dob,
   onTrackNow,
@@ -23,28 +32,25 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
   const isDark = theme === 'dark';
 
   useEffect(() => {
-    if (isOpen) {
-      fireCelebrationConfetti();
-      const originalOverflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-
-      const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') onClose();
-      };
-      window.addEventListener('keydown', handleKeyDown);
-
-      return () => {
-        document.body.style.overflow = originalOverflow;
-        window.removeEventListener('keydown', handleKeyDown);
-      };
-    }
+    if (!isOpen) return;
+    fireCelebrationConfetti();
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener('keydown', onKey);
+    };
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
   return (
-    <div 
-      className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-xl flex items-center justify-center p-4 animate-in fade-in duration-200"
+    <div
+      className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-xl flex items-center justify-center p-4"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -52,118 +58,87 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
       aria-modal="true"
       aria-labelledby="celebration-modal-title"
     >
-      <div 
-        className={`rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border relative overflow-hidden transition-colors ${
-          isDark 
-            ? 'bg-[#101426] text-white border-white/20' 
-            : 'bg-white text-[#101426] border-slate-200'
+      <div
+        className={`rounded-3xl max-w-lg w-full p-6 sm:p-8 relative border ${
+          isDark
+            ? 'bg-[#0E121E] text-white border-white/20 shadow-2xl'
+            : 'bg-white text-[#0D1017] border-[2px] border-[#0D1017] shadow-[8px_8px_0px_0px_#0D1017]'
         }`}
       >
-        {/* Top neon glow line */}
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#4563FF] via-[#D4FF5A] to-[#10B981]" />
-        
-        <div className="absolute top-4 right-4">
-          <button
-            onClick={onClose}
-            className={`p-2.5 rounded-xl transition cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-[#4563FF] outline-none ${
-              isDark ? 'text-slate-400 hover:text-white hover:bg-white/10' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
-            }`}
-            aria-label="Close Confirmation Dialog"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-4 right-4 w-10 h-10 rounded-xl hover:bg-current/10 flex items-center justify-center cursor-pointer"
+          aria-label="Close modal"
+        >
+          <X className="w-5 h-5" />
+        </button>
 
         <div className="text-center space-y-5 pt-2">
-          <div className="w-16 h-16 rounded-2xl bg-[#10B981]/20 text-[#10B981] mx-auto flex items-center justify-center shadow-md border border-[#10B981]/30">
+          <div className="w-16 h-16 rounded-2xl bg-[#C8FF32] text-[#090B10] mx-auto flex items-center justify-center shadow-lg">
             <CheckCircle2 className="w-9 h-9" />
           </div>
 
-          <div>
-            <span className="inline-block px-3 py-1 bg-[#10B981]/15 text-[#10B981] text-xs font-display font-bold rounded-full mb-2 border border-[#10B981]/30 uppercase tracking-wider">
-              Profile Registered Successfully!
+          <div className="space-y-1.5">
+            <span className="inline-block text-[11px] font-mono font-bold uppercase px-3 py-1 rounded-full bg-[#12B886]/20 text-[#12B886]">
+              Profile Live in Talent Desk
             </span>
-            <h3 
+            <h3
               id="celebration-modal-title"
-              className="text-2xl sm:text-3xl font-black font-display uppercase tracking-tight"
+              className="font-display font-extrabold text-2xl sm:text-3xl tracking-tight"
             >
-              WELCOME ABOARD!
+              You&apos;re In, {candidateName.split(' ')[0]}!
             </h3>
-            <p className={`text-sm mt-2 leading-relaxed ${
-              isDark ? 'text-slate-300' : 'text-slate-600'
-            }`}>
-              Your resume is securely stored in the talent database and queued for screening with our 40+ partner CA firms and corporate clients.
+            <p className="text-xs sm:text-sm opacity-75 leading-relaxed">
+              Your CV is queued with Amii Ma&apos;am&apos;s executive search desk. We’ve also saved your passkey in this browser for instant 1-tap tracking anytime.
             </p>
           </div>
 
-          {/* Secure credentials box */}
-          <div className={`border rounded-2xl p-4 text-left space-y-3 ${
-            isDark ? 'bg-white/5 border-white/10' : 'bg-slate-50 border-slate-200'
-          }`}>
-            <div className={`flex items-center gap-2 text-xs font-display font-bold uppercase tracking-wider ${
-              isDark ? 'text-[#D4FF5A]' : 'text-[#4563FF]'
-            }`}>
+          <div
+            className={`rounded-2xl p-4 border text-left space-y-3 ${
+              isDark ? 'bg-black/40 border-white/10' : 'bg-[#FAF7F0] border-[#0D1017]/15'
+            }`}
+          >
+            <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase text-[#FF6B4A]">
               <ShieldCheck className="w-4 h-4" />
-              <span>Your Application Tracking Passcode</span>
+              <span>Your Private Status Passkey</span>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div className={`p-3 rounded-xl border ${
-                isDark ? 'bg-[#101426] border-white/10' : 'bg-white border-slate-200 shadow-2xs'
-              }`}>
-                <div className={`flex items-center gap-1.5 text-xs font-medium ${
-                  isDark ? 'text-slate-400' : 'text-slate-500'
-                }`}>
-                  <Phone className="w-3.5 h-3.5" />
-                  <span>Mobile Number</span>
-                </div>
-                <div className={`font-mono font-bold text-sm mt-1 ${
-                  isDark ? 'text-white' : 'text-slate-900'
-                }`}>
-                  {phone}
-                </div>
+              <div className="p-3 rounded-xl bg-black/20 border border-current/10">
+                <span className="text-[11px] opacity-65 flex items-center gap-1">
+                  <Phone className="w-3 h-3" /> Mobile
+                </span>
+                <strong className="font-mono text-sm block mt-0.5">{phone}</strong>
               </div>
-              <div className={`p-3 rounded-xl border ${
-                isDark ? 'bg-[#101426] border-white/10' : 'bg-white border-slate-200 shadow-2xs'
-              }`}>
-                <div className={`flex items-center gap-1.5 text-xs font-medium ${
-                  isDark ? 'text-slate-400' : 'text-slate-500'
-                }`}>
-                  <Calendar className="w-3.5 h-3.5" />
-                  <span>Date of Birth</span>
-                </div>
-                <div className={`font-mono font-bold text-sm mt-1 ${
-                  isDark ? 'text-white' : 'text-slate-900'
-                }`}>
-                  {dob}
-                </div>
+              <div className="p-3 rounded-xl bg-black/20 border border-current/10">
+                <span className="text-[11px] opacity-65 flex items-center gap-1">
+                  <Calendar className="w-3 h-3" /> DOB
+                </span>
+                <strong className="font-mono text-sm block mt-0.5">{dob}</strong>
               </div>
             </div>
-            <p className={`text-[11px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-              * Bookmark these details. Check screening progress and partner interview status at any time in the live tracker.
-            </p>
           </div>
 
-          {/* Direct CTA */}
-          <div className="pt-2 space-y-2.5">
+          <div className="space-y-2 pt-1">
             <button
+              type="button"
               onClick={() => {
                 onClose();
                 onTrackNow(phone, dob);
               }}
-              className="w-full flex items-center justify-center gap-2.5 bg-[#D4FF5A] hover:bg-[#bbf036] text-[#101426] font-display font-extrabold py-4 px-6 rounded-xl shadow-md transition cursor-pointer text-sm min-h-[48px] focus-visible:ring-2 focus-visible:ring-[#4563FF] outline-none"
+              className="neo-btn-pop w-full py-4 px-6 rounded-xl bg-[#C8FF32] hover:bg-[#b8f21e] text-[#090B10] font-display font-extrabold text-sm flex items-center justify-center gap-2 cursor-pointer"
             >
               <Search className="w-4 h-4" />
-              <span>Open Live Status Tracker Now</span>
+              <span>Open My Live Pipeline Status</span>
               <ArrowRight className="w-4 h-4" />
             </button>
 
             <button
+              type="button"
               onClick={onClose}
-              className={`w-full py-3 text-xs font-semibold transition cursor-pointer min-h-[44px] ${
-                isDark ? 'text-slate-400 hover:text-white' : 'text-slate-500 hover:text-slate-900'
-              }`}
+              className="w-full py-2.5 text-xs font-bold opacity-65 hover:opacity-100 cursor-pointer"
             >
-              Close and Return to Homepage
+              Back to Live Roles
             </button>
           </div>
         </div>

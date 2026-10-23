@@ -1,276 +1,203 @@
 import React, { useState } from 'react';
-import { 
-  HelpCircle, 
-  Phone, MessageCircle, Star, Sparkles, ChevronDown 
+import {
+  Phone,
+  MessageCircle,
+  ChevronDown,
+  Sparkles,
+  CheckCircle2,
+  MapPin,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { DISPLAY_PHONE, buildWhatsAppUrl } from '../lib/supabase';
 
 export const TrustSection: React.FC = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
-  const WHATSAPP_URL =
-    "https://wa.me/919821262613?text=Hi%20Amii%20Ma%27am%2C%20reaching%20out%20via%20FinTalent%20Partners";
+  const whatsappUrl = buildWhatsAppUrl(
+    "Hi Amii Ma'am, reaching out for direct finance recruitment consultation!"
+  );
 
   const faqs = [
     {
-      q: 'Is there any fee or charge for Candidates / Job Seekers?',
-      a: 'Zero. FinTalent Partners provides 100% free placement assistance to all candidates, whether you are a Qualified CA, CA Inter, CMA, MBA Finance, or seeking Articleship.',
+      q: 'Do candidates pay anything at any stage?',
+      a: 'Never — ₹0 forever. Placement assistance, interview prep, and profile matching across all 40+ partner CA firms & corporates are 100% free for candidates.',
     },
     {
-      q: 'How does candidate status tracking work?',
-      a: 'After submitting your profile, your Registered Mobile Number and Date of Birth (DOB) serve as your private access keys. At any time, enter them in the "Track Status" portal to see your real-time 5-stage progress.',
+      q: 'How fast is the turnaround for recruiters & firms?',
+      a: '24 to 48 hours for Statutory Audit, Direct Tax, GST, Accounting & Articleship shortlists. Senior VP Finance / CFO mandates receive curated batches in 3–5 days.',
     },
     {
-      q: 'How quickly do CA Firms & Corporates receive shortlisted resumes?',
-      a: 'Our typical turnaround is 24 to 48 hours for standard roles (Statutory Audit Seniors, Direct Tax Executives, Article Assistants, Accounting Leads). Specialized leadership roles take 3 to 5 business days.',
+      q: 'How do I check my live application progress?',
+      a: 'Just click "Track Status" at the top of any screen and enter your 10-digit Mobile Number + Date of Birth — no password or login hassle required.',
     },
     {
-      q: 'Do you facilitate CA Articleship and Industrial Training?',
-      a: 'Yes. We work actively with ICAI registered firms offering stipend-compliant Articleships and industrial training opportunities with listed corporate entities.',
+      q: 'Do you place CA Articles & Industrial Trainees too?',
+      a: 'Yes! We actively place 1st-year CA Inter students, transfer cases, and industrial trainees into top CA firms and listed corporate finance desks.',
     },
   ];
 
   return (
-    <div 
-      className={`border-b relative overflow-hidden transition-colors duration-200 ${
-        isDark 
-          ? 'bg-[#0E1222] text-white border-white/10' 
-          : 'bg-[#F7F6F2] text-[#101426] border-slate-200'
-      }`}
-    >
-      {/* Ambient background glow */}
-      <div 
-        className={`absolute top-0 right-1/4 w-96 h-96 rounded-full blur-3xl pointer-events-none ${
-          isDark ? 'bg-[#4563FF]/10' : 'bg-[#4563FF]/5'
-        }`} 
-      />
+    <section className="px-3 sm:px-6 py-12 sm:py-16">
+      <div className="max-w-7xl mx-auto space-y-12">
+        {/* Principal Practice Card with Custom Twilight Architecture Image */}
+        <div
+          className={`rounded-[2rem] overflow-hidden grid grid-cols-1 lg:grid-cols-12 border ${
+            isDark
+              ? 'bg-[#111522] border-white/15 shadow-2xl'
+              : 'bg-white border-[2px] border-[#0D1017] shadow-[7px_7px_0px_0px_#0D1017]'
+          }`}
+        >
+          {/* Visual Column */}
+          <div
+            className="lg:col-span-5 min-h-[280px] sm:min-h-[340px] bg-cover bg-center relative flex flex-col justify-between p-6 sm:p-8 text-white"
+            style={{
+              backgroundImage: `url('/images/recruiter-card-bg.jpg')`,
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-t from-[#090B10]/95 via-[#090B10]/45 to-[#090B10]/30" />
 
-      {/* 1. EDITORIAL ABOUT AMII MA'AM LEADERSHIP SECTION */}
-      <section className="py-20 lg:py-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          
-          {/* Left: Editorial Content */}
-          <div className="lg:col-span-7 space-y-6">
-            <div 
-              className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold ${
-                isDark 
-                  ? 'bg-white/5 border-white/10 text-[#D4FF5A]' 
-                  : 'bg-white border-slate-300 text-[#4563FF] shadow-2xs'
-              }`}
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span className="font-display font-bold uppercase tracking-wider text-[11px]">
-                EXECUTIVE PRACTICE LEADERSHIP
+            <div className="relative z-10 flex items-center justify-between">
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-mono font-bold uppercase px-3 py-1 rounded-full bg-black/60 text-[#C8FF32] border border-white/15 backdrop-blur-md">
+                <Sparkles className="w-3.5 h-3.5" />
+                Practice Principal
+              </span>
+              <span className="inline-flex items-center gap-1 text-xs font-mono bg-white/15 backdrop-blur-md px-2.5 py-1 rounded-full">
+                <MapPin className="w-3 h-3 text-[#FF6B4A]" />
+                Mumbai · Pan-India
               </span>
             </div>
 
-            <h2 className="font-display font-black text-3xl sm:text-5xl tracking-tight uppercase leading-[1.1]">
-              <span className={isDark ? 'text-white' : 'text-[#101426]'}>
-                MEET THE PRINCIPAL:
-              </span> <br />
-              <span className={isDark ? 'text-[#D4FF5A]' : 'text-[#4563FF]'}>
-                AMII MA'AM
-              </span>
-            </h2>
-
-            <p className={`text-base sm:text-lg leading-relaxed font-normal ${
-              isDark ? 'text-slate-200' : 'text-slate-700'
-            }`}>
-              Directing executive talent acquisition for India's foremost Chartered Accountancy firms, corporate conglomerates, and venture-backed tech startups, <strong>Amii Ma'am</strong> leads FinTalent Partners with unmatched domain depth.
-            </p>
-
-            <p className={`text-sm leading-relaxed ${
-              isDark ? 'text-slate-300' : 'text-slate-600'
-            }`}>
-              With deep specialization in statutory audit, direct/indirect taxation, and corporate controllership, our practice moves beyond keyword matching. Every candidate is evaluated with technical precision, cultural suitability, and ethical integrity, ensuring our partner firms hire long-term institutional pillars.
-            </p>
-
-            {/* Three Stat Cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4">
-              <div className={`p-4 rounded-2xl border ${
-                isDark ? 'bg-white/[0.04] border-white/10' : 'bg-white border-slate-200 shadow-2xs'
-              }`}>
-                <div className={`font-display font-extrabold text-2xl ${
-                  isDark ? 'text-white' : 'text-[#101426]'
-                }`}>
-                  12+ Yrs
-                </div>
-                <div className={`text-xs mt-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                  Executive Search
-                </div>
+            <div className="relative z-10 space-y-2">
+              <div className="w-14 h-14 rounded-2xl bg-[#C8FF32] text-[#090B10] font-display font-extrabold text-xl flex items-center justify-center shadow-lg">
+                AM
               </div>
-              <div className={`p-4 rounded-2xl border ${
-                isDark ? 'bg-white/[0.04] border-white/10' : 'bg-white border-slate-200 shadow-2xs'
-              }`}>
-                <div className="font-display font-extrabold text-2xl text-[#10B981]">
-                  40+
-                </div>
-                <div className={`text-xs mt-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                  Partner CA Firms
-                </div>
-              </div>
-              <div className={`p-4 rounded-2xl border col-span-2 sm:col-span-1 ${
-                isDark ? 'bg-white/[0.04] border-white/10' : 'bg-white border-slate-200 shadow-2xs'
-              }`}>
-                <div className="font-display font-extrabold text-2xl text-[#4563FF]">
-                  98%
-                </div>
-                <div className={`text-xs mt-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                  Retention Rate
-                </div>
-              </div>
+              <h3 className="font-display font-extrabold text-2xl sm:text-3xl pt-1">
+                Amii Ma&apos;am
+              </h3>
+              <p className="text-xs font-mono uppercase tracking-wider text-[#C8FF32]">
+                Managing Search Lead · FinTalent Partners
+              </p>
             </div>
           </div>
 
-          {/* Right: Bespoke Editorial Consultation Card */}
-          <div className="lg:col-span-5">
-            <div 
-              className={`rounded-3xl p-8 sm:p-10 border shadow-2xl space-y-6 relative overflow-hidden transition-colors ${
-                isDark 
-                  ? 'bg-white/[0.04] border-white/15 backdrop-blur-xl' 
-                  : 'bg-white border-slate-200/90'
-              }`}
-            >
-              <div className="flex items-center gap-4">
-                {/* Monogram Badge */}
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#4563FF] via-[#101426] to-[#D4FF5A] p-0.5 shadow-md">
-                  <div className="w-full h-full bg-[#101426] rounded-[14px] flex items-center justify-center font-display font-black text-2xl text-white">
-                    AM
-                  </div>
-                </div>
+          {/* Copy + Direct Desk Actions Column */}
+          <div className="lg:col-span-7 p-6 sm:p-10 lg:p-12 flex flex-col justify-between space-y-6">
+            <div className="space-y-4">
+              <h2 className="font-display font-extrabold text-2xl sm:text-4xl tracking-tight leading-tight">
+                Human precision over keyword spam.{' '}
+                <span className="text-[#FF6B4A]">Every shortlist hand-picked.</span>
+              </h2>
+              <p
+                className={`text-sm sm:text-base leading-relaxed ${
+                  isDark ? 'text-slate-300' : 'text-slate-600'
+                }`}
+              >
+                Led directly by <strong>Amii Ma&apos;am</strong>, FinTalent Partners works closely with managing partners at leading Chartered Accountancy practices, MNC controllers, and VC-backed startup founders. Every candidate’s ICAI credentials, technical depth, and role alignment are personally verified before a single interview is booked.
+              </p>
 
-                <div>
-                  <h3 className={`font-display font-bold text-xl ${
-                    isDark ? 'text-white' : 'text-[#101426]'
-                  }`}>
-                    Amii Ma'am
-                  </h3>
-                  <p className={`text-xs font-semibold tracking-wide mt-0.5 ${
-                    isDark ? 'text-[#D4FF5A]' : 'text-[#4563FF]'
-                  }`}>
-                    Principal Executive Search Partner
-                  </p>
-                  <p className={`text-[11px] font-mono mt-0.5 ${
-                    isDark ? 'text-slate-400' : 'text-slate-500'
-                  }`}>
-                    FinTalent Partners LLP · Mumbai Desk
-                  </p>
-                </div>
-              </div>
-
-              <div className={`p-4 rounded-2xl border text-xs space-y-2 ${
-                isDark 
-                  ? 'bg-[#101426] border-white/10 text-slate-300' 
-                  : 'bg-slate-50 border-slate-200 text-slate-700'
-              }`}>
-                <div className={`flex items-center gap-2 font-display font-bold text-xs ${
-                  isDark ? 'text-white' : 'text-[#101426]'
-                }`}>
-                  <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-                  <span>DIRECT CONSULTATION DESK</span>
-                </div>
-                <p className="leading-relaxed">
-                  "Whether you need an urgent Statutory Audit Senior to handle listed client year-end filings, or a strategic VP Finance, reach out directly to my desk for priority matching."
-                </p>
-              </div>
-
-              <div className="space-y-3 pt-2">
-                <a
-                  href={WHATSAPP_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2.5 py-3.5 px-5 rounded-xl bg-[#D4FF5A] hover:bg-[#bbf036] text-[#101426] font-display font-extrabold text-sm shadow-md transition cursor-pointer min-h-[44px] focus-visible:ring-2 focus-visible:ring-[#4563FF] outline-none"
-                >
-                  <MessageCircle className="w-4 h-4 fill-current" />
-                  <span>WhatsApp Desk: +91 9821262613</span>
-                </a>
-
-                <a
-                  href="tel:+919821262613"
-                  className={`w-full flex items-center justify-center gap-2 py-3.5 px-5 rounded-xl font-semibold text-xs border transition cursor-pointer min-h-[44px] focus-visible:ring-2 focus-visible:ring-[#4563FF] outline-none ${
-                    isDark 
-                      ? 'bg-white/5 hover:bg-white/10 text-white border-white/10' 
-                      : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-200'
+              <div className="grid grid-cols-3 gap-3 pt-2">
+                <div
+                  className={`p-3.5 rounded-2xl ${
+                    isDark ? 'bg-black/40 border border-white/10' : 'bg-[#FAF7F0] border border-[#0D1017]/15'
                   }`}
                 >
-                  <Phone className="w-3.5 h-3.5 opacity-70" />
-                  <span>Call Direct Line: +91 9821262613</span>
-                </a>
+                  <span className="font-display font-extrabold text-2xl block text-[#12B886]">
+                    12+ Yrs
+                  </span>
+                  <span className="text-[11px] opacity-75">Finance Search</span>
+                </div>
+                <div
+                  className={`p-3.5 rounded-2xl ${
+                    isDark ? 'bg-black/40 border border-white/10' : 'bg-[#FAF7F0] border border-[#0D1017]/15'
+                  }`}
+                >
+                  <span className="font-display font-extrabold text-2xl block text-[#3B5BFF]">
+                    40+
+                  </span>
+                  <span className="text-[11px] opacity-75">Partner Firms</span>
+                </div>
+                <div
+                  className={`p-3.5 rounded-2xl ${
+                    isDark ? 'bg-black/40 border border-white/10' : 'bg-[#FAF7F0] border border-[#0D1017]/15'
+                  }`}
+                >
+                  <span className="font-display font-extrabold text-2xl block text-[#FF6B4A]">
+                    98%
+                  </span>
+                  <span className="text-[11px] opacity-75">Offer Retention</span>
+                </div>
               </div>
             </div>
-          </div>
 
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="neo-btn-pop flex-1 py-4 px-5 rounded-2xl bg-[#C8FF32] hover:bg-[#b8f21e] text-[#090B10] font-display font-extrabold text-sm flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <MessageCircle className="w-4 h-4 fill-current" />
+                <span>WhatsApp Amii Ma&apos;am Directly</span>
+              </a>
+
+              <a
+                href="tel:+919821262613"
+                className={`py-4 px-5 rounded-2xl border font-mono font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition cursor-pointer ${
+                  isDark
+                    ? 'bg-white/6 hover:bg-white/12 border-white/15 text-white'
+                    : 'bg-[#FAF7F0] hover:bg-slate-200/70 border-[#0D1017] text-[#0D1017]'
+                }`}
+              >
+                <Phone className="w-4 h-4 text-[#12B886]" />
+                <span>{DISPLAY_PHONE}</span>
+              </a>
+            </div>
+          </div>
         </div>
-      </section>
 
-      {/* 2. FREQUENTLY ASKED QUESTIONS */}
-      <section 
-        className={`py-20 lg:py-24 border-t transition-colors ${
-          isDark ? 'border-white/10 bg-[#0B0E1B]' : 'border-slate-200 bg-white'
-        }`}
-      >
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="text-center space-y-3">
-            <span className={`text-xs font-display font-bold uppercase tracking-wider ${
-              isDark ? 'text-[#D4FF5A]' : 'text-[#4563FF]'
-            }`}>
-              CLARITY & TRANSPARENCY
+        {/* Snappy 2-Column FAQ Grid */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h3 className="font-display font-extrabold text-2xl sm:text-3xl">
+              Quick Answers — Zero Jargon
+            </h3>
+            <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-mono opacity-70">
+              <CheckCircle2 className="w-4 h-4 text-[#12B886]" />
+              Transparent Process
             </span>
-            <h2 className="font-display font-extrabold text-3xl sm:text-4xl uppercase tracking-tight">
-              <span className={isDark ? 'text-white' : 'text-[#101426]'}>
-                FREQUENTLY ASKED QUESTIONS
-              </span>
-            </h2>
-            <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-              Everything you need to know about candidate submission, status tracking, and firm mandates.
-            </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {faqs.map((faq, idx) => {
               const isOpen = openFaq === idx;
-              const faqId = `faq-answer-${idx}`;
-              const btnId = `faq-button-${idx}`;
               return (
                 <div
-                  key={idx}
-                  className={`rounded-2xl border transition-all ${
-                    isDark ? 'border-white/10 bg-white/[0.03]' : 'border-slate-200 bg-slate-50/50'
+                  key={faq.q}
+                  className={`rounded-2xl border transition ${
+                    isDark
+                      ? 'bg-[#111522] border-white/12'
+                      : 'bg-white border-[1.5px] border-[#0D1017] shadow-[3px_3px_0px_0px_#0D1017]'
                   }`}
                 >
                   <button
-                    id={btnId}
+                    type="button"
                     aria-expanded={isOpen}
-                    aria-controls={faqId}
                     onClick={() => setOpenFaq(isOpen ? null : idx)}
-                    className={`w-full text-left p-5 sm:p-6 flex items-center justify-between gap-4 transition-colors cursor-pointer min-h-[48px] focus-visible:ring-2 focus-visible:ring-[#4563FF] rounded-2xl outline-none ${
-                      isDark ? 'text-white hover:text-[#D4FF5A]' : 'text-[#101426] hover:text-[#4563FF]'
-                    }`}
+                    className="w-full p-5 text-left flex items-center justify-between gap-3 cursor-pointer"
                   >
-                    <div className="flex items-center gap-3">
-                      <HelpCircle className="w-5 h-5 text-[#4563FF] shrink-0" />
-                      <span className="font-display font-bold text-base sm:text-lg">
-                        {faq.q}
-                      </span>
-                    </div>
+                    <span className="font-display font-bold text-sm sm:text-base">
+                      {faq.q}
+                    </span>
                     <ChevronDown
-                      className={`w-5 h-5 shrink-0 transition-transform duration-200 ${
-                        isOpen ? 'rotate-180 text-[#10B981]' : isDark ? 'text-slate-400' : 'text-slate-500'
+                      className={`w-5 h-5 shrink-0 transition-transform ${
+                        isOpen ? 'rotate-180 text-[#FF6B4A]' : 'opacity-60'
                       }`}
                     />
                   </button>
-
                   {isOpen && (
-                    <div 
-                      id={faqId}
-                      role="region"
-                      aria-labelledby={btnId}
-                      className={`px-5 sm:px-6 pb-6 pt-1 text-sm leading-relaxed border-t animate-in fade-in ${
-                        isDark ? 'text-slate-300 border-white/5' : 'text-slate-700 border-slate-200'
-                      }`}
-                    >
+                    <div className="px-5 pb-5 text-xs sm:text-sm opacity-80 leading-relaxed border-t border-current/10 pt-3">
                       {faq.a}
                     </div>
                   )}
@@ -279,7 +206,7 @@ export const TrustSection: React.FC = () => {
             })}
           </div>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   );
 };
