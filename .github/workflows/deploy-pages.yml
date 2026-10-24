@@ -37,7 +37,7 @@ jobs:
         run: |
           test -s dist/index.html
           test -s dist/404.html
-          test -s dist/.nojekyll
+          test -f dist/.nojekyll
           grep -Fq 'src="/fintalent-partners/assets/' dist/index.html
           grep -Fq '/fintalent-partners/images/' dist/index.html
       - name: Upload Pages artifact
