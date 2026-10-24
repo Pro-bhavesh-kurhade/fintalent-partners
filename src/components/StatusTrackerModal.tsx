@@ -98,7 +98,7 @@ export const StatusTrackerModal: React.FC<StatusTrackerModalProps> = ({
         setCandidate(res);
       }
     } catch {
-      setErrorMsg('Unable to check status right now — please retry in a moment.');
+      setErrorMsg('Unable to check status right now - please retry in a moment.');
       setCandidate(null);
     } finally {
       setIsLoading(false);

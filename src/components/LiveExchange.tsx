@@ -145,7 +145,7 @@ export const LiveExchange: React.FC<LiveExchangeProps> = ({
             </h2>
             <p className={`text-sm sm:text-base max-w-2xl ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
               {activeBoardTab === 'jobs'
-                ? 'Spot a role that fits? Hit "Apply in 60s" to pre-fill your application directly — zero account signup needed.'
+                ? 'Spot a role that fits? Hit "Apply in 60s" to pre-fill your application directly - zero account signup needed.'
                 : 'Need someone urgently? Hit "Shortlist Profile" to request their full verified CV & schedule an interview within 24–48h.'}
             </p>
           </div>
@@ -306,7 +306,7 @@ export const LiveExchange: React.FC<LiveExchangeProps> = ({
               }`}
             >
               <p className="font-display font-bold text-xl">
-                No exact mandate matched that filter — new roles arrive daily!
+                No exact mandate matched that filter - new roles arrive daily!
               </p>
               <button
                 type="button"
@@ -464,7 +464,7 @@ export const LiveExchange: React.FC<LiveExchangeProps> = ({
             }`}
           >
             <p className="font-display font-bold text-xl">
-              No screened profile matched that exact filter — ask Ami Bhanushali for custom bench profiles!
+              No screened profile matched that exact filter - ask Ami Bhanushali for custom bench profiles!
             </p>
             <button
               type="button"

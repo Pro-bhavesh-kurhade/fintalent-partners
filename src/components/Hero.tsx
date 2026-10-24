@@ -83,7 +83,7 @@ export const Hero: React.FC<HeroProps> = ({
                 </span>
               </h1>
               <p className="text-sm sm:text-lg text-slate-200 max-w-xl leading-relaxed">
-                Connecting Qualified CAs, Tax Specialists, FP&amp;A Analysts &amp; Articles with premier CA Firms, Corporates &amp; Startups — zero candidate fees, 48-hour shortlists.
+                Connecting Qualified CAs, Tax Specialists, FP&amp;A Analysts &amp; Articles with premier CA Firms, Corporates &amp; Startups - zero candidate fees, 48-hour shortlists.
               </p>
             </motion.div>
 

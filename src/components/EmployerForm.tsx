@@ -90,7 +90,7 @@ export const EmployerForm: React.FC<EmployerFormProps> = ({
 
   useEffect(() => {
     if (shortlistingTalent) {
-      setRoleNeeded(`${shortlistingTalent.qualification} — ${shortlistingTalent.domain.split('&')[0].trim()}`);
+      setRoleNeeded(`${shortlistingTalent.qualification} - ${shortlistingTalent.domain.split('&')[0].trim()}`);
       if (PRACTICE_DOMAINS.includes(shortlistingTalent.domain as any)) {
         setDomain(shortlistingTalent.domain);
       }
@@ -149,7 +149,7 @@ export const EmployerForm: React.FC<EmployerFormProps> = ({
       }
       setIsSuccess(true);
     } catch (err: any) {
-      setErrorMsg(err.message || 'Could not save mandate — please tap WhatsApp Desk instead.');
+      setErrorMsg(err.message || 'Could not save mandate - please tap WhatsApp Desk instead.');
     } finally {
       setIsSubmitting(false);
     }

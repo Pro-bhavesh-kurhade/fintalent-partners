@@ -551,7 +551,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                                   <ExternalLink className="w-2.5 h-2.5" />
                                 </a>
                               ) : (
-                                <span className="text-slate-400">—</span>
+                                <span className="text-slate-400">-</span>
                               )}
                             </td>
                             <td className="py-3 px-4">
