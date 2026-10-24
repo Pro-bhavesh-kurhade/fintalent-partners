@@ -40,7 +40,7 @@ export const ActionStudio: React.FC<ActionStudioProps> = ({
   const savedCreds = getLastTrackingCredentials();
 
   return (
-    <section id="action-studio" className="px-3 sm:px-6 py-10 sm:py-16 scroll-mt-20">
+    <section id="action-studio" className="px-3 sm:px-6 pt-5 pb-12 scroll-mt-20">
       <div
         className={`max-w-6xl mx-auto relative rounded-[2.2rem] overflow-hidden border p-4 sm:p-8 lg:p-12 ${
           isDark

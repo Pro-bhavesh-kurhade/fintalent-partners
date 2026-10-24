@@ -39,7 +39,7 @@ export const TrustSection: React.FC = () => {
   ];
 
   return (
-    <section className="px-3 sm:px-6 py-12 sm:py-16">
+    <section className="px-3 sm:px-6 pt-5 pb-12">
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Principal Practice Card with Custom Twilight Architecture Image */}
         <div
