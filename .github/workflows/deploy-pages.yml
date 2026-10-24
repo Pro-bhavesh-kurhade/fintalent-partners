@@ -33,6 +33,13 @@ jobs:
         run: npm run lint
       - name: Build site
         run: npm run build
+      - name: Verify GitHub Pages output
+        run: |
+          test -s dist/index.html
+          test -s dist/404.html
+          test -s dist/.nojekyll
+          grep -Fq 'src="/fintalent-partners/assets/' dist/index.html
+          grep -Fq '/fintalent-partners/images/' dist/index.html
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
