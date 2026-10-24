@@ -85,7 +85,7 @@ export const HomeGatewayCards: React.FC<HomeGatewayCardsProps> = ({
               Choose Where You Want to Go
             </span>
             <h2 className="font-display font-extrabold text-2xl sm:text-3xl tracking-tight mt-0.5">
-              Everything neatly organized — one click away.
+              Everything neatly organized - one click away.
             </h2>
           </div>
           <p className={`text-xs sm:text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>

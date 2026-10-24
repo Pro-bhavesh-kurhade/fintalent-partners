@@ -22,7 +22,7 @@ export const TrustSection: React.FC = () => {
   const faqs = [
     {
       q: 'Do candidates pay anything at any stage?',
-      a: 'Never — ₹0 forever. Placement assistance, interview prep, and profile matching across all 40+ partner CA firms & corporates are 100% free for candidates.',
+      a: 'Never - ₹0 forever. Placement assistance, interview prep, and profile matching across all 40+ partner CA firms & corporates are 100% free for candidates.',
     },
     {
       q: 'How fast is the turnaround for recruiters & firms?',
@@ -30,7 +30,7 @@ export const TrustSection: React.FC = () => {
     },
     {
       q: 'How do I check my live application progress?',
-      a: 'Just click "Track Status" at the top of any screen and enter your 10-digit Mobile Number + Date of Birth — no password or login hassle required.',
+      a: 'Just click "Track Status" at the top of any screen and enter your 10-digit Mobile Number + Date of Birth - no password or login hassle required.',
     },
     {
       q: 'Do you place CA Articles & Industrial Trainees too?',
@@ -161,7 +161,7 @@ export const TrustSection: React.FC = () => {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="font-display font-extrabold text-2xl sm:text-3xl">
-              Quick Answers — Zero Jargon
+              Quick Answers - Zero Jargon
             </h3>
             <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-mono opacity-70">
               <CheckCircle2 className="w-4 h-4 text-[#12B886]" />
