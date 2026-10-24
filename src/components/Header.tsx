@@ -45,7 +45,7 @@ export const Header: React.FC<HeaderProps> = ({
   const isDark = theme === 'dark';
 
   const whatsappHref = buildWhatsAppUrl(
-    "Hi Amii Ma'am, reaching out via FinTalent Partners website!"
+    "Hi Ami Bhanushali, reaching out via FinTalent Partners website!"
   );
 
   const navItemClass = (active: boolean) => {
@@ -284,7 +284,7 @@ export const Header: React.FC<HeaderProps> = ({
               { id: 'jobs', label: `Open Finance Roles (${openRolesCount})` },
               { id: 'talent', label: 'Pre-Vetted Talent Pool (For Recruiters)' },
               { id: 'domains', label: '6 Finance Verticals & Salaries' },
-              { id: 'about', label: "Amii Ma'am Leadership & FAQs" },
+              { id: 'about', label: "Ami Bhanushali Leadership & FAQs" },
             ] as { id: AppRoute; label: string }[]
           ).map((item) => (
             <button

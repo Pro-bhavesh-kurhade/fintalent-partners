@@ -320,7 +320,7 @@ export const LiveExchange: React.FC<LiveExchangeProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {visibleRoles.map((role, idx) => {
                 const whatsappJobUrl = buildWhatsAppUrl(
-                  `Hi Amii Ma'am, I saw the open mandate for "${role.role_needed}" at ${role.organization_name} (${role.city} · ${role.budget_range}) on FinTalent Partners and would like to apply!`
+                  `Hi Ami Bhanushali, I saw the open mandate for "${role.role_needed}" at ${role.organization_name} (${role.city} · ${role.budget_range}) on FinTalent Partners and would like to apply!`
                 );
 
                 return (
@@ -464,7 +464,7 @@ export const LiveExchange: React.FC<LiveExchangeProps> = ({
             }`}
           >
             <p className="font-display font-bold text-xl">
-              No screened profile matched that exact filter — ask Amii Ma&apos;am for custom bench profiles!
+              No screened profile matched that exact filter — ask Ami Bhanushali for custom bench profiles!
             </p>
             <button
               type="button"
@@ -478,7 +478,7 @@ export const LiveExchange: React.FC<LiveExchangeProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {visibleTalent.map((profile, idx) => {
               const whatsappTalentUrl = buildWhatsAppUrl(
-                `Hi Amii Ma'am, we'd like to review the full CV & schedule an interview for candidate ${profile.code} (${profile.display_name} · ${profile.qualification} · ${profile.domain}).`
+                `Hi Ami Bhanushali, we'd like to review the full CV & schedule an interview for candidate ${profile.code} (${profile.display_name} · ${profile.qualification} · ${profile.domain}).`
               );
 
               return (

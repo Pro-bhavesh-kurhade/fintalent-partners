@@ -16,7 +16,7 @@ export const TrustSection: React.FC = () => {
   const isDark = theme === 'dark';
 
   const whatsappUrl = buildWhatsAppUrl(
-    "Hi Amii Ma'am, reaching out for direct finance recruitment consultation!"
+    "Hi Ami Bhanushali, reaching out for direct finance recruitment consultation!"
   );
 
   const faqs = [
@@ -74,7 +74,7 @@ export const TrustSection: React.FC = () => {
                 AM
               </div>
               <h3 className="font-display font-extrabold text-2xl sm:text-3xl pt-1">
-                Amii Ma&apos;am
+                Ami Bhanushali
               </h3>
               <p className="text-xs font-mono uppercase tracking-wider text-[#C8FF32]">
                 Managing Search Lead · FinTalent Partners
@@ -94,7 +94,7 @@ export const TrustSection: React.FC = () => {
                   isDark ? 'text-slate-300' : 'text-slate-600'
                 }`}
               >
-                Led directly by <strong>Amii Ma&apos;am</strong>, FinTalent Partners works closely with managing partners at leading Chartered Accountancy practices, MNC controllers, and VC-backed startup founders. Every candidate’s ICAI credentials, technical depth, and role alignment are personally verified before a single interview is booked.
+                Led directly by <strong>Ami Bhanushali</strong>, FinTalent Partners works closely with managing partners at leading Chartered Accountancy practices, MNC controllers, and VC-backed startup founders. Every candidate’s ICAI credentials, technical depth, and role alignment are personally verified before a single interview is booked.
               </p>
 
               <div className="grid grid-cols-3 gap-3 pt-2">
@@ -139,7 +139,7 @@ export const TrustSection: React.FC = () => {
                 className="neo-btn-pop flex-1 py-4 px-5 rounded-2xl bg-[#C8FF32] hover:bg-[#b8f21e] text-[#090B10] font-display font-extrabold text-sm flex items-center justify-center gap-2 cursor-pointer"
               >
                 <MessageCircle className="w-4 h-4 fill-current" />
-                <span>WhatsApp Amii Ma&apos;am Directly</span>
+                <span>WhatsApp Ami Bhanushali Directly</span>
               </a>
 
               <a

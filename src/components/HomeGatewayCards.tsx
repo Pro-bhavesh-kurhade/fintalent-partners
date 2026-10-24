@@ -65,7 +65,7 @@ export const HomeGatewayCards: React.FC<HomeGatewayCardsProps> = ({
       id: 'domains' as GatewayTarget,
       step: '04 · PRACTICE & DESK',
       title: '6 Domains & Leadership',
-      subtitle: 'View compensation ranges across all 6 finance verticals & connect with Amii Ma’am.',
+      subtitle: 'View compensation ranges across all 6 finance verticals & connect with Ami Bhanushali.',
       cta: 'View Verticals',
       badge: 'ICAI Desk',
       icon: Layers,

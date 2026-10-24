@@ -102,8 +102,8 @@ export const EmployerForm: React.FC<EmployerFormProps> = ({
 
   const whatsappDirectUrl = buildWhatsAppUrl(
     shortlistingTalent
-      ? `Hi Amii Ma'am, we want to shortlist candidate ${shortlistingTalent.code} (${shortlistingTalent.display_name} · ${shortlistingTalent.qualification}) for ${orgName.trim() || 'our team'}. Please share the full CV!`
-      : `Hi Amii Ma'am, urgent hiring mandate from ${orgName.trim() || 'our organization'}: ${roleNeeded.trim() || 'Finance Specialist'} (${city} · Budget: ${budgetRange}). Please share vetted CVs.`
+      ? `Hi Ami Bhanushali, we want to shortlist candidate ${shortlistingTalent.code} (${shortlistingTalent.display_name} · ${shortlistingTalent.qualification}) for ${orgName.trim() || 'our team'}. Please share the full CV!`
+      : `Hi Ami Bhanushali, urgent hiring mandate from ${orgName.trim() || 'our organization'}: ${roleNeeded.trim() || 'Finance Specialist'} (${city} · Budget: ${budgetRange}). Please share vetted CVs.`
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -173,7 +173,7 @@ export const EmployerForm: React.FC<EmployerFormProps> = ({
             Mandate Live! 48h Shortlist Initiated.
           </h3>
           <p className="text-sm opacity-80 leading-relaxed">
-            Your mandate for <strong>{roleNeeded}</strong> at <strong>{orgName}</strong> is now live on the Open Roles board and queued on Amii Ma&apos;am&apos;s executive desk for callback on <strong>+91 {phone}</strong>.
+            Your mandate for <strong>{roleNeeded}</strong> at <strong>{orgName}</strong> is now live on the Open Roles board and queued on Ami Bhanushali&apos;s executive desk for callback on <strong>+91 {phone}</strong>.
           </p>
         </div>
 
@@ -185,7 +185,7 @@ export const EmployerForm: React.FC<EmployerFormProps> = ({
             className="neo-btn-pop inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[#C8FF32] text-[#090B10] font-display font-extrabold text-sm cursor-pointer"
           >
             <MessageCircle className="w-4 h-4 fill-current" />
-            <span>Ping Amii Ma&apos;am on WhatsApp Now</span>
+            <span>Ping Ami Bhanushali on WhatsApp Now</span>
           </a>
           <button
             type="button"

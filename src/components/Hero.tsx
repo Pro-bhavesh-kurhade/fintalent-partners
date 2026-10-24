@@ -210,7 +210,7 @@ export const Hero: React.FC<HeroProps> = ({
                 <div className="pt-2 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400 font-mono">
                   <span className="inline-flex items-center gap-1.5">
                     <ShieldCheck className="w-3.5 h-3.5 text-[#12B886]" />
-                    Led by Amii Ma&apos;am
+                    Led by Ami Bhanushali
                   </span>
                   <span className="inline-flex items-center gap-1.5">
                     <CheckCircle2 className="w-3.5 h-3.5 text-[#C8FF32]" />

@@ -303,7 +303,7 @@ function MainApp() {
               </>
             )}
 
-            {/* 7. DEDICATED SUB-PAGE: PRACTICE PRINCIPAL (AMII MA'AM) & FAQS */}
+            {/* 7. DEDICATED SUB-PAGE: PRACTICE PRINCIPAL (Ami Bhanushali) & FAQS */}
             {currentPage === 'about' && (
               <>
                 <SubPageBar
