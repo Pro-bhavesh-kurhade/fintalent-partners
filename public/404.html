@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <title>Redirecting - FinTalent Partners</title>
+  </head>
+  <body>
+    <script>
+      (function () {
+        const basePath = '/fintalent-partners';
+        const pathname = window.location.pathname.startsWith(basePath)
+          ? window.location.pathname.slice(basePath.length) || '/'
+          : window.location.pathname;
+        const params = new URLSearchParams({
+          route: pathname,
+          search: window.location.search,
+          hash: window.location.hash,
+        });
+        window.location.replace(`${basePath}/?${params.toString()}`);
+      })();
+    </script>
+    <p>Redirecting to FinTalent Partners...</p>
+  </body>
+</html>

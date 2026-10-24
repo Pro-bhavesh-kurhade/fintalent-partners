@@ -13,7 +13,7 @@
       property="og:description"
       content="Instant job discovery & 48-hour pre-vetted shortlists for Chartered Accountants, Tax Leads, FP&A Analysts, and Leading Firms."
     />
-    <meta property="og:image" content="/images/hero-finance-studio.jpg" />
+    <meta property="og:image" content="%BASE_URL%images/hero-finance-studio.jpg" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -25,6 +25,18 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      (function () {
+        const params = new URLSearchParams(window.location.search);
+        const route = params.get('route');
+        if (!route) return;
+        const basePath = '%BASE_URL%'.replace(/\/$/, '');
+        const pathname = route.startsWith('/') ? route : `/${route}`;
+        const search = params.get('search') || '';
+        const hash = params.get('hash') || '';
+        window.history.replaceState(null, '', `${basePath}${pathname}${search}${hash}`);
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

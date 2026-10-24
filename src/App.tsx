@@ -29,8 +29,14 @@ const AdminPortal = lazy(() =>
   import('./components/AdminPortal').then((m) => ({ default: m.AdminPortal }))
 );
 
+const APP_BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
+
 function parseRouteFromLocation(): AppRoute {
-  const path = window.location.pathname.replace(/^\/+|\/+$/g, '').toLowerCase();
+  const pathname = window.location.pathname;
+  const appPath = APP_BASE_PATH && pathname.startsWith(`${APP_BASE_PATH}/`)
+    ? pathname.slice(APP_BASE_PATH.length)
+    : pathname;
+  const path = appPath.replace(/^\/+|\/+$/g, '').toLowerCase();
   if (path === 'jobs') return 'jobs';
   if (path === 'talent') return 'talent';
   if (path === 'apply') return 'apply';
@@ -75,7 +81,7 @@ function MainApp() {
 
   const navigateTo = useCallback((page: AppRoute) => {
     setCurrentPage(page);
-    const targetPath = page === 'home' ? '/' : `/${page}`;
+    const targetPath = `${APP_BASE_PATH}${page === 'home' ? '/' : `/${page}`}`;
     if (window.location.pathname !== targetPath) {
       window.history.pushState({ page }, '', targetPath);
     }

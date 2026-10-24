@@ -9,6 +9,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { publicAsset } from '../lib/supabase';
 
 export type GatewayTarget = 'jobs' | 'apply' | 'talent' | 'hire' | 'domains' | 'about';
 
@@ -36,7 +37,7 @@ export const HomeGatewayCards: React.FC<HomeGatewayCardsProps> = ({
       badge: `${openRolesCount} Live`,
       icon: Briefcase,
       accentPill: 'bg-[#C8FF32] text-[#090B10]',
-      image: '/images/candidate-card-bg.jpg',
+      image: publicAsset('images/candidate-card-bg.jpg'),
     },
     {
       id: 'apply' as GatewayTarget,
@@ -47,7 +48,7 @@ export const HomeGatewayCards: React.FC<HomeGatewayCardsProps> = ({
       badge: '100% Free',
       icon: FileUp,
       accentPill: 'bg-[#12B886] text-white',
-      image: '/images/workspace-abstract-bg.jpg',
+      image: publicAsset('images/workspace-abstract-bg.jpg'),
     },
     {
       id: 'talent' as GatewayTarget,
@@ -58,7 +59,7 @@ export const HomeGatewayCards: React.FC<HomeGatewayCardsProps> = ({
       badge: '48h SLA',
       icon: Users,
       accentPill: 'bg-[#FF6B4A] text-white',
-      image: '/images/recruiter-card-bg.jpg',
+      image: publicAsset('images/recruiter-card-bg.jpg'),
       altCta: { label: 'Post Mandate', target: 'hire' as GatewayTarget },
     },
     {
@@ -70,7 +71,7 @@ export const HomeGatewayCards: React.FC<HomeGatewayCardsProps> = ({
       badge: 'ICAI Desk',
       icon: Layers,
       accentPill: 'bg-[#3B5BFF] text-white',
-      image: '/images/hero-finance-studio.jpg',
+      image: publicAsset('images/hero-finance-studio.jpg'),
       altCta: { label: 'About & FAQ', target: 'about' as GatewayTarget },
     },
   ];

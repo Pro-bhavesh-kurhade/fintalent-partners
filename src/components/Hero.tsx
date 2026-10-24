@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { AppRoute } from './Header';
+import { publicAsset } from '../lib/supabase';
 
 interface HeroProps {
   openRolesCount: number;
@@ -42,7 +43,7 @@ export const Hero: React.FC<HeroProps> = ({
         <div
           className="absolute inset-0 bg-cover bg-center scale-[1.02]"
           style={{
-            backgroundImage: `url('/images/hero-finance-studio.jpg')`,
+            backgroundImage: `url('${publicAsset('images/hero-finance-studio.jpg')}')`,
           }}
         />
 
@@ -149,7 +150,7 @@ export const Hero: React.FC<HeroProps> = ({
             >
               <div
                 className="h-36 bg-cover bg-center relative flex items-end p-5"
-                style={{ backgroundImage: `url('/images/candidate-card-bg.jpg')` }}
+                style={{ backgroundImage: `url('${publicAsset('images/candidate-card-bg.jpg')}')` }}
               >
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0D101B] via-[#0D101B]/45 to-transparent" />
                 <div className="relative z-10 w-full flex items-end justify-between gap-2">

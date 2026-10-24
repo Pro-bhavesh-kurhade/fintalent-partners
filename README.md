@@ -160,6 +160,12 @@ npm run lint    # Runs TypeScript strict check (tsc --noEmit)
 npm run build   # Builds optimized production chunks into dist/
 ```
 
+### Deploy to GitHub Pages
+
+GitHub Actions builds and deploys the site to [https://pro-bhavesh-kurhade.github.io/fintalent-partners/](https://pro-bhavesh-kurhade.github.io/fintalent-partners/) whenever a change reaches `main`. The workflow type-checks the project, builds with the repository subpath, and publishes the `dist/` artifact. A Pages fallback keeps direct links and refreshes working for routes such as `/jobs`, `/apply`, and `/about`.
+
+The repository's **Settings → Pages → Build and deployment → Source** must be set to **GitHub Actions**. Deployments can also be started manually from **Actions → Deploy to GitHub Pages → Run workflow**.
+
 ### Staff Admin Console Access
 
 Click **`Staff Admin Console`** in the website footer (or visit `/#admin`):
