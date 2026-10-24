@@ -37,7 +37,7 @@ export const Header: React.FC<HeaderProps> = ({
   const isDark = theme === 'dark';
 
   const whatsappHref = buildWhatsAppUrl(
-    "Hi Amii Ma'am, reaching out via FinTalent Partners website!"
+    "Hi Ami Bhanushali, reaching out via FinTalent Partners website!"
   );
 
   return (

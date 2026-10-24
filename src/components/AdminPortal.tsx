@@ -74,7 +74,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   const [newDomain, setNewDomain] = useState<string>(PRACTICE_DOMAINS[0]);
   const [newBudget, setNewBudget] = useState('14 - 20 LPA');
   const [newCity, setNewCity] = useState('Mumbai (BKC)');
-  const [newContact, setNewContact] = useState("Amii Ma'am Desk");
+  const [newContact, setNewContact] = useState("Ami Bhanushali Desk");
   const [newPhone, setNewPhone] = useState('9821262613');
 
   const [updateFeedback, setUpdateFeedback] = useState<string | null>(null);
@@ -171,7 +171,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
     const res = await submitFirmRequirement({
       organization_name: newOrg.trim(),
       org_type: newOrgType,
-      contact_person: newContact.trim() || "Amii Ma'am Desk",
+      contact_person: newContact.trim() || "Ami Bhanushali Desk",
       contact_phone: newPhone.trim() || '9821262613',
       role_needed: newRole.trim(),
       domain: newDomain,
@@ -571,7 +571,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                               <div className="inline-flex items-center gap-1.5">
                                 <a
                                   href={`https://wa.me/91${c.phone}?text=${encodeURIComponent(
-                                    `Hi ${c.full_name}, reaching out from Amii Ma'am's desk at FinTalent Partners regarding your ${c.domain} profile.`
+                                    `Hi ${c.full_name}, reaching out from Ami Bhanushali's desk at FinTalent Partners regarding your ${c.domain} profile.`
                                   )}`}
                                   target="_blank"
                                   rel="noopener noreferrer"

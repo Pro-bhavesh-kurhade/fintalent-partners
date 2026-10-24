@@ -35,7 +35,7 @@ export const Footer: React.FC<FooterProps> = ({
   const isDark = theme === 'dark';
 
   const whatsappUrl = buildWhatsAppUrl(
-    "Hi Amii Ma'am, reaching out via FinTalent Partners!"
+    "Hi Ami Bhanushali, reaching out via FinTalent Partners!"
   );
 
   return (
@@ -171,7 +171,7 @@ export const Footer: React.FC<FooterProps> = ({
               className="mt-3 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#C8FF32] text-[#090B10] font-display font-extrabold text-xs cursor-pointer"
             >
               <MessageCircle className="w-3.5 h-3.5 fill-current" />
-              <span>WhatsApp Amii Ma&apos;am</span>
+              <span>WhatsApp Ami Bhanushali</span>
             </a>
           </div>
         </div>
@@ -179,7 +179,7 @@ export const Footer: React.FC<FooterProps> = ({
         {/* Bottom Legal + Staff Console Trigger */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <p>
-            © {new Date().getFullYear()} FinTalent Partners LLP · Led by Amii Ma&apos;am · ICAI Confidential Search
+            © {new Date().getFullYear()} FinTalent Partners LLP · Led by Ami Bhanushali · ICAI Confidential Search
           </p>
 
           <button

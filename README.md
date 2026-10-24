@@ -9,7 +9,7 @@
 [![Platform](https://img.shields.io/badge/Platform-FinTalent_Partners_v2.0-090B10?style=for-the-badge&logo=vercel&logoColor=C8FF32)](#)
 [![Candidate Fee](https://img.shields.io/badge/Candidate_Fee-100%25_Free-12B886?style=for-the-badge)](#for-candidates--job-seekers)
 [![Recruiter SLA](https://img.shields.io/badge/Shortlist_Turnaround-24–48_Hours-FF6B4A?style=for-the-badge)](#for-recruiters-ca-firms--cfos)
-[![WhatsApp Desk](https://img.shields.io/badge/WhatsApp_Desk-+91_98212_62613-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://wa.me/919821262613?text=Hi%20Amii%20Ma%27am%2C%20reaching%20out%20via%20FinTalent%20Partners)
+[![WhatsApp Desk](https://img.shields.io/badge/WhatsApp_Desk-+91_98212_62613-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://wa.me/919821262613?text=Hi%20Ami%20Bhanushali%2C%20reaching%20out%20via%20FinTalent%20Partners)
 
 <br />
 
@@ -27,7 +27,7 @@
 
 Traditional job portals bury candidates behind 10-page forms and flood hiring managers with hundreds of unscreened resumes.
 
-**FinTalent Partners** is built around **speed, human domain screening, and transparency** — led directly by **Amii Ma'am** and a specialized Chartered Accountancy & Corporate Finance search desk serving **Mumbai (BKC)**, **Delhi NCR (Connaught Place)**, **Bengaluru (Indiranagar)**, **Pune**, and **Pan-India**.
+**FinTalent Partners** is built around **speed, human domain screening, and transparency** — led directly by **Ami Bhanushali** and a specialized Chartered Accountancy & Corporate Finance search desk serving **Mumbai (BKC)**, **Delhi NCR (Connaught Place)**, **Bengaluru (Indiranagar)**, **Pune**, and **Pan-India**.
 
 | What Matters Most | Traditional Job Portals | FinTalent Partners Studio |
 | :--- | :--- | :--- |
@@ -36,7 +36,7 @@ Traditional job portals bury candidates behind 10-page forms and flood hiring ma
 | **Application Visibility** | Black-hole applications with zero feedback | **Live 5-Stage Pipeline Tracker** via Mobile + DOB |
 | **Recruiter Resume Quality** | 200+ unfiltered keyword matches | **3–5 ICAI-verified, technically screened profiles** |
 | **Recruiter Turnaround** | Weeks of manual screening | **24 to 48 hours** for core CA, Tax & Finance roles |
-| **Human Accountability** | Automated bots only | **Direct WhatsApp & phone access** to Amii Ma'am's desk |
+| **Human Accountability** | Automated bots only | **Direct WhatsApp & phone access** to Ami Bhanushali's desk |
 
 ---
 
@@ -113,10 +113,10 @@ Every candidate profile moves transparently through 5 clear recruitment stages s
 
 ## Direct Executive Search Desk
 
-Need urgent statutory audit seniors before filing deadlines, industrial trainees, or a strategic finance lead? Reach **Amii Ma'am's** desk directly:
+Need urgent statutory audit seniors before filing deadlines, industrial trainees, or a strategic finance lead? Reach **Ami Bhanushali's** desk directly:
 
-- **Managing Search Lead**: **Amii Ma'am**
-- **Instant WhatsApp Desk**: [**Chat on WhatsApp (+91 98212 62613)**](https://wa.me/919821262613?text=Hi%20Amii%20Ma%27am%2C%20reaching%20out%20via%20FinTalent%20Partners)
+- **Managing Search Lead**: **Ami Bhanushali**
+- **Instant WhatsApp Desk**: [**Chat on WhatsApp (+91 98212 62613)**](https://wa.me/919821262613?text=Hi%20Ami%20Bhanushali%2C%20reaching%20out%20via%20FinTalent%20Partners)
 - **Direct Phone Line**: `+91 98212 62613`
 - **Email**: `recruitment@fintalentpartners.com`
 - **Regional Search Hubs**:

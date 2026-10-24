@@ -90,7 +90,7 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
               You&apos;re In, {candidateName.split(' ')[0]}!
             </h3>
             <p className="text-xs sm:text-sm opacity-75 leading-relaxed">
-              Your CV is queued with Amii Ma&apos;am&apos;s executive search desk. We’ve also saved your passkey in this browser for instant 1-tap tracking anytime.
+              Your CV is queued with Ami Bhanushali&apos;s executive search desk. We’ve also saved your passkey in this browser for instant 1-tap tracking anytime.
             </p>
           </div>
 

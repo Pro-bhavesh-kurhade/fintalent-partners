@@ -232,7 +232,7 @@ function MainApp() {
         {/* 5. 6 Practice Verticals Bento Grid */}
         <Specializations onSelectDomain={handleSelectDomainCard} />
 
-        {/* 6. Practice Principal Desk (Amii Ma'am) & Snappy FAQ */}
+        {/* 6. Practice Principal Desk (Ami Bhanushali) & Snappy FAQ */}
         <TrustSection />
       </main>
 

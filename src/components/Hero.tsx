@@ -253,7 +253,7 @@ export const Hero: React.FC<HeroProps> = ({
                 <span>
                   {isCandidate
                     ? 'Or skip browsing & drop your Resume PDF directly (60s) →'
-                    : 'Or post a custom Hiring Mandate directly to Amii Ma’am (45s) →'}
+                    : 'Or post a custom Hiring Mandate directly to Ami Bhanushali (45s) →'}
                 </span>
               </button>
 
@@ -346,7 +346,7 @@ export const Hero: React.FC<HeroProps> = ({
                         </span>
                         <div className="text-xs">
                           <strong className="text-white block">Share Role in 45 Seconds</strong>
-                          <span className="text-slate-400">Tap a preset role or message Amii Ma’am directly</span>
+                          <span className="text-slate-400">Tap a preset role or message Ami Bhanushali directly</span>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/[0.05] border border-white/10">
