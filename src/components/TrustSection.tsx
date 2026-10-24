@@ -8,7 +8,7 @@ import {
   MapPin,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import { DISPLAY_PHONE, buildWhatsAppUrl } from '../lib/supabase';
+import { DISPLAY_PHONE, buildWhatsAppUrl, publicAsset } from '../lib/supabase';
 
 export const TrustSection: React.FC = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -53,7 +53,7 @@ export const TrustSection: React.FC = () => {
           <div
             className="lg:col-span-5 min-h-[280px] sm:min-h-[340px] bg-cover bg-center relative flex flex-col justify-between p-6 sm:p-8 text-white"
             style={{
-              backgroundImage: `url('/images/recruiter-card-bg.jpg')`,
+              backgroundImage: `url('${publicAsset('images/recruiter-card-bg.jpg')}')`,
             }}
           >
             <div className="absolute inset-0 bg-gradient-to-t from-[#090B10]/95 via-[#090B10]/45 to-[#090B10]/30" />

@@ -8,6 +8,7 @@ import {
   VettedTalentProfile,
   Candidate,
   getLastTrackingCredentials,
+  publicAsset,
 } from '../lib/supabase';
 
 interface ActionStudioProps {
@@ -52,7 +53,7 @@ export const ActionStudio: React.FC<ActionStudioProps> = ({
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: `url('/images/workspace-abstract-bg.jpg')`,
+            backgroundImage: `url('${publicAsset('images/workspace-abstract-bg.jpg')}')`,
           }}
         />
         <div

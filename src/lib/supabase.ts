@@ -1,5 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 
+export function publicAsset(path: string): string {
+  return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`;
+}
+
 export const SUPABASE_URL = 'https://dwebcaopcmahtfnlhoad.supabase.co';
 export const SUPABASE_ANON_KEY = 'sb_publishable_wZhy8p3SQc5KKB3pEtIBFA_szTU3g9y';
 
